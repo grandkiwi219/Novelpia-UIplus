@@ -1,0 +1,102 @@
+:root {
+    --novelpia-color: rgb(118, 50, 255);
+}
+
+
+/*
+header
+*/
+html[npup-b-w="true"] .s-logo {
+    display: none;
+}
+
+html:where([npup-b-w="books"], [npup-b-w="webtoon"]) .s-logo {
+    gap: 0px;
+}
+
+html[npup-b-w="books"] :where(.slogo-books, .header-txt-bar) {
+    display: none;
+}
+
+html[npup-b-w="webtoon"] :where(.slogo-webtoon, .header-txt-bar) {
+    display: none;
+}
+
+
+html[npup-search] .header-search {
+    display: none;
+}
+
+html[npup-nav] .row.top-menu-margin {
+    margin: 90px auto 0px auto;
+}
+
+/* html[npup-nav] .logo-novelpia, html[npup-adult] .logo-novelpia */
+html:where([npup-nav], [npup-adult]) .logo-novelpia {
+    margin-right: 20px;
+}
+
+html[npup-adult] .s-logo {
+    margin-right: 15px !important;
+}
+
+@media screen and (min-width: 892px) {
+
+    html[npup-nav] header.mobile_hidden.s_inv {
+        height: 90px;
+    }
+
+    html[npup-nav] .top-menu-margin_simple {
+        margin: 90px auto 0px auto;
+    }
+}
+
+html:where([npup-nav], [npup-search]) .header-search {
+    display: none;
+}
+
+
+
+/*
+navigation
+*/
+@media screen and (min-width: 892px) {
+
+    html[npup-nav-align] .mybook-sub-nav-list {
+        width: 100%;
+        max-width: 1240px;
+    }
+
+    html[npup-nav-align="left-less"] {
+    
+        .top_nav:not(.npup-nav),
+        .mybook-sub-nav-list {
+            padding-left: 200px;
+        }
+    }
+
+    html[npup-nav-align="center"] {
+    
+        .top_nav:not(.npup-nav),
+        .mybook-sub-nav-list {
+            justify-content: center;
+        }
+    }
+
+    html[npup-nav-align="right"] {
+    
+        .top_nav:not(.npup-nav),
+        .mybook-sub-nav-list {
+            justify-content: flex-end;
+        }
+    }
+
+    html[npup-nav-align="right-less"] {
+    
+        .top_nav:not(.npup-nav),
+        .mybook-sub-nav-list {
+            justify-content: flex-end;
+            padding-right: 200px;
+        }
+    }
+}

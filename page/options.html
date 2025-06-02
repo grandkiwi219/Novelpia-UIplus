@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+
+<!--
+
+Copyright ⓒ 2025. grand kiwi All rights reserved.
+
+-->
+
+<html lang="ko" dark="true">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+        <title>노벨피아 UI+</title>
+
+        <script src="./code/js/sync_key.js"></script>
+        
+        <script src="./code/js/pre-options.js"></script>
+        <script src="./code/js/options.js" defer></script>
+
+        <link rel="stylesheet" href="./code/css/options.css">
+
+        <link rel="stylesheet" href="./code/css/options-chrome.css">
+    </head>
+
+    <body>
+        <header class="cleaner">
+            <div class="container">
+                <div id="title" class="child">
+                    <img id="icon" src="../img/icon.png" width="25px" height="25px">
+                    &nbsp;&nbsp;
+                    <div style="height: fit-content; padding-top: 4.5px;">노벨피아 UI+</div>
+                </div>
+                <div id="menu" class="child">
+                    <a class="header-button" href="https://novelpia.com" target="_blank">
+                        <img id="novel-logo" 
+                        src="https://images.novelpia.com/img/favicon/2025-android-icon-192x192.png"
+                        alt="🪽">
+                    </a>
+
+                    <button id="theme" class="header-button">
+                        <!-- moon -->
+                        <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="-5 -2.5 24 19">
+                            <path d="M 3.223 0.36 A 1 1 0 0 0 12.91 12.475 Q 13.232 11.994 12.666 11.924 Q 3.008 10.089 3.681 0.655 Q 3.719 0.109 3.223 0.36" fill="#000000"/>
+                        </svg> -->
+
+                        <!-- sun -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -2.5 22 19">
+                            <path
+                                d="M8 3A1 1 0 008 11 1 1 0 008 3M8 0Q8.46.002 8.46.481L8.453 1.496Q8.453 1.997 8 2 7.514 1.992 7.508 1.53L7.503.459Q7.502.002 8 0zM3 7Q2.991 6.51 2.488 6.512L1.514 6.51Q1 6.517 1 7 1.007 7.502 1.481 7.502L2.506 7.502Q3.01 7.498 3 7M13 7Q13.006 6.488 13.487 6.483L14.477 6.483Q15 6.488 15 7 15.005 7.497 14.5 7.497L13.496 7.497Q13.006 7.492 13 7M8 12Q8.47 12.001 8.48 12.477L8.48 13.481Q8.48 13.991 8 14 7.513 13.995 7.494 13.495L7.485 12.505Q7.48 12.005 8 12"
+                                fill="#ffffff" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="sun-deg" viewBox="-2.2 -2.2 22 19" transform="rotate(45, 50, 50)">
+                            <path
+                                d="M8 3A1 1 0 008 11 1 1 0 008 3M8 0Q8.46.002 8.46.481L8.453 1.496Q8.453 1.997 8 2 7.514 1.992 7.508 1.53L7.503.459Q7.502.002 8 0zM3 7Q2.991 6.51 2.488 6.512L1.514 6.51Q1 6.517 1 7 1.007 7.502 1.481 7.502L2.506 7.502Q3.01 7.498 3 7M13 7Q13.006 6.488 13.487 6.483L14.477 6.483Q15 6.488 15 7 15.005 7.497 14.5 7.497L13.496 7.497Q13.006 7.492 13 7M8 12Q8.47 12.001 8.48 12.477L8.48 13.481Q8.48 13.991 8 14 7.513 13.995 7.494 13.495L7.485 12.505Q7.48 12.005 8 12"
+                                fill="#ffffff" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <div id="box" class="cleaner">
+            <div class="container">
+                <div class="tools">
+                    <div class="tools-headline">
+                        🚩 헤더 설정
+                    </div>
+                    <div class="tools-wrap"> <!--max 6 setting tag-->
+
+                        <div class="tools-child">
+                            <div>성인 버튼을 헤더에 옮김</div>
+                            <setting-switch key="adult"/>
+                        </div>
+                        
+                        <div class="tools-child">
+                            <div>
+                                "북스 | 웹툰" 제거
+                            </div>
+                            <setting-selector key="b-w">
+                                |그대로        {normal}
+                                |"북스"만 제거   {books}
+                                |"웹툰"만 제거   {webtoon}
+                                |모두 제거     {true}
+                            </setting-selector>
+                        </div>
+                        
+                        <div class="tools-child">
+                            <div>
+                                검색바 최소화 & 반응형
+                            </div>
+                            <setting-switch key="search"/>
+                        </div>
+
+                        <div class="tools-child">
+                            <div>
+                                최근 검색 결과 표시
+                            </div>
+                            <setting-switch key="search-result"/>
+                        </div>
+
+                        <div class="tools-child">
+                            <div>
+                                알림 위치 변경
+                            </div>
+                            <setting-selector key="alarm">
+                                |댓글 알림        {comment}
+                                |구독 알림          {novel}
+                                |만화 구독 알림     {comic}
+                                |시스템 알림       {system}
+                                |이벤트 알림        {event}
+                            </setting-selector>
+                        </div>
+
+                    </div>
+                 </div>
+
+                 <div class="tools">
+                    <div class="tools-headline">
+                        ⏩ 내비게이션 바 설정
+                    </div>
+                    <div class="tools-wrap">
+                        <div class="tools-child">
+                            <div>
+                                내비게이션 메뉴 정렬 방식  
+                            </div>
+                            <setting-selector key="nav-align">
+                                |왼쪽 정렬            {left}
+                                |덜 왼쪽 정렬    {left-less}
+                                |가운데 정렬        {center}
+                                |오른쪽 정렬         {right}
+                                |덜 오른쪽 정렬 {right-less}
+                            </setting-selector>
+                        </div>
+
+                        <div class="tools-child">
+                            <div>
+                                내서재 위치 변경 (모바일에서는 최근기록 부분 포함)
+                            </div>
+                            <setting-selector key="nav-mybook">
+                                |설정 안 함    {normal}
+                                |선호작          {like}
+                                |최근 본 작품     {last}
+                                |구독 알림       {alarm}
+                                |소장함        {collect}
+                            </setting-selector>
+                        </div>
+
+                        <div class="tools-child">
+                            <div>
+                                내비게이션 메뉴 헤더로 (기본적으로 검색바 최소화)
+                            </div>
+                            <setting-switch key="nav"/>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="tools">
+                    <div class="tools-headline">
+                        📕 소설 페이지 설정
+                    </div>
+                    <div class="tools-wrap">
+                        
+                        <div class="tools-child">
+                            <div>
+                                페이지 이동 상단 추가  
+                            </div>
+                            <setting-switch key="novel-page"/>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="tools">
+                    <div class="tools-headline">
+                        📜 뷰어 설정
+                    </div>
+                    <div class="tools-wrap">
+
+                        <div class="tools-child">
+                            <div>
+                                옛 뷰어 아이콘 및 배치
+                            </div>
+                            <setting-switch key="old-icon"/>
+                        </div>
+
+                        <div class="tools-child">
+                            <div>
+                                우클릭 알림 삭제
+                            </div>
+                            <setting-switch key="click-alert"/>
+                        </div>
+
+                    </div>
+                </div>
+                 
+                <div id="mobile-ui-setting" class="tools">
+                    <div class="tools-headline">
+                        📱 모바일 UI 설정
+                    </div>
+                    <div class="tools-wrap">
+
+                        <div class="tools-child">
+                            <div>
+                                이어보기 버튼 상단 추가
+                            </div>
+                            <setting-switch key="top-ep"/>
+                        </div>
+
+                        <div class="tools-child">
+                            <div>
+                                선호작, 구독알람 아이콘 하단 추가
+                            </div>
+                            <setting-switch key="bottom-heart-alarm"/>
+                        </div>
+
+                        <div class="tools-child">
+                            <div>
+                                기존 헤더로 변경 (기본적으로 아이콘 하단 추가)
+                            </div>
+                            <setting-switch key="origin-header"/>
+                        </div>
+
+                        <div class="tools-child">
+                            <div>
+                                하단 내비게이션 삭제 (기본적으로 기존 헤더로 변경)
+                            </div>
+                            <setting-switch key="bottom-nav"/>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="tools">
+                    <div class="tools-headline">
+                        🛠️ 기타 설정
+                    </div>
+                    <div class="tools-wrap">
+
+                        <div class="tools-child">
+                            <div>
+                                메인 페이지 공지 상단 추가 
+                            </div>
+                            <setting-switch key="notice"/>
+                        </div>
+
+                        <div class="tools-child">
+                            <div>
+                                페이지 이름 변경 
+                            </div>
+                            <setting-selector key="web-title" type="long">
+                                |노벨피아 - 웹소설로 꿈꾸는 세상! - (page)         {normal}
+                                |노벨피아 - (page)                                {short}
+                                |(page) - 노벨피아                        {reverse-short}
+                                |(page)                                         {single}
+                                |(page) - 노벨피아 - 웹소설로 꿈꾸는 세상! {reverse-normal}
+                            </setting-selector>
+                        </div>
+
+                        <div class="tools-child">
+                            <div>
+                                마지막으로 읽었던 회차로 이동 알림
+                            </div>
+                            <setting-switch key="last-ep"/>
+                        </div>
+                        
+                        <div class="tools-child">
+                            <div>
+                                &nbsp; ㄴ 메인화면에서만 알림
+                            </div>
+                            <setting-switch key="last-ep-home"/>
+                        </div>
+
+                        <div class="tools-child">
+                            <div>
+                                &nbsp; ㄴ 알림 제거 후 다시 보기
+                            </div>
+                            <setting-selector key="last-ep-cooltime">
+                                |30분        {30}
+                                |1시간       {60}
+                                |1시간 30분  {90}
+                                |2시간       {120}
+                                |3시간       {180}
+                                |4시간       {240}
+                                |6시간       {360}
+                                |8시간       {480}
+                                |10시간      {600}
+                                |12시간      {720}
+                                |14시간      {840}
+                                |16시간      {960}
+                                |18시간      {1080}
+                                |20시간      {1200}
+                                |22시간      {1320}
+                                |하루        {1440}
+                            </setting-selector>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="tools">
+                    <div class="tools-headline">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg"
+                        alt="✒️">&nbsp; 커스텀 CSS 설정
+                    </div>
+                    <div class="tools-wrap">
+                        <setting-textarea key="custom-css" placeholder=
+"/* 외부 폰트 불러오기 예시 */
+@font-face {
+    font-family: 'NoonnuBasicGothicRegular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noon-2410@1.0/NoonnuBasicGothicRegular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 뷰어 폰트 설정 변경 예시 */
+#novel_box {
+    font-family: 'NoonnuBasicGothicRegular', sans-serif !important;
+    color: #030f05 !important;
+}
+
+/* 뷰어 배경색 변경 예시 */
+#novel_box, #list_box, #comment_box, #header_bar, #footer_bar, #theme_box {
+    background-color: #c1e3ca !important;
+}
+
+* {
+    font-family: 'NoonnuBasicGothicRegular', sans-serif !important;
+}
+
+body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #payment, .menubar, .list_box, .mile-top-wrapper, .npup-notice, .npup-search-box, .npup-search-result {
+    background-color: #e8e8e8 !important;
+}
+
+.loads {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.rand-wrapper {
+    background-color: silver !important;
+}
+
+.card, .card-header, .card-body {
+    background-color: silver !important;
+}
+
+.agit-back {
+    background-color: silver !important;
+}
+
+.calendar-body-wrapper {
+    background-color: #f6ebff !important;
+}
+
+.sidemenu-wrapper-upper, .sidemenu-wrapper-lower, #m-sidemenu {
+    background-color: #e8e8e8 !important;;
+}
+
+.mybook-sub-nav, .mybook-tab-container-m, .s_menubar {
+    background-color: silver !important;
+} · · ·"
+>@media screen and (min-width: 892px) {
+    header.mobile_hidden  {
+        border-bottom: 1px solid #E6E6E6;
+    }
+}
+
+.header-search { transition: border .24s; }
+
+.header-search:has(#search_input:focus) {
+    border-bottom: 1px solid var(--novelpia-color) !important;
+}
+
+::selection {
+    background-color: rgba(40, 40, 40, 0.12);
+}
+</setting-textarea>
+                    </div>
+                </div>
+
+                <div class="tools">
+                    <div class="tools-headline">
+                        🪡 확장프로그램 설정
+                    </div>
+                    <div class="tools-wrap">
+
+                        <div class="tools-child">
+                            <div>
+                                이 장치에서의 설정 동기화
+                            </div>
+                            <setting-switch key="extension-sync" storage="local"/>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="tools">
+                    <div class="tools-headline">
+                        🚧 ??? 설정
+                    </div>
+                    <div class="tools-wrap">
+                        <div class="tools-child">
+                            "준비 중"
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer>
+                <span>v<span id="version">0.0.0</span></span>
+                <a id="patch" href="https://addons.mozilla.org/ko/firefox/addon/novelpia-ui-plus/versions/" target="_blank">패치노트</a>
+            </footer>
+        </div>
+
+    </body>
+</html>

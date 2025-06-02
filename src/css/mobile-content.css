@@ -1,0 +1,170 @@
+/* 
+origin-header
+*/
+/* 참고: https://developer.chrome.com/docs/css-ui/css-nesting?hl=ko */
+html[npup-origin-header], html[npup-bottom-nav] {
+    
+    header.mobile_show,
+    #renewal-header {
+        top: -90px !important;
+    }
+
+    div#renewal-header, /* 공지 페이지 */
+    div.top_navi /* 이모티콘 구매 프리뷰 페이지 */
+    {
+        display: none;
+    }
+
+    header.mobile_hidden,
+    #btn_alram {
+        display: block !important;
+    }
+
+    @media screen and (max-width: 891px) {
+        .header-icon-menu > * {
+            width: 20px;
+            height: 22.20px;
+        }
+
+        .header-icon-menu > * > *:not(.red-dot, #npup-search-form),
+        .npup-search-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .npup-search-align {
+            align-items: end;
+            position: relative;
+        }
+
+        .npup-search-icon {
+            content: url('https://images.novelpia.com/img/new/navi/sbm_icon_search.svg');
+            position: absolute;
+            top: 2px;
+            left: 0;
+        }
+
+        .npup-search-base {
+            align-items: flex-start;
+        }
+
+        .header-icon-menu > div:has(#toggle-menu),
+        #toggle-menu,
+        #toggle-menu > div > img {
+            width: 25px !important;
+            height: 25px !important;
+        }
+
+        .logo-novelpia img {
+            width: auto !important;
+            height: 22px !important;
+        }
+
+        .logo-novelpia > a {
+            display: flex;
+        }
+
+        .logo-novelpia > a > img:last-child {
+            content: url('https://images.novelpia.com/img/new/header/logo_novelpia_mobile.svg');
+        }
+
+        /* 다크모드 로고 안 보임 해결책 */
+        body[bgcolor="black"] .logo-novelpia > a > img:last-child {
+            content: url('https://images.novelpia.com/img/new/header/logo_novelpia_mobile_dark.svg');
+        }
+
+        /* 조금도 보이지 않게 처리 */
+        #pc-sidemenu {
+            display: none !important;
+        }
+        
+        /* header border 일부 페이지서 보이지 않는 문제 해결 */
+        
+        body:has(.top-menu-margin_simple) > header.mobile_hidden {
+            border-bottom: 1px solid #E6E6E6;
+        }
+        
+        header.mobile_hidden {
+            transition: border .24s;
+        }
+        
+
+        /* margin */
+        .top-menu-margin_simple {
+            margin: 90px auto 0px !important;
+            display: block;
+        }
+        
+        .menu_list {
+            margin-top: 90px !important;
+        }
+        
+        #tab_top + table {
+            top: 89px !important;
+        }
+                
+            /* /novel 부분 */
+        body > div:has(.epnew-wrapper) {
+            top: 20px;
+        }
+        
+            /* 공지 */
+        body > div:has(#view-wrapper) {
+            top: 15px;
+        }
+        
+            /* 놀이터 */
+        .game-all-wrapper {
+            padding-top: 0px;
+        }
+
+        /* 콘테스트 혹은 일부 이벤트 페이지 sticky 에 대한 높이 조절 */
+        /* .mc-tap-wr, */ /* 2025 밀리언 클래스 (이벤트 탭) */
+        body > div > div:has(.tap-box), /* 2025 밀리언 클래스 (이벤트 탭) 포함, TRPG 완결 기념 이벤트 탭 */
+        .contest_menu, /* 2025 천지창조 (공모전 탭 => 이벤트 탭) */
+        .contest-tab /* 2024, 2023 우주최강 (이벤트 탭) */
+
+        {
+            top: 90px;
+        }
+    }
+}
+
+
+
+/*
+bottom-nav
+*/
+html[npup-bottom-nav] {
+    #bottom-nav-bar {
+        left: 150vw;
+    }
+    
+    /* 이어보기 위치 살짝 내림 */
+    /* .btn-view-episode {
+        bottom: 60px;
+    } */
+}
+
+/* 
+bottom-heart-alarm
+*/
+html[npup-bottom-heart-alarm],
+html[npup-origin-header],
+html[npup-bottom-nav] {
+
+    /* 10px is margin */
+    --npup-ep-li-al-width: calc(var(--npup-ep-width) + 10px + 44px + 10px + 44px);
+
+    .epnew-mobile-btn-area-relative + .btn-view-episode {
+        left: calc(50% - ((var(--npup-ep-li-al-width) / 2) - (var(--npup-ep-width) / 2)));
+    }
+
+    .sbm-icon-menu.btn-view-episode:has(.sbm_icon_alert) {
+        left: calc(50% + ((var(--npup-ep-li-al-width) / 2) - 22px));
+    }
+
+    .sbm-icon-menu.btn-view-episode:has(.sbm_icon_heart) {
+        left: calc(50% + ((var(--npup-ep-li-al-width) / 2) - (22px + 10px + 44px)));
+    }
+}
