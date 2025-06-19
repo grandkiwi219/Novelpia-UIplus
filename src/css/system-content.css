@@ -1,0 +1,625 @@
+/*
+nav css
+*/
+.npup-nav {
+    width: fit-content;
+    height: fit-content !important;
+    font-size: 23px;
+    font-weight: 500;
+    gap: 0 25px !important;
+    word-break: keep-all;
+}
+
+.npup-nav > a.no-select {
+    color: black;
+}
+
+.npup-nav > a.no-select:hover {
+    color: black;
+}
+
+.npup-nav > a.active {
+    color: var(--novelpia-color);
+}
+
+.npup-nav > a.active:hover {
+    color: var(--novelpia-color);
+}
+
+html[npup-nav] .hader-logo > .switch-adult {
+    margin-right: 22px;
+}
+
+
+
+/*
+search css
+*/
+.npup-search-base {
+    position: relative;
+    width: 30px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    /*z-index: 100;*/
+    --search-size: 400px;
+}
+
+.npup-search-header {
+    width: 0px;
+    left: 0px;
+    overflow: hidden;
+    display: inline;
+    position: absolute;
+    transition: width .18s, left .18s;
+}
+
+@media screen and (min-width: 892px) {
+
+    .npup-search-base:hover .npup-search-header,
+    .npup-search-header:has(.npup-search-box:focus) {
+        width: var(--search-size);
+        left: calc(0px - var(--search-size));
+    }
+}
+
+
+.npup-search-box {
+    box-sizing: border-box;
+    left: 0;
+    height: 50px;
+    width: var(--search-size);
+    padding: 10px;
+    border: 0;
+    border-bottom: 1px solid rgb(0, 0, 0) !important;
+    overflow: hidden;
+    outline: 0;
+    transition: border-bottom .24s;
+}
+
+.npup-search-box:focus {
+    border-bottom: 1px solid var(--novelpia-color) !important;
+}
+
+.npup-search-align {
+    height: fit-content;
+    width: fit-content;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    user-select : none;
+}
+
+.npup-search-icon {
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+}
+
+
+
+/*
+search result css
+*/
+
+.npup-search-result {
+    --search-result-width: 420px;
+    --search-result-height: 187px;
+    --search-result-transition: height .18s;
+    box-sizing: border-box;
+    width: var(--search-result-width);
+    height: 0px;
+    margin-top: 20px;
+    overflow: hidden;
+    color: silver;
+    background-color: white;
+    user-select: none;
+    position: absolute;
+    transition: var(--search-result-transition);
+}
+
+
+.npup-search-result-newtype {
+    --search-result-width: 400px;
+    width: var(--search-result-width);
+    height: var(--search-result-height);
+    transition: none;
+}
+
+@media screen and (min-width: 892px) {
+
+    .npup-search-result-active {
+        height: var(--search-result-height);
+    }
+}
+
+.npup-search-result-wrap {
+    box-sizing: border-box;
+    width: var(--search-result-width);
+    height: 0px;
+    padding: 20px;
+    border: 1px solid silver;
+    overflow: hidden;
+    transition: var(--search-result-transition);
+}
+
+.npup-search-result-newtype .npup-search-result-wrap {
+    height: var(--search-result-height);
+}
+
+.npup-search-result-active .npup-search-result-wrap {
+    height: var(--search-result-height);
+}
+
+/*normal-form*/
+
+.npup-search-result-header {
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.npup-search-result-header > div {
+    width: fit-content;
+    height: fit-content;
+}
+
+.npup-search-result-items {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.npup-search-result-item {
+    box-sizing: padding-box;
+    max-width: 200px;
+    height: 30px;
+    padding: 0 3px;
+    border-radius: 15px;
+    background-color: rgb(245, 245, 245);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.npup-search-result-word-wrap {
+    max-width: 150px;
+    color: black;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.npup-search-result-word {
+    max-width: 100%;
+    padding: 0 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/*검색 결과 삭제 버튼*/
+
+.npup-search-result-delete {
+    width: 12px;
+    margin-right: 10px;
+    height: fit-content;
+    padding: 4px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#npup-search-result-delete-all {
+    cursor: pointer;
+}
+   
+
+/*newtype-form*/
+
+.npup-search-result-form {
+    top: 0px;
+    height: 257px;
+}
+
+/* 검색바 최소화 시 */
+div.header-top-wrapper[npup-search] > div.header-top > div:has(div.header-search) {
+    position: relative;
+    width: 420px;
+    height: 50px;
+}
+
+
+/*
+notice css
+*/
+
+.npup-notice {
+    background-color: rgba(0, 0, 0, 0) !important;
+    padding: 15px 15px 9px;
+}
+
+@media screen and (min-width: 892px) {
+
+    .npup-notice {
+        border-bottom: 1px solid rgba(192, 192, 192, 0.342);
+        padding: 15px;
+    }
+}
+
+
+/* 
+old-icon css
+*/
+
+html[npup-old-icon] {
+    --nav-height: 60px;
+
+    /* home */
+    .menu-top-home {
+        width: 40px;
+        cursor: pointer;
+        height: var(--nav-height);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .menu-top-home > img {
+        display: none;
+    }
+
+    .menu-title-wrapper {
+        line-height: 1.4em;
+        gap: 0px;
+        flex-flow: row wrap;
+
+        .menu-top-novel-title {
+            width: 100%;
+            height: 1.3em;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .menu-top-title-element-wrapper {
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            line-height: 1.4em;
+            height: 1.4em;
+            text-align: left;
+            word-wrap: break-word;
+            display: block;
+            line-clamp: 1;
+            box-orient: vertical;
+        }
+
+        .menu-top-tag {
+            background-color:rgba(155,155,155,0.5);
+            padding: 1px 6px;
+            margin-right: 3px;
+            border-radius: 3px;
+            line-height: 1.4em;
+            font-size: 11px;
+            font-weight: normal;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .menu-top-title {
+            display: none;
+        }
+
+        .menu-top-nineteen {
+            padding: 1px 4px;
+            margin-right: 5px;
+            border-radius: 3px;
+            background-color: #ea4a4a;
+            color: #fff;
+            line-height: 1.4em;
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 18px;
+            text-shadow: .5px .5px black;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+
+        }
+    }
+
+    /* list, setting, bottom item */
+    .menu-top-list,
+    .menu-top-setting {
+        width:63px;
+        height: var(--nav-height);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* 상단 바 */
+    .menu-top-wrapper {
+        padding: 0 3% 0 2%;
+        
+        gap: 0px;
+    
+        .menu-top-left {
+            gap: 3.2%;
+        }
+    
+        .menu-top-right {
+            gap: 0px;
+        }
+    }
+
+    /* 리스트 */
+    .menu-top-list > img {
+        content: url('https://novelpia.com/img/new/viewer/btn_list.png'); 
+    }
+    .menu-top-list > img[src*="list_on.svg"] {
+        content: url('https://novelpia.com/img/new/viewer/btn_list_on.png');
+    }
+
+    /* 세팅 */
+    .menu-top-setting > img {
+        content: url('https://novelpia.com/img/new/viewer/btn_theme.png');
+    }
+    .menu-top-setting > img[src*="setting_on.svg"] {
+        content: url('https://novelpia.com/img/new/viewer/btn_theme_on.png');
+    }
+
+    /* 하단 바 */
+    .menu-bottom-wrapper {
+
+        /* 이전화 */
+        .before-ep {
+            
+            img {
+                content: url('https://images.novelpia.com/img/new/viewer/btn_back.png');
+            }
+
+            &:has(.epi-menu-none) {
+                opacity: 40%;
+            }
+        }
+
+        /* 댓글 */
+        .comment-ep {
+
+            img {
+                content: url('https://novelpia.com/img/new/viewer/btn_comment.png');
+            }
+
+            &:has(.comment-on) {
+                img {
+                    content: url('https://novelpia.com/img/new/viewer/btn_comment_on.png');
+                }   
+            }
+        }
+
+        /* 추천 */
+        #recommend_tap {
+
+            img[src*="recommend.svg"] {
+                content: url('https://images.novelpia.com/img/new/viewer/btn_vote.png');
+            }
+
+            img[src*="recommend_on.svg"] {
+                content: url('https://images.novelpia.com/img/new/viewer/btn_vote_on2.png');
+            }
+        }
+
+        /* 선호작 */
+        .like-ep {
+
+            img {
+                height: 60px;
+                padding: 20px 0;
+                content: url('https://images.novelpia.com/img/new/viewer/btn_like.png');
+            }
+
+            img[src*="like_on.svg"] {
+                content: url('https://images.novelpia.com/img/new/viewer/btn_like_on2.png');
+            }
+        }
+
+        /* 다음화 */
+        .after-ep {
+
+            img {
+                content: url('https://images.novelpia.com/img/new/viewer/btn_next.png');
+            }
+
+            &:has(.epi-menu-none) {
+                opacity: 40%;
+            }
+        }
+
+        /* 최근 기록 */
+        .last-ep {
+            display: none;
+        }
+
+    }
+
+    .menu-bottom-item {
+        height: var(--nav-height);
+    }
+
+    .menu-bottom-item > span {
+        height: 24px;
+        padding-top: 4px;
+        font-size: 0px;
+    }
+
+    @media screen and (max-width: 699px) {
+
+        .menu-bottom-item > span {
+            height: 0px;
+        }
+    }
+
+    :where(
+        .menu-top-list,
+        .menu-top-setting,
+        .menu-bottom-item
+    ) > img {
+        width: 60px;
+        height: 20px;
+    }
+}
+
+
+/* 
+last episode alarm
+*/
+
+.last-ep-alarm {
+    --last-ep-padding: 15px;
+
+    width: 280px;
+    height: 190px;
+    padding: var(--last-ep-padding);
+    border-radius: 15px;
+
+    box-shadow: 0 0 20px rgba(80, 80, 80, 0.5);
+    background-color: #fff;
+    text-align: center;
+    user-select: none;
+    display: flex;
+    flex-flow: column wrap;
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    opacity: 0;
+    transition: opacity .5s, bottom .5s;
+
+    &.active {
+        bottom: 80px;
+        opacity: 1;
+        transition: opacity .8s, bottom .8s;
+    }
+
+    &.adult.active {
+        opacity: 0.6;
+    }
+}
+
+@media screen and (max-width: 891px) {
+
+    .last-ep-alarm.novel-page {
+        bottom: 114px;
+    }
+
+    .last-ep-alarm.novel-page.active {
+        bottom: 134px;
+    }
+}
+
+.last-ep-content {
+    box-sizing: border-box;
+    width: 100%;
+    height: 70%;
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    & > div:not(.last-ep-off) {
+        box-sizing: border-box;
+        width: 100%;
+        max-height: 100%;
+        padding-top: 9px;
+    }
+
+    p {
+        width: 100%;    
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.last-ep-off {
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+}
+
+.last-ep-off:hover {
+    transform: scale(110%);
+}
+
+.last-ep-redirect-wrap {
+    width: 100%;
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12.5px;
+}
+
+.last-ep-redirect {
+    width: 60%;
+    height: 85%;
+    padding: 5px 10px;
+    border-radius: 10px;
+    background-color: var(--novelpia-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    * {
+        color: #fff;
+    }
+
+    & > div {
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.last-ep-redirect.last-ep-list {
+    width: 16%;
+}
+
+.last-ep-redirect:hover {
+    filter: grayscale(30%);
+}
+
+@media screen and  (min-width: 892px) {
+
+    .last-ep-alarm {    
+        --last-ep-padding: 30px;
+
+        width: 380px;
+        height: 220px;
+        padding: var(--last-ep-padding);
+        padding-top: calc(var(--last-ep-padding) - 6px);
+        border-radius: 25px;
+    }
+
+    .last-ep-content > div:not(.last-ep-off) {
+        padding: 0;
+    }
+
+    .last-ep-redirect {
+        height: 100%;
+    }
+}

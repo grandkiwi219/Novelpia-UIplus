@@ -1,0 +1,115 @@
+{
+    "manifest_version": 3,
+    "name": "노벨피아 UI+",
+    "description": "더 나은 노벨피아 UI를 경험해보세요!",
+    "author": "grand-kiwi",
+    "version": "2.0.0.2",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "",
+            "strict_min_version": "88.0"
+        }
+    },
+    "content_scripts": [
+        {
+            "tag": "모두",
+            "matches": ["*://*.novelpia.com/*"],
+            "exclude_matches": [
+                "*://images.novelpia.com/*",
+                "*://image.novelpia.com/*",
+                
+                "*://novelpia.com/img/*",
+                "*://novelpia.com/css/*",
+                "*://novelpia.com/js/*",
+                "*://novelpia.com/lib/*"
+            ],
+            "js": [
+                "./src/initial-setup.js",
+                "./src/setup.js",
+                "./src/content.js",
+                
+                "./src/pre-common/other.js"
+            ],
+            "css": [
+                "./src/css/setup-content.css",
+                "./src/css/system-content.css",
+                "./src/css/mobile-content.css"
+            ],
+            "run_at": "document_start"
+        },
+        {
+            "tag": "기본 웹소설 페이지에서 뷰어들을 제외한 모두",
+            "matches": ["*://novelpia.com/*"],
+            "exclude_matches": [
+                "*://novelpia.com/viewer/*",
+                "*://novelpia.com/viewer_collect/*",
+                "*://novelpia.com/comic_viewer/*",
+                "*://novelpia.com/page/block/*",
+
+                "*://novelpia.com/img/*",
+                "*://novelpia.com/css/*",
+                "*://novelpia.com/js/*",
+                "*://novelpia.com/lib/*"
+            ],
+            "js": [
+                "./src/engine/page.js",
+
+                "./src/system/header.js",
+                "./src/system/navigation.js",
+                "./src/system/novel.js",
+                "./src/system/mobile.js",
+                "./src/system/other.js"
+            ],
+            "run_at": "document_start"
+        },
+        {
+            "tag": "기본 웹소설 페이지에서 기본 뷰어",
+            "matches": ["*://novelpia.com/viewer/*"],
+            "js": [
+                "./src/engine/viewer.js",
+
+                "./src/system/viewer.js"
+            ],
+            "run_at": "document_start"
+        },
+        {
+            "tag": "기본 웹소설 페이지에서 기본 검색 페이지",
+            "matches": ["*://novelpia.com/search/*"],
+            "js": ["./src/part/dynamic-search.js"],
+            "run_at": "document_end"
+        }
+    ],
+    "background": {
+        "service_worker": "./service/background.js"
+    },
+    "options_ui": {
+        "page": "./page/options.html",
+        "open_in_tab": true
+    },
+    "permissions": [
+        "storage"
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "src/initial-setup.js",
+                "src/file/*"
+            ],
+            "matches": ["*://*.novelpia.com/*"]
+        }
+    ],
+    "action": {
+        "default_icon": {
+            "16": "/img/icon.png",
+            "32": "/img/icon.png",
+            "48": "/img/icon.png",
+            "128": "/img/icon.png"
+        }
+    },
+    "icons": {
+            "16": "/img/icon.png",
+            "32": "/img/icon.png",
+            "48": "/img/icon.png",
+            "128": "/img/icon.png"
+    }
+}
