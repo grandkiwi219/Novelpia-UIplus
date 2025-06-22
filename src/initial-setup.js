@@ -76,6 +76,7 @@ const l = {
     // other
     notice: 'notice', w_title: 'web-title',
     last_ep: 'last-ep', last_ep_cooltime: 'last-ep-cooltime', last_ep_home: 'last-ep-home',
+    //quick_mybook: 'quick-mybook', quick_mybook_blank: 'quick-mybook-blank',
 
     // custom css
     c_css: 'custom-css'
@@ -119,7 +120,7 @@ new MutationObserver(() => {
 /**
  * 현 주소가 적힌 path인지 확인하는 함수
  * @param {any} paths string 혹은 Array 타입의 path(s)를 적어주세요.
- * @returns 
+ * @returns {boolean}
  */
 const pathChecker = (paths) => {
     if (typeof paths == 'string')
@@ -136,12 +137,29 @@ const pathChecker = (paths) => {
 }
 
 /**
+ * 현재 도메인 확인 함수
+ * @param {string} domain [novel, books, webtoon] || 도메인
+ * @returns {boolean}
+ */
+const domainChecker = (domain) => {
+    const domain_type = {
+        novel: 'novelpia.com',
+        books: 'book.novelpia.com',
+        webtoon: 'toptoon.novelpia.com'
+    };
+
+    const current_domain = window.location.hostname;
+
+    return current_domain == domain_type[domain] || domain;
+
+}
+
+/**
  * 간단한 try catch 함수
  * @param {function} func 실행할 함수를 작성하는 곳.
  * @param {string} type 이 함수에게 명명하세요.
  * @param {string | boolean} not_engine 콘텐츠 스크립트의 기본적인 함수인 엔진이 아니라면 무엇이라고 할 것 입니까? 만약 아무것도 아니라면 spacing 해주세요. 코멘트만을 원하면 '' 처리를 해주세요. 콘솔 출력을 하고 싶지 않다면 false를 해주세요.
  * @param  {...any} comment 추가 코멘트 작성.
- * @returns 
  */
 const tryChecker = (func, type, not_engine, ...comment) => {
     if (typeof func == 'function') {

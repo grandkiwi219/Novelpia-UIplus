@@ -257,43 +257,61 @@ Copyright ⓒ 2025. grand kiwi All rights reserved.
                             </setting-selector>
                         </div>
 
-                        <div class="tools-child">
-                            <div>
-                                마지막으로 읽었던 회차로 이동 알림
+                        <div class="tools-child tools-child-addon">
+                            <div class="tools-main">
+                                <div>
+                                    마지막으로 읽었던 회차로 이동 알림
+                                </div>
+                                <setting-switch key="last-ep" />
                             </div>
-                            <setting-switch key="last-ep"/>
-                        </div>
                         
-                        <div class="tools-child">
-                            <div>
-                                &nbsp; ㄴ 메인화면에서만 알림
+                            <div class="tools-sub">
+                                <div>
+                                    &nbsp; ㄴ 메인화면에서만 알림
+                                </div>
+                                <setting-switch key="last-ep-home" />
                             </div>
-                            <setting-switch key="last-ep-home"/>
+                        
+                            <div class="tools-sub">
+                                <div>
+                                    &nbsp; ㄴ 알림 제거 후 다시 보기
+                                </div>
+                                <setting-selector key="last-ep-cooltime">
+                                    |30분 {30}
+                                    |1시간 {60}
+                                    |1시간 30분 {90}
+                                    |2시간 {120}
+                                    |3시간 {180}
+                                    |4시간 {240}
+                                    |6시간 {360}
+                                    |8시간 {480}
+                                    |10시간 {600}
+                                    |12시간 {720}
+                                    |14시간 {840}
+                                    |16시간 {960}
+                                    |18시간 {1080}
+                                    |20시간 {1200}
+                                    |22시간 {1320}
+                                    |하루 {1440}
+                                </setting-selector>
+                            </div>
                         </div>
 
-                        <div class="tools-child">
-                            <div>
-                                &nbsp; ㄴ 알림 제거 후 다시 보기
+                        <!-- <div class="tools-child tools-child-addon">
+                            <div class="tools-main">
+                                <div>
+                                    빠른 최근기록 (확장프로그램 아이콘 클릭 시)
+                                </div>
+                                <setting-switch key="quick-mybook"/>
                             </div>
-                            <setting-selector key="last-ep-cooltime">
-                                |30분        {30}
-                                |1시간       {60}
-                                |1시간 30분  {90}
-                                |2시간       {120}
-                                |3시간       {180}
-                                |4시간       {240}
-                                |6시간       {360}
-                                |8시간       {480}
-                                |10시간      {600}
-                                |12시간      {720}
-                                |14시간      {840}
-                                |16시간      {960}
-                                |18시간      {1080}
-                                |20시간      {1200}
-                                |22시간      {1320}
-                                |하루        {1440}
-                            </setting-selector>
-                        </div>
+    
+                            <div class="tools-child tools-sub">
+                                <div>
+                                    &nbsp; ㄴ 새 탭으로 열기
+                                </div>
+                                <setting-switch key="quick-mybook-blank"/>
+                            </div>
+                        </div> -->
 
                     </div>
                 </div>

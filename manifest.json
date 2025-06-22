@@ -3,7 +3,7 @@
     "name": "노벨피아 UI+",
     "description": "더 나은 노벨피아 UI를 경험해보세요!",
     "author": "grand-kiwi",
-    "version": "2.0.0.2",
+    "version": "2.0.1.0",
     "browser_specific_settings": {
         "gecko": {
             "id": "",
@@ -111,5 +111,10 @@
             "32": "/img/icon.png",
             "48": "/img/icon.png",
             "128": "/img/icon.png"
+    },
+    "commands": {
+        "run-options": {
+            "description": "옵션 설정 페이지 열기"
+        }
     }
 }

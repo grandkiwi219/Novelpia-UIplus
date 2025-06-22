@@ -23,3 +23,11 @@ chrome.runtime.onInstalled.addListener(async d => {
 chrome.action.onClicked.addListener(() => {
     chrome.runtime.openOptionsPage();
 });
+
+/**
+ * 옵션 페이지 열림 커맨드
+ */
+chrome.commands.onCommand.addListener((command) => {
+    if (command == 'run-options')
+        chrome.runtime.openOptionsPage();
+});

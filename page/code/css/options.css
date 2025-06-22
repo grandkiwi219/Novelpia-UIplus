@@ -316,6 +316,9 @@ button.header-button {
 }
 
 #box > .container {
+    --box-grid-row-gap: 19px;
+    --box-grid-column-gap: 20px;
+
     padding: 17px 11px 0px;
     /* display: flex;
     justify-content: center;
@@ -324,7 +327,7 @@ button.header-button {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(auto-fill, var(--template-rows-size));
     grid-auto-rows: var(--template-rows-size);
-    gap: 19px 20px;
+    gap: var(--box-grid-row-gap) var(--box-grid-column-gap);
 }
 
 @media screen and (max-width: 750px) {
@@ -350,6 +353,11 @@ button.header-button {
     scrollbar-color: gray rgba(255, 255, 255, 0);
     border: var(--border-normal);
     /* border-radius: 7px; */
+}
+
+.tools-y2 {
+    height: calc(var(--template-rows-size) * 2 + var(--box-grid-row-gap));
+    grid-row: auto / span 2;
 }
 
 .tools-headline {
@@ -380,20 +388,40 @@ button.header-button {
     /*overflow: auto;*/
 }
 
-.tools-child {
+.tools-child, .tools-main, .tools-sub {
     width: 100%;
     padding: 5.5px 0 6.5px;
-    border-bottom: var(--border-normal);
     display: flex;
     justify-content: space-between;
     align-items: center;
     column-gap: 10px;
     text-overflow: ellipsis;
     word-break: break-word;
+
+    & > div {
+        height: fit-content;
+    }
 }
 
-.tools-child > div {
-    height: fit-content;
+.tools-child {
+    border-bottom: var(--border-normal);
+}
+
+.tools-main {
+    margin-bottom: 1.5px;
+}
+
+.tools-child-addon {
+    padding: 0;
+    flex-flow: column wrap;
+}
+
+.tools-sub > div {
+    color: gray;
+}
+
+html[dark=true] .tools-sub > div {
+    color: silver;
 }
 
 .tools-child:last-child {

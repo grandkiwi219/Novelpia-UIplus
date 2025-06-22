@@ -11,6 +11,10 @@ html[npup-origin-header], html[npup-bottom-nav] {
 
     div#renewal-header, /* 공지 페이지 */
     div.top_navi /* 이모티콘 구매 프리뷰 페이지 */
+    /*
+        공지 페이지: header#renewal-header 외에도 뒤 쪽에 남겨져있는 div#renewal-header가 존재
+        이모티콘 구매 프리뷰 페이지: 위와 같은 이유
+    */
     {
         display: none;
     }
