@@ -34,7 +34,7 @@ const searchSystem = (r) => {
             + `<form id="${project_prefix}search-form" class="${project_prefix}search-header" autocomplete="off">`
                     + `<input id="search_input" class="${project_prefix}search-box" type="text" name="search_box" placeholder="제목, 작가를 입력하세요." maxlength="50" autocomplete="off" value form="${project_prefix}search-form">`
             + '</form>'
-            + `<button type="button" class="${project_prefix}search-align" onclick="javascript:pc_search()">`
+            + `<button type="button" class="${project_prefix}search-align" onclick="javascript:npupPcSearch()">`
                 +`<img src="//images.novelpia.com/img/new/header/icon_in_search.svg" alt="검색" class="${project_prefix}search-icon">`
             + '</button>'
         + '</div>'
