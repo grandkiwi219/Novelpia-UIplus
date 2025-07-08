@@ -1,28 +1,26 @@
 /** system: other */
-const noticeSystem = (r) => {
-    if (!r[l.notice]) return;
+npup.options.other.options['notice'].system = function(r) {
+    if (!r[this.key]) return;
     if (window.location.pathname != "/") return;
 
     window.addEventListener("DOMContentLoaded", () => {
         let notice_why_id_copyright = document.getElementById('copyright_bar').cloneNode(true);
         let main = document.getElementById('vue_main_wrapper');
 
-        notice_why_id_copyright.classList.add(`${project_prefix}notice`);
+        notice_why_id_copyright.classList.add(`${npup.project.prefix.css}notice`);
         notice_why_id_copyright.style = "";
     
         main.insertAdjacentElement("beforebegin", notice_why_id_copyright);
     });
 }
 
-new SystemStructure(l.notice, STRUCTURE.SYSTEM.TYPE)
-    .setSystem(noticeSystem)
-.setup();
 
 
-/** system: other */
-const lastEpisodeSystem = async (r) => {
-    if (!r[l.last_ep]) return;
-    if (r[l.last_ep_home] && window.location.pathname != "/") return;
+
+
+npup.options.other.options['last-ep'].system = async function(r) {
+    if (!r[this.key]) return;
+    if (r['last-ep-home'] && window.location.pathname != "/") return;
 
     const last_ep_timestamp = 'last-ep-timestamp';
 
@@ -41,7 +39,7 @@ const lastEpisodeSystem = async (r) => {
         const minutes = Math.floor(remaining / (1000 * 60)) % 60;
         const hours = Math.floor(remaining / (1000 * 60 * 60));
 
-        return console.log(console_project_prefix + `알림 쿨타임 남은 시간: ${hours}시간 ${minutes}분 ${seconds}초`);
+        return npup.log(`알림 쿨타임 남은 시간: ${hours}시간 ${minutes}분 ${seconds}초`);
     }
 
     const data = JSON.parse(localStorage.last_episode); 
@@ -119,15 +117,10 @@ const lastEpisodeSystem = async (r) => {
 
         const timestamp = new Date();
 
-        const add_time = Number(r[l.last_ep_cooltime] ?? 30);
+        const add_time = Number(r['last-ep-cooltime'] ?? 30);
 
         timestamp.setMinutes(timestamp.getMinutes() + add_time);
 
         local.set({ [last_ep_timestamp]: timestamp.getTime() });
     });
 }
-
-new SystemStructure(l.last_ep, STRUCTURE.SYSTEM.TYPE)
-    .setAddons(new Addons(ENGINE_TYPE.SYSTEM, l.last_ep_home, l.last_ep_cooltime))
-    .setSystem(lastEpisodeSystem)
-.setup();

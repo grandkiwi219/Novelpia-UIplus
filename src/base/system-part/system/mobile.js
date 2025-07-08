@@ -1,8 +1,7 @@
-/** system: mobile */
-const originHeaderSystem = (r) => {
-    if (!r[l.o_header] && !r[l.b_nav]) return;
+npup.options.mobile.options['origin-header'].system = function(r) {
+    if (!r[this.key] && !r['bottom-nav']) return;
 
-    if (!r[l.search]) {
+    if (!r['search']) {
         let m_search_icon = ``
             + `<a href="/search" class="header-mobile-search">`
                 + `<img src="//images.novelpia.com/img/new/navi/sbm_icon_search.svg" alt="모바일 검색">`
@@ -62,14 +61,12 @@ const originHeaderSystem = (r) => {
     /* 메인 페이지 border 속성 스크롤시 설정 고려 중 */
 }
 
-new SystemStructure(l.o_header, STRUCTURE.ON_OFF.TYPE, STRUCTURE.SYSTEM.TYPE)
-    .setSystem(originHeaderSystem)
-.setup();
 
 
-/** system: mobile */
-const heartAlarmBottomSystem = (r) => {
-    if ((!r[l.o_header] && !r[l.b_nav] && !r[l.b_h_a]) || !pathChecker('/novel')) return;
+
+
+npup.options.mobile.options['bottom-heart-alarm'].system = function(r) {
+    if ((!r['origin-header'] && !r['bottom-nav'] && !r[this.key]) || !pathChecker('/novel')) return;
 
     new MutationObserver((mus, ob) => {
         const continue_ep = document.querySelector('.epnew-mobile-btn-area-relative + .btn-view-episode');
@@ -103,9 +100,6 @@ const heartAlarmBottomSystem = (r) => {
     /* 위치 속성은 css에서 / bottom-like-alarm 참고 */
 }
 
-new SystemStructure(l.b_h_a, STRUCTURE.ON_OFF.TYPE, STRUCTURE.SYSTEM.TYPE)
-    .setSystem(heartAlarmBottomSystem)
-.setup();
 
 /**
  * 이어보기 크기 style 값
@@ -135,9 +129,10 @@ function widthObserver(continue_ep, style) {
 }
 
 
-/** system: mobile */
-const episodeTopSystem = (r) => {
-    if (!r[l.t_ep] || !pathChecker('/novel')) return;
+
+
+npup.options.mobile.options['top-ep'].system = function(r) {
+    if (!r[this.key] || !pathChecker('/novel')) return;
 
     new MutationObserver((mus, ob) => {
         const continue_ep_mobile = document.getElementsByClassName('btn-view-run')[0];
@@ -156,10 +151,3 @@ const episodeTopSystem = (r) => {
         info_box.insertAdjacentElement('afterend', top_ep);
     }).observe(document.body, observer_setup);
 }
-
-new SystemStructure(l.t_ep, STRUCTURE.SYSTEM.TYPE)
-    .setSystem(episodeTopSystem)
-.setup();
-
-new SystemStructure(l.b_nav, STRUCTURE.ON_OFF.TYPE, STRUCTURE.SYSTEM.TYPE) // originHeaderSystem, heartAlarmBottomSystem 서 사용
-.setup();

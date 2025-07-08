@@ -404,16 +404,13 @@ button.header-button {
 }
 
 .tools-child {
-    border-bottom: var(--border-normal);
-}
-
-.tools-main {
-    margin-bottom: 1.5px;
-}
-
-.tools-child-addon {
     padding: 0;
+    border-bottom: var(--border-normal);
     flex-flow: column wrap;
+}
+
+.tools-child > .tools-sub:nth-child(2) {
+    margin-top: 1.5px;
 }
 
 .tools-sub > div {

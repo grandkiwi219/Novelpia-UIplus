@@ -1,6 +1,5 @@
-/** system: header */
-const adultSystem = async (r) => {
-    if (!r[l.adult]) return;
+npup.options.header.options.adult.system = async function(r) {
+    if (!r[this.key]) return;
 
     new MutationObserver((mus, ob) => {
         let switch_adult = document.querySelector('.switch-adult');
@@ -18,24 +17,22 @@ const adultSystem = async (r) => {
     }).observe(document.body, observer_setup);
 }
 
-new SystemStructure(l.adult, STRUCTURE.ON_OFF.TYPE, STRUCTURE.SYSTEM.TYPE)
-    .setSystem(adultSystem)
-.setup();
+
     
 
-/** system: header */
-const searchSystem = (r) => {
-    if (!r[l.nav] && !r[l.search]) return;
+
+npup.options.header.options.search.system = function(r) {
+    if (!r['nav'] && !r[this.key]) return;
     
     document.getElementsByClassName('header-search')[0]?.remove();
 
     let search_icon = ''
-        + `<div class="${project_prefix}search-base">`
-            + `<form id="${project_prefix}search-form" class="${project_prefix}search-header" autocomplete="off">`
-                    + `<input id="search_input" class="${project_prefix}search-box" type="text" name="search_box" placeholder="제목, 작가를 입력하세요." maxlength="50" autocomplete="off" value form="${project_prefix}search-form">`
+        + `<div class="${npup.project.prefix.css}search-base">`
+            + `<form id="${npup.project.prefix.css}search-form" class="${npup.project.prefix.css}search-header" autocomplete="off">`
+                    + `<input id="search_input" class="${npup.project.prefix.css}search-box" type="text" name="search_box" placeholder="제목, 작가를 입력하세요." maxlength="50" autocomplete="off" value form="${npup.project.prefix.css}search-form">`
             + '</form>'
-            + `<button type="button" class="${project_prefix}search-align" onclick="javascript:npupPcSearch()">`
-                +`<img src="//images.novelpia.com/img/new/header/icon_in_search.svg" alt="검색" class="${project_prefix}search-icon">`
+            + `<button type="button" class="${npup.project.prefix.css}search-align" onclick="javascript:npupPcSearch()">`
+                +`<img src="//images.novelpia.com/img/new/header/icon_in_search.svg" alt="검색" class="${npup.project.prefix.css}search-icon">`
             + '</button>'
         + '</div>'
 
@@ -50,25 +47,23 @@ const searchSystem = (r) => {
     }).observe(document.body, observer_setup);
 }
 
-new SystemStructure(l.search, STRUCTURE.ON_OFF.TYPE, STRUCTURE.SYSTEM.TYPE)
-    .setAddons(new Addons(ENGINE_TYPE.ALL, l.nav))
-    .setSystem(searchSystem)
-.setup();
 
 
-const presr = project_prefix + l.s_r;
+let sr;
+let presr = npup.project.prefix.css;
 
 let delete_all = document.createElement('div');
-delete_all.id = `${presr}-delete-all`;
 delete_all.innerHTML = '잔체삭제';
 
-/** system: header */
-const searchResultSystem = (r) => {
-    if (!r[l.s_r] || path == '/comic_search') return;
+
+npup.options.header.options['search-result'].system = function(r) {
+    if (!r[this.key] || path == '/comic_search') return;
+    
+    sr = this.key
+    presr += this.key;
+    delete_all.id = `${presr}-delete-all`;
 
     if (!pathChecker('/comic_search/')) {
-        const presr = project_prefix + l.s_r;
-
         let result_box = document.createElement('div');
         result_box.classList.add(`${presr}`);
 
@@ -80,7 +75,7 @@ const searchResultSystem = (r) => {
         result_box.appendChild(result_box_wrap);
 
         // 검색바 최소화 선택이 '안'되어 있을 시
-        if (!r[l.nav] && !r[l.search]) {
+        if (!r['nav'] && !r['search']) {
             let searcher = document.querySelector('div.header-top-wrapper > div.header-top > div:has(div.header-search)');
             // css 로 위치 변경
             //searcher.style = 'position: relative; width: 420px; height: 50px;';
@@ -108,9 +103,9 @@ const searchResultSystem = (r) => {
             });
         
         // 검색바 최소화 선택이 되어 있을 시
-        } else if (r[l.nav] || r[l.search]) {
+        } else if (r['nav'] || r[npup.options.header.options.search]) {
             new MutationObserver((mus, ob) => {
-                let searcher = document.getElementById(`${project_prefix + l.search}-form`);
+                let searcher = document.getElementById(`${npup.project.prefix.css + npup.options.header.options.search}-form`);
 
                 if (!searcher) return;
 
@@ -128,16 +123,14 @@ const searchResultSystem = (r) => {
     }
 }
 
-new SystemStructure(l.s_r, STRUCTURE.SYSTEM.TYPE)
-    .setSystem(searchResultSystem)
-.setup();
+
 
 /**
  * 검색 결과 창에서 검색 결과 제거
  */
 function resultRemove() {
     window.addEventListener("DOMContentLoaded", () => {
-        scriptInjection(`src/file/${l.s_r}-remove.js`);
+        scriptInjection(`src/base/file/${sr}-remove.js`);
     });
 }
 
@@ -207,13 +200,14 @@ function resultBoxContent() {
 }
 
 
-/** system: header */
-const alarmLocationSystem = (r) => {
-    if (!r[l.alarm] || r[l.alarm] == 'comment') return;
+
+
+npup.options.header.options.alarm.system = function(r) {
+    if (!r[this.key] || r[this.key] == 'comment') return;
 
     let where_href = '/';
 
-    switch (r[l.alarm]) {
+    switch (r[this.key]) {
         case 'novel': 
             where_href += 'novel';
             break;
@@ -252,12 +246,3 @@ const alarmLocationSystem = (r) => {
         m_alarm.outerHTML = m_alarm.outerHTML.replace(/div/g, 'a').replace('a', `a href="/alarm${where_href}" style="color: black;"`);
     }).observe(document.body, observer_setup);
 } 
-
-new SystemStructure(l.alarm, STRUCTURE.SYSTEM.TYPE)
-    .setSystem(alarmLocationSystem)
-.setup();
-
-
-new SystemStructure(l.b_w, STRUCTURE.SELECTOR.TYPE)
-    .setOptions(true, 'normal', 'books', 'webtoon', 'true')
-.setup();

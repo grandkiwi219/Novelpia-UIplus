@@ -1,13 +1,9 @@
-/** system: viewer */
-const oldIconSystem = (r) => {
-    if (!r[l.old_icon]) return;
+npup.options.viewer.options['old-icon'].system = function(r) {
+    if (!r[this.key]) return;
 
     window.addEventListener('DOMContentLoaded', iconSetup);
 }
 
-new SystemStructure(l.old_icon, STRUCTURE.ON_OFF.TYPE, STRUCTURE.SYSTEM.TYPE)
-    .setSystem(oldIconSystem)
-.setup();
 
 function iconSetup() {
     // style: system-content.css => old-icon css 부분
@@ -94,15 +90,11 @@ function iconSetup() {
 }
 
 
-/* system: viewer */
-const deleteAlertSystem = (r) => {
-    if (!r[l.click_alert]) return;
 
-    console.log(console_project_prefix + '우클릭 제거 준비가 완료되었습니다.');
+npup.options.viewer.options['click-alert'].system = function(r) {
+    if (!r[this.key]) return;
 
-    scriptInjection('src/file/delete-click-alert.js');
+    npup.log('우클릭 제거 준비가 완료되었습니다.');
+
+    scriptInjection('src/base/file/delete-click-alert.js');
 }
-
-new SystemStructure(l.click_alert, STRUCTURE.SYSTEM.TYPE)
-    .setSystem(deleteAlertSystem)
-.setup();

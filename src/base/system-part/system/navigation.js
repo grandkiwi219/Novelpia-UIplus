@@ -1,11 +1,10 @@
-/** system: navigation */
-const navMybookSystem = (r) => {
-    if (!r[l.nav_mb] || r[l.nav_mb] == 'normal') return;
+npup.options.nav.options['nav-mybook'].system = function(r) {
+    if (!r[this.key] || r[this.key] == 'normal') return;
 
     let where_href = '/';
     let where_name;
 
-    switch (r[l.nav_mb]) {
+    switch (r[this.key]) {
         case 'like':
             where_href += 'like';
             where_name = '선호작';
@@ -49,14 +48,12 @@ const navMybookSystem = (r) => {
     }).observe(document.body, observer_setup);
 }   
 
-new SystemStructure(l.nav_mb, STRUCTURE.SYSTEM.TYPE)
-    .setSystem(navMybookSystem)
-.setup();
 
 
-/** system: navigation */
-const navSystem = (r) => {
-    if (!r[l.nav]) return;
+
+
+npup.options.nav.options.nav.system = function(r) {
+    if (!r[this.key]) return;
 
     const nav = document.getElementsByClassName('top_nav')[0];
     let header_position = false;
@@ -79,10 +76,6 @@ const navSystem = (r) => {
     });
 }
 
-new SystemStructure(l.nav, STRUCTURE.ON_OFF.TYPE, STRUCTURE.SYSTEM.TYPE)
-    .setAddons(new Addons(ENGINE_TYPE.SYSTEM, l.nav_align))
-    .setSystem(navSystem)
-.setup();
 
 
 /**
@@ -114,8 +107,3 @@ function navLocation(nav) {
     document.querySelector('header.mobile_hidden')
         .appendChild(nav);
 }
-
-
-new SystemStructure(l.nav_align, STRUCTURE.SELECTOR.TYPE)
-    .setOptions(true, 'left', 'left-less', 'center', 'right', 'right-less')
-.setup();

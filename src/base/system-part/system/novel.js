@@ -1,6 +1,5 @@
-/** system: novel */
-const novelPageSystem = (r) => {
-    if (!r[l.no_pa] || !pathChecker('/novel/')) return;
+npup.options.novel.options['novel-page'].system = function(r) {
+    if (!r[this.key] || !pathChecker('/novel/')) return;
 
     new MutationObserver((mus, ob) => {
         if (!document.getElementById('episode_table')) return;
@@ -12,9 +11,6 @@ const novelPageSystem = (r) => {
     }).observe(document.body, observer_setup);
 }
 
-new SystemStructure(l.no_pa, STRUCTURE.SYSTEM.TYPE)
-    .setSystem(novelPageSystem)
-.setup();
 
 function novelPageItem(r) {
     const page_items_tmp = document.querySelectorAll('div.s_inv.d-flex.align-items-center.justify-content-center');

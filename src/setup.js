@@ -1,23 +1,25 @@
 let storage = chrome.storage.sync;
 const local = chrome.storage.local;
 
-local.get([sync_key]).then(r => {
-    if (!r[sync_key] && typeof r[sync_key] != 'boolean')
-        local.set({ [sync_key]: true });
-    else if (!r[sync_key]) {
+local.get([npup.keys.sync, 'custom-css']).then(r => {
+    if (!r[npup.keys.sync] && typeof r[npup.keys.sync] != 'boolean')
+        local.set({ [npup.keys.sync]: true });
+    else if (!r[npup.keys.sync]) {
         storage = local;
     } 
-    ready();
+    ready(r);
 });
 
 
 
+const { tryChecker, pathChecker, domainChecker } = npup.func;
+const observer_setup = npup.settings.observer;
 
 
 
 const ENGINE_TYPE = {
     ALL: 'all', // for Addon class
-    ON_OFF: 'on-off',
+    ON_OFF: 'switch',
     SELECTOR: 'selector',
     SYSTEM: 'system',
 };
@@ -102,20 +104,20 @@ class EngineStructure {
         ON_OFF: (r) => {
             this.#getKeys().forEach(key =>{
                 if (r[key])
-                    html.setAttribute(project_prefix + key, '');
+                    html.setAttribute(npup.project.prefix.css + key, '');
 
                 const addons = this.#getAddons(key);
 
                 if (addons)
                     addons.forEach(addon => {
-                        if (r[addon]) html.setAttribute(project_prefix + key, '');
+                        if (r[addon]) html.setAttribute(npup.project.prefix.css + key, '');
                     });
             });
         },
         SELECTOR: (r) => {
             this.#getKeys().forEach(key => {
                 if (r[key] && r[key] != this.#getSystemStructure(key).options[0])
-                    html.setAttribute(project_prefix + key, r[key]);
+                    html.setAttribute(npup.project.prefix.css + key, r[key]);
             });
         },
         SYSTEM: (r) => {
@@ -183,10 +185,10 @@ class EngineStructure {
 
 
 const STRUCTURE = {
-    ON_OFF:      { TYPE: 'on-off',     ENGINE: new EngineStructure('온오프', ENGINE_TYPE.ON_OFF)},
+    ON_OFF:      { TYPE: 'switch',     ENGINE: new EngineStructure('스위치', ENGINE_TYPE.ON_OFF)},
     SELECTOR:    { TYPE: 'selector',   ENGINE: new EngineStructure('선택자', ENGINE_TYPE.SELECTOR)},
     CUSTOM:      { TYPE: 'custom',     ENGINE: new EngineStructure('커스텀', ENGINE_TYPE.SYSTEM, false)},
-    PRE_COMMON:  { TYPE: 'preCommon',  ENGINE: new EngineStructure('헤드 공통', ENGINE_TYPE.SYSTEM)},
+    PRE_COMMON:  { TYPE: 'pre-common',  ENGINE: new EngineStructure('헤드 공통', ENGINE_TYPE.SYSTEM)},
     COMMON:      { TYPE: 'common',     ENGINE: new EngineStructure('바디 공통', ENGINE_TYPE.SYSTEM)},
     SYSTEM:      { TYPE: 'system',     ENGINE: new EngineStructure('', ENGINE_TYPE.SYSTEM)},
 };
@@ -212,7 +214,7 @@ class Addons {
 /**
  * 사용법:
  * 
- * 엔진 타입이 on-off라면 키 값과 타입을,
+ * 엔진 타입이 switch라면 키 값과 타입을,
  * 엔진 타입이 selector라면 키 값과 타입, 옵션들을,
  * 엔진 타입이 system이라면 키 값과 타입, 시스템을 설정해주어야만 한다.
  * 
@@ -223,7 +225,7 @@ class SystemStructure {
     /**
      * system structure
      * @param {string} key data key name
-     * @param {string} types  (STRUCTURE.TYPES) on-off | selector | system
+     * @param {string} types  (STRUCTURE.TYPES) switch | selector | system
      */
     constructor(key, ...types) {
         this.key = typeof key == 'string' && key ? key.trim() : undefined;

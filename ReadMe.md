@@ -5,3 +5,6 @@
 ※ 수동 설치 시 manifest.json의 gecko.id는 따로 설정해주셔야 할 수도 있습니다.
 
 img/icon.png의 경우 ChatGPT를 이용하여 보정한 이미지입니다.
+
+
+> 현 버전은 배포되지 않은 버전입니다.
