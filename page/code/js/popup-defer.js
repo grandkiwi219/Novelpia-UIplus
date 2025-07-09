@@ -50,9 +50,9 @@ async function resolveMybookData() {
 
     if (!mybook_wrap.classList.contains('waiting')) {
         if (mybook_wrap.classList.contains('failed')) mybook_wrap.classList.remove('failed');
+        else if (mybook_wrap.classList.contains('empty')) mybook_wrap.classList.remove('empty');
         mybook_wrap.classList.add('waiting');
         mybook_wrap.innerHTML = '';
-        category_wrap.innerHTML = '';
     } 
 
     
@@ -81,6 +81,22 @@ async function resolveMybookData() {
 
     if (!novel_data) return mybook_wrap.classList.add('failed');
 
+    category_wrap.innerHTML = '';
+    novel_data.category?.forEach(r => { 
+        const category = document.createElement('button');
+        category.classList.add('p-mybook-category');
+        if (r.id == last_data.category) category.classList.add('active');
+        category.id = r.id;
+        category.textContent = r.name;
+        category.setAttribute(mb_func_att, `${last_data.tab},${r.id},${page_att},${order_att}`)
+
+        category_wrap.appendChild(category);
+    });
+
+    if (last_data.category == 'null' || (!last_data.category && last_data.category != 0)) category_wrap?.children[0]?.classList?.add('active');
+
+    if (!novel_data.books) return mybook_wrap.classList.add('empty');
+
     novel_data.books.forEach(r => {
         const novel = document.createElement('novel-item');
         novel.setAttribute('title', r.title);
@@ -96,19 +112,6 @@ async function resolveMybookData() {
 
         mybook_wrap.appendChild(novel);
     });
-
-    novel_data.category?.forEach(r => {
-        const category = document.createElement('button');
-        category.classList.add('p-mybook-category');
-        if (r.id == last_data.category) category.classList.add('active');
-        category.id = r.id;
-        category.textContent = r.name;
-        category.setAttribute(mb_func_att, `${last_data.tab},${r.id},${page_att},${order_att}`)
-
-        category_wrap.appendChild(category);
-    });
-
-    if (last_data.category == 'null' || (!last_data.category && last_data.category != 0)) category_wrap?.children[0]?.classList?.add('active');
 }
 
 

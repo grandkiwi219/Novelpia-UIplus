@@ -162,26 +162,23 @@ html[dark=false] {
     display: grid;
     grid-template-columns: 1fr;
 
-    &.waiting {
+    &.waiting, &.failed, &.empty {
         height: 180px;
         line-height: 180px;
         text-align: center;
-
-        &:after {
-            content: '데이터를 불러오는 중입니다...';
-            opacity: 0.5;
-        }
+        opacity: 0.5;
     }
 
-    &.failed {
-        height: 180px;
-        line-height: 180px;
-        text-align: center;
+    &.waiting:after {
+        content: '데이터를 불러오는 중입니다...';
+    }
 
-        &:after {
-            content: '데이터를 불러오지 못했습니다.';
-            opacity: 0.5;
-        }
+    &.failed:after {
+        content: '데이터를 불러오지 못했습니다.';
+    }
+
+    &.empty:after {
+        content: '등록된 데이터가 존재하지 않습니다.';
     }
 }
 

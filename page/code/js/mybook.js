@@ -80,6 +80,7 @@ async function loadMybookData(tab, category, page, order) {
     if (initial_html) {
         switch (data?.state)  {
             case 2:
+            case 3:
                 load_data_el.innerHTML = `${npup_success} 새로고침 완료`;
                 break;
             case 4:
@@ -99,7 +100,7 @@ async function loadMybookData(tab, category, page, order) {
         }, 400);
     }
 
-    return data.state == 2 ? data.data : null;
+    return data.state == 2 || data.state == 3 ? data.data : null;
 }
 
 /* 
@@ -112,7 +113,7 @@ async function loadMybookData(tab, category, page, order) {
 /**
  * id=npup_need_id 를 지닌 요소 있으면 데이터 연동 중 표시
  * tab = [last_view, collect, alarm, like]
- * state > 2 = 성공, 4 = 로그인 상태가 아님, 5 = 정보를 가져올 수 없음
+ * state > 2 = 성공, 3 = 카테고리에 등록된 책이 존재하지 않음, 4 = 로그인 상태가 아님, 5 = 정보를 가져올 수 없음
  */
 async function mybookData(tab, category = undefined, page = 1, order = 'date') {
     let fetch_url = `https://novelpia.com/mybook/${tab}/`;
@@ -131,9 +132,10 @@ async function mybookData(tab, category = undefined, page = 1, order = 'date') {
                 const doc = parser.parseFromString(html, "text/html");
                 const item = doc.querySelector('.mybook-data-list-items');
 
-                if (!item) return state = 4;
+                if (!doc.querySelector('.recommend-botton-section')) return state = 4
 
-                state = 2, mybook_data = mybookJson(item);
+                if (doc.getElementsByClassName('novel-list-real-container')[0]) state = 2, mybook_data = mybookJson(item);
+                else state = 3;
 
                 const category = doc.querySelector('#submenu_bar');
 
