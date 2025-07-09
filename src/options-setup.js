@@ -17,18 +17,12 @@ function optionBinding(ca, op) {
         .setDescription(op.desc);
 
     if (op.values?.length && op.type.structure.includes(STRUCTURE.SELECTOR.TYPE)) {
-        let opbi_values = [];
-        op.values.forEach(va => {
-            opbi_values.push(va.value);
-        });
+        let opbi_values = op.values.map(va => va.value);
         opbi.setOptions(true, ...opbi_values);
     }
 
     if (op.addons?.length) {
-        let opbi_addons = [];
-        op.addons.forEach(ad => {
-            opbi_addons.push(new Addons(ad.type, ...ad.keys));
-        });
+        let opbi_addons = op.addons.map(ad => new Addons(ad.type, ...ad.keys));
         opbi.setAddons(...opbi_addons);
     }
 

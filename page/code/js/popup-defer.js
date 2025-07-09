@@ -1,0 +1,236 @@
+document.getElementById('options').addEventListener('click', () => {
+    openOptions();
+});
+
+
+const mb_func_att = 'mybook-data';
+
+
+document.getElementById(npup_need_id).addEventListener('click', async e => {
+    if (loadStateMybookData()) return;
+
+    await resolveMybookData();
+});
+
+document.addEventListener('click', async e => {
+    if (loadStateMybookData()) return;
+
+    if (!e.target.getAttribute(mb_func_att)) return;
+
+    const att_data = e.target.getAttribute(mb_func_att).split(',');
+
+    const data = {
+        tab: att_data ? att_data[0] : 'last_view',
+        category: att_data.length > 1 ? (att_data[1] ? att_data[1] : null) : null,
+        page: att_data.length > 2 ? att_data[2] : 1,
+        order: att_data.length > 3 ? att_data[3] : 'date'
+    };
+
+    await setLastMybookData({ tab: data.tab, category: data.category });
+
+    const mybook_wrap = document.getElementById('p-mybook-novel-wrap');
+
+    mybook_wrap.setAttribute('page', data.page);
+    mybook_wrap.setAttribute('order', data.order);
+
+    await resolveMybookData();
+});
+
+
+
+/* 처음 열렸을 때 */
+(async() => {
+    await resolveMybookData();
+})();
+
+/* 초기화된 마지막 내서재 정보를 들고온다 */
+async function resolveMybookData() {
+    const mybook_wrap = document.getElementById('p-mybook-novel-wrap');
+    const category_wrap = document.getElementById('p-mybook-category-wrap');
+
+    if (!mybook_wrap.classList.contains('waiting')) {
+        if (mybook_wrap.classList.contains('failed')) mybook_wrap.classList.remove('failed');
+        mybook_wrap.classList.add('waiting');
+        mybook_wrap.innerHTML = '';
+        category_wrap.innerHTML = '';
+    } 
+
+    
+    let last_data = await getLastMybookData();
+
+    if (!last_data.tab) last_data.tab = 'last_view';
+
+    const active_tab = document.querySelector('.p-mybook-tab.active');
+    if (active_tab) active_tab.classList.remove('active');
+
+    document.getElementById(last_data.tab).classList.add('active');
+
+
+    const mb_att = document.getElementById('p-mybook');
+    mb_att.setAttribute('tab', last_data.tab);
+    mb_att.setAttribute('category', last_data.category);
+
+    const page_att = mb_att.getAttribute('page');
+    const order_att = mb_att.getAttribute('order');
+
+    const novel_data = await loadMybookData(last_data.tab, last_data.category, page_att, order_att);
+
+    setLastMybookData({ tab: mb_att.getAttribute('tab'), category: mb_att.getAttribute('category') });
+
+    mybook_wrap.classList.remove('waiting');
+
+    if (!novel_data) return mybook_wrap.classList.add('failed');
+
+    novel_data.books.forEach(r => {
+        const novel = document.createElement('novel-item');
+        novel.setAttribute('title', r.title);
+        novel.setAttribute('author', r.author.name);
+        novel.setAttribute('author-id', r.author.id);
+        novel.setAttribute('thumb', r.thumbnail);
+        novel.setAttribute('id', r.id);
+        novel.setAttribute('adult', r.adult);
+        novel.setAttribute('cont-ep', r.continue.ep);
+        novel.setAttribute('cont-id', r.continue.id);
+        novel.setAttribute('next-state', r.next.state);
+        novel.setAttribute('next-id', r.next.id);
+
+        mybook_wrap.appendChild(novel);
+    });
+
+    novel_data.category?.forEach(r => {
+        const category = document.createElement('button');
+        category.classList.add('p-mybook-category');
+        if (r.id == last_data.category) category.classList.add('active');
+        category.id = r.id;
+        category.textContent = r.name;
+        category.setAttribute(mb_func_att, `${last_data.tab},${r.id},${page_att},${order_att}`)
+
+        category_wrap.appendChild(category);
+    });
+
+    if (last_data.category == 'null' || (!last_data.category && last_data.category != 0)) category_wrap?.children[0]?.classList?.add('active');
+}
+
+
+
+
+class NovelItem extends HTMLElement {
+    connectedCallback() {
+        const data = {
+            title: this.getAttribute('title'),
+            author: {
+                name: this.getAttribute('author'),
+                id: this.getAttribute('author-id')
+            },
+            thumb: this.getAttribute('thumb'),
+            id: this.getAttribute('id'),
+            adult: this.getAttribute('adult'),
+            continue: {
+                ep: this.getAttribute('cont-ep'),
+                id: this.getAttribute('cont-id')
+            },
+            next: {
+                state: this.getAttribute('next-state'), 
+                id: this.getAttribute('next-id')
+            }
+            
+        }
+
+        const novelpia = 'https://novelpia.com/'
+
+        const wrap = document.createElement('div');
+        wrap.classList.add('p-novel-item-wrap');
+
+        const item = document.createElement('div');
+        item.classList.add('p-novel-item');
+
+
+        const thumb = document.createElement('a');
+        thumb.classList.add('p-novel-thumb');
+        thumb.title = data.title;
+        thumb.target = '_blank';
+        thumb.href = `${novelpia}novel/${data.id}`;
+
+        const thumb_img = document.createElement('img');
+        thumb_img.src = data.thumb;
+        thumb_img.alt = data.thumb;
+
+        if (data.adult == 'true') {
+            const adult = document.createElement('div');
+            adult.classList.add('p-novel-adult-mark');
+
+            thumb.appendChild(adult);
+        }
+
+        thumb.appendChild(thumb_img);
+        item.appendChild(thumb);
+
+
+        const info = document.createElement('div');
+        info.classList.add('p-novel-info');
+
+        const title = document.createElement('a');
+        title.classList.add('p-novel-title');
+        title.title = data.title;
+        title.href = `${novelpia}novel/${data.id}`;
+        title.target = '_blank';
+        title.textContent = data.title;
+
+        const author = document.createElement('a');
+        author.classList.add('p-novel-author');
+        author.title = data.author.name;
+        author.href = `${novelpia}user/${data.author.id}`;
+        author.target = '_blank';
+        author.textContent = data.author.name;
+
+        info.appendChild(title);
+        info.appendChild(author);
+        item.appendChild(info);
+
+
+        wrap.appendChild(item);
+
+
+        const btns = document.createElement('div');
+        btns.classList.add('p-novel-btns');
+
+        if (data.continue.ep != 'undefined') {
+            const continue_btn = document.createElement('a');
+            continue_btn.classList.add('normal-button');
+            continue_btn.classList.add('continue');
+            continue_btn.target = '_blank';
+            continue_btn.href = `${novelpia}viewer/${data.continue.id}`;
+            continue_btn.textContent = `EP.${data.continue.ep} 이어보기`;
+
+            const next_btn = document.createElement('a');
+            next_btn.classList.add('normal-button');
+            next_btn.classList.add('next');
+            if (data.next.state == 'true') {
+                next_btn.href = `${novelpia}viewer/${data.next.id}`;
+                next_btn.target = '_blank';
+                next_btn.textContent = '다음화 보기';
+            }
+            else {
+                next_btn.classList.add('disabled');
+                next_btn.textContent = '신규회차 없음';
+            }
+
+            btns.appendChild(continue_btn);
+            btns.appendChild(next_btn);
+        }
+        else {
+            const next_btn = document.createElement('a');
+            next_btn.classList.add('normal-button');
+            next_btn.classList.add('next');
+            next_btn.classList.add('disabled');
+            next_btn.textContent = '불러올 수 없음';
+
+            btns.appendChild(next_btn);
+        }
+
+        wrap.appendChild(btns);
+
+        this.appendChild(wrap);
+    }
+}
+customElements.define('novel-item', NovelItem);

@@ -265,6 +265,14 @@ npup.options = { ...npup.options,
                     },
                 }
             },
+
+            'quick-mybook': {
+                desc: '빠른 최근기록 (확장프로그램 아이콘 클릭 시)',
+                type: {
+                    option: 'switch',
+                    structure: ['system']
+                },
+            }
         },
         setups: {                                         // 옵션 카테고리 UI '특수' 설정
             length: 2

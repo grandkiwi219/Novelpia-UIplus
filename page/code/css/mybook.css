@@ -1,0 +1,12 @@
+#npup-load-mybook-data {
+    padding: 6px 5px;
+    color: gray;
+    line-height: var(--header-height-base);
+    font-family: var(--font);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button:has(#npup-load-mybook-data) {
+    cursor: normal !important;
+}
