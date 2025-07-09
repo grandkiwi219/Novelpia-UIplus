@@ -3,6 +3,35 @@ document.getElementById('options').addEventListener('click', () => {
 });
 
 
+const scroll_category = document.getElementById('p-mybook-category-wrap');
+
+let scrollAmount = 0;
+let isScrolling = false;
+
+scroll_category.addEventListener('wheel', function (e) {
+    e.preventDefault();
+
+    scrollAmount += e.deltaY;
+
+    if (!isScrolling) {
+        isScrolling = true;
+        requestAnimationFrame(smoothScroll);
+    }
+}, { passive: false });
+
+function smoothScroll() {
+    scroll_category.scrollLeft += scrollAmount * 0.2;
+    scrollAmount *= 0.7;
+
+    if (Math.abs(scrollAmount) > 0.5) {
+        requestAnimationFrame(smoothScroll);
+    } else {
+        isScrolling = false;
+    }
+}
+
+
+
 const mb_func_att = 'mybook-data';
 
 
