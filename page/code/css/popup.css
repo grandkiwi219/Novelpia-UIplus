@@ -113,6 +113,11 @@ html[dark=false] {
         border-bottom: 0px;
         font-weight: bold !important;
     }
+
+    &.disabled {
+        opacity: 0.3;
+        cursor: no-drop;
+    }
 }
 
 #p-mybook-category-wrap {
