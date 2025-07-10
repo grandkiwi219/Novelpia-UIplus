@@ -115,7 +115,7 @@ async function loadMybookData(tab, category, page, order) {
 /**
  * id=npup_need_id 를 지닌 요소 있으면 데이터 연동 중 표시
  * tab = [last_view, collect, alarm, like]
- * state > 2 = 성공, 3 = 카테고리에 등록된 책이 존재하지 않음, 4 = 로그인 상태가 아님, 5 = 정보를 가져올 수 없음
+ * state > 2 = 성공, 3 = 카테고리에 등록된 책이 존재하지 않음, 4 = 로그인 상태가 아님, 5 = 정보를 가져올 수 없음/데이터 형식이 변경됨
  */
 async function mybookData(tab, category = undefined, page = 1, order = 'date') {
     let fetch_url = `https://novelpia.com/mybook/${tab}/`;
