@@ -50,14 +50,14 @@ document.addEventListener('click', async e => {
 
     const data = {
         tab: att_data ? att_data[0] : 'last_view',
-        category: att_data.length > 1 ? (att_data[1] ? att_data[1] : null) : null,
+        category: att_data.length > 1 && att_data[1] ? att_data[1] : null,
         page: att_data.length > 2 ? att_data[2] : 1,
         order: att_data.length > 3 ? att_data[3] : 'date'
     };
 
     await setLastMybookData({ tab: data.tab, category: data.category });
 
-    const mybook_wrap = document.getElementById('p-mybook-novel-wrap');
+    const mybook_wrap = document.getElementById('p-mybook');
 
     mybook_wrap.setAttribute('page', data.page);
     mybook_wrap.setAttribute('order', data.order);
@@ -99,6 +99,9 @@ async function resolveMybookData() {
     mb_att.setAttribute('tab', last_data.tab);
     mb_att.setAttribute('category', last_data.category);
 
+    const tab_att =  mb_att.getAttribute('tab');
+    let category_att = mb_att.getAttribute('category');
+
     const page_att = mb_att.getAttribute('page');
     const order_att = mb_att.getAttribute('order');
 
@@ -122,7 +125,17 @@ async function resolveMybookData() {
         category_wrap.appendChild(category);
     });
 
-    if (last_data.category == 'null' || (!last_data.category && last_data.category != 0)) category_wrap?.children[0]?.classList?.add('active');
+    if (last_data.category == 'null' || (!last_data.category && last_data.category != 0)) {
+        if (!category_wrap.children[0]) {
+            mb_att.setAttribute('category', 0);
+        }
+        else {
+            category_wrap.children[0].classList.add('active');
+            mb_att.setAttribute('category', category_wrap.children[0].id);
+            category_att = mb_att.getAttribute('category');
+        }
+        setLastMybookData({ tab: tab_att, category: category_att });
+    }
 
     if (!novel_data.books) return mybook_wrap.classList.add('empty');
 
@@ -141,7 +154,72 @@ async function resolveMybookData() {
 
         mybook_wrap.appendChild(novel);
     });
+
+
+    const page_items = document.querySelectorAll('.p-mybook-page-items');
+
+    if (novel_data.page.last <= 1) return page_items.forEach(pis => pis.innerHTML = '');
+
+    const page_side_size = 2;
+
+    let count = 1;
+    page_items.forEach(pis => {
+        pis.innerHTML = '';
+
+        const first_page = 'first-page-' + count;
+
+        pis.appendChild(pageItem(1, { content: '<<', id: first_page }));
+
+        let last_set_page = novel_data.page.active;
+
+        for (let i = novel_data.page.active - 1; i >= 1 && i >= novel_data.page.active - page_side_size; i--) {
+            document.getElementById(first_page).insertAdjacentElement('afterend', pageItem(i));
+            last_set_page--;
+        }
+
+        if (last_set_page > 1) {
+            document.getElementById(first_page).insertAdjacentElement('afterend', pageItem(last_set_page - 1, { content: '<' }));
+        } else {
+            document.getElementById(first_page).insertAdjacentElement('afterend', pageItem(1, { content: '<' }));
+        }
+
+        pis.appendChild(pageItem(novel_data.page.active, { active: true }));
+
+        last_set_page = novel_data.page.active;
+
+        for (let i = novel_data.page.active + 1; i <= novel_data.page.last && i <= novel_data.page.active + page_side_size; i++) {
+            pis.appendChild(pageItem(i));
+            last_set_page++;
+        }
+
+        if (last_set_page < novel_data.page.last) {
+            pis.appendChild(pageItem(last_set_page + 1, { content: '>' }));
+        } else {
+            pis.appendChild(pageItem(novel_data.page.last, { content: '>' }));
+        }
+
+        pis.appendChild(pageItem(novel_data.page.last, { content: '>>' }));
+
+        count++;
+    });
+
+    function pageItem(page_num, setting = { content: undefined, id: undefined, active: false }) {
+        const el = document.createElement('button');
+        el.classList.add('p-mybook-page-item');
+        if (setting.active) el.classList.add('active');
+        el.setAttribute('mybook-data', `${tab_att},${category_att},${page_num},${order_att}`);
+        if (setting.content) {
+            el.textContent = setting.content;
+            el.title = page_num;
+        } else {
+            el.textContent = page_num;
+        }
+        if (setting.id) el.id = setting.id;
+        return el;
+    }
 }
+
+
 
 
 

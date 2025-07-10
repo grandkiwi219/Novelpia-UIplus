@@ -35,24 +35,21 @@
 
         <div id="box" class="cleaner">
 
-            <div style="display: none;">
-                안녕
-                <a class="normal-button continue" target="_blank">이어보기</a>
-                <a class="normal-button next">다음화 보기</a>
-                <a class="normal-button next disabled">신규회차 없음</a>
-            </div>
-
             <div id="p-mybook" tab="last_view" category="0" page="1" order="date">
                 <div id="p-mybook-tab-wrap">
                     <button id="like" class="p-mybook-tab" mybook-data="like">선호작</button>
                     <button id="alarm" class="p-mybook-tab" mybook-data="alarm">구독 알림</button>
                     <button id="collect" class="p-mybook-tab disabled" mybook-data-lock="collect">소장함</button>
-                    <button id="last_view" class="p-mybook-tab" mybook-data="last_view">최근 본 작품</button>
+                    <button id="last_view" class="p-mybook-tab" mybook-data="last_view,0">최근 본 작품</button>
                 </div>
 
                 <div id="p-mybook-category-wrap"></div>
 
+                <div id="p-pi-top" class="p-mybook-page-items"></div>
+
                 <div id="p-mybook-novel-wrap" class="waiting"></div>
+
+                <div id="p-pi-bottom" class="p-mybook-page-items"></div>
 
             </div> 
         </div>

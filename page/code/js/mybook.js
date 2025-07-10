@@ -76,9 +76,11 @@ async function loadMybookData(tab, category, page, order) {
     let data = await mybookData(tab, category, page, order);
 
 
+    console.log(`데이터 변환 결과 상태 코드: ${data.state}`);
+
 
     if (initial_html) {
-        switch (data?.state)  {
+        switch (data.state)  {
             case 2:
             case 3:
                 load_data_el.innerHTML = `${npup_success} 새로고침 완료`;
@@ -118,9 +120,13 @@ async function loadMybookData(tab, category, page, order) {
 async function mybookData(tab, category = undefined, page = 1, order = 'date') {
     let fetch_url = `https://novelpia.com/mybook/${tab}/`;
 
-    if (category) fetch_url += `${category}/${order}/${page}`;
+    const fetch_url_plus = `${category}/${order}/${page}`;
 
-    let mybook_data = null, category_data = null, state;
+    if (category) fetch_url += fetch_url_plus;
+    else if (page > 1) fetch_url += fetch_url_plus;
+    else if (order != 'date') fetch_url += fetch_url_plus;
+
+    let mybook_data = null, category_data = null, page_data = null, state;
     try {
         await fetch(fetch_url)
             .then(res => { 
@@ -134,7 +140,10 @@ async function mybookData(tab, category = undefined, page = 1, order = 'date') {
 
                 if (!doc.querySelector('.recommend-botton-section')) return state = 4
 
-                if (doc.getElementsByClassName('novel-list-real-container')[0]) state = 2, mybook_data = mybookJson(item);
+                if (doc.getElementsByClassName('novel-list-real-container')[0]) {
+                    state = 2, mybook_data = mybookJson(item);
+                    page_data = pageJson(item, page);
+                }
                 else state = 3;
 
                 const category = doc.querySelector('#submenu_bar');
@@ -146,20 +155,13 @@ async function mybookData(tab, category = undefined, page = 1, order = 'date') {
         state = 5;
     }
 
-    const data = { state: state, data: { books: mybook_data, category: category_data } }
+    const data = { state: state, data: { books: mybook_data, category: category_data, page: page_data } }
 
     return data;
 }
 
 function mybookJson(data) {
     let data_arr = [];
-    let data_page = {
-        first: 1,
-        last: 1,
-        before: 1,
-        next: 1,
-        active: 1 
-    };
 
     for (let i = 0; i < data.children.length - 1; i++) {
         let data_html = data.children[i].outerHTML;
@@ -208,3 +210,17 @@ function categoryJson(data) {
     return data_category;
 }
 
+function pageJson(data, page) {
+    let data_page = {
+        last: 1,
+        active: parseInt(page)
+    };
+
+    let page_data = data.getElementsByClassName('page-item');
+
+    if (page_data) data_page.last = parseInt(page_data[page_data.length - 1].children[0].href.match(/(\d+)(?!.*\d)/)[1]);
+
+    if (data_page.active > data_page.last) data_page.active = data_page.last;
+
+    return data_page;
+}

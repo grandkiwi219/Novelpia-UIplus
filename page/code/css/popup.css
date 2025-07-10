@@ -217,6 +217,10 @@ html[dark=false] {
     display: flex;
     flex-flow: column wrap;
 
+    * {
+        transition: all var(--theme-transition-speed);
+    }
+
     .p-novel-item {
         width: 100%;
         display: flex;
@@ -238,6 +242,10 @@ html[dark=false] {
                 height: var(--novel-height);
                 border-radius: 5px;
             }
+
+            &:hover {
+                filter: opacity(0.75);
+            }
         }
 
         .p-novel-info {
@@ -257,6 +265,10 @@ html[dark=false] {
                 text-overflow: ellipsis;
                 font-weight: bold !important;
                 font-size: 16px;
+
+                &:hover {
+                    filter: opacity(0.75);
+                }
             }
 
             .p-novel-author {
@@ -265,6 +277,10 @@ html[dark=false] {
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+
+                &:hover {
+                    filter: opacity(0.75);
+                }
             }
         }
     }
@@ -281,4 +297,37 @@ html[dark=false] {
             font-weight: 500 !important;
         }
     }
+}
+
+.p-mybook-page-items {
+    width: 100%;
+    padding: 10px 0 7px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+
+    .p-mybook-page-item {
+        box-sizing: border-box;
+        width: 22px;
+        height: 30px;
+        background-color: var(--mybook-category-bgc);
+        line-height: 30px;
+        text-align: center;
+        transition: all var(--theme-transition-speed);
+
+        &.active {
+            background-color: var(--mybook-category-bgc-active);
+            color: var(--mybook-category-color-active);
+        }
+
+        &:hover {
+            filter: opacity(0.75);
+        }
+    }
+}
+
+#p-pi-top {
+    border-bottom: 1px solid var(--mybook-tab-border);
 }
