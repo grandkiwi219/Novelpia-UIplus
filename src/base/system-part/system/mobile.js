@@ -108,7 +108,7 @@ npup.options.mobile.options['bottom-heart-alarm'].system = function(r) {
  */
 function epWidth(ep_width) {
     return ':root {'
-        + `--${project_prefix}ep-width: ${ep_width}px;`
+        + `--${npup.project.prefix.css}ep-width: ${ep_width}px;`
     + '}';
 }
 

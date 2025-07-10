@@ -69,6 +69,7 @@ document.addEventListener('click', async e => {
 
 /* 처음 열렸을 때 */
 (async() => {
+    if (open_option) return;
     await resolveMybookData();
 })();
 

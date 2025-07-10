@@ -126,6 +126,8 @@ async function mybookData(tab, category = undefined, page = 1, order = 'date') {
     else if (page > 1) fetch_url += fetch_url_plus;
     else if (order != 'date') fetch_url += fetch_url_plus;
 
+    console.log(`데이터 URL: ${fetch_url}`);
+
     let mybook_data = null, category_data = null, page_data = null, state;
     try {
         await fetch(fetch_url)

@@ -7,8 +7,10 @@
 }
 
 body {
-    width: var(--p-body-width);
-    height: var(--p-body-height);
+    min-width: var(--p-body-width);
+    min-height: var(--p-body-height);
+    width: 100%;
+    height: 100%;
     overflow: auto;
     user-select: none;
 }
@@ -107,6 +109,7 @@ html[dark=false] {
     border-bottom: 1px solid var(--font-color);
     text-align: center;
     letter-spacing: -1px;
+    transition: all var(--theme-transition-speed);
 
     &.active {
         border: 1px solid var(--font-color);
@@ -117,6 +120,10 @@ html[dark=false] {
     &.disabled {
         opacity: 0.3;
         cursor: no-drop;
+    }
+
+    &:hover:not(.disabled) {
+        filter: opacity(0.75);
     }
 }
 
@@ -154,10 +161,15 @@ html[dark=false] {
     font-size: 13px;
     font-weight: 500 !important;
     white-space: nowrap;
+    transition: all var(--theme-transition-speed);
 
     &.active {
         background-color: var(--mybook-category-bgc-active);
         color: var(--mybook-category-color-active);
+    }
+
+    &:hover {
+        filter: opacity(0.75);
     }
 }
 
@@ -165,7 +177,7 @@ html[dark=false] {
     width: 100%;
     height: fit-content;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 100%;
 
     &.waiting, &.failed, &.empty {
         height: 180px;
@@ -201,17 +213,19 @@ html[dark=false] {
         content: '19';
         width: fit-content;
         height: fit-content;
-        padding: 0px 3px 2px 2px;
+        padding: 1px 3px;
+        border-radius: 50px;
         color: white;
         font-size: 11px;
         background-color: rgb(255, 97, 97);
-        border-radius: 50px;
+        display: flex;
+        align-items: center;
     }
 }
 
 .p-novel-item-wrap {
     box-sizing: border-box;
-    width: calc(var(--p-body-width) - (var(--p-margin) * 2));
+    width: 100%;
     padding: 7px;
     border-bottom: 1px solid var(--mybook-tab-border);
     display: flex;
@@ -310,8 +324,8 @@ html[dark=false] {
 
     .p-mybook-page-item {
         box-sizing: border-box;
-        width: 22px;
-        height: 30px;
+        width: 25px;
+        height: 33px;
         background-color: var(--mybook-category-bgc);
         line-height: 30px;
         text-align: center;
@@ -328,6 +342,6 @@ html[dark=false] {
     }
 }
 
-#p-pi-top {
+#p-pi-top:has(.p-mybook-page-item) {
     border-bottom: 1px solid var(--mybook-tab-border);
 }
