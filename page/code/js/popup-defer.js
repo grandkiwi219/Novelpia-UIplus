@@ -203,7 +203,7 @@ async function resolveMybookData() {
 
     mybook_wrap.classList.remove('waiting');
 
-    if (!novel_data) return mybook_wrap.classList.add('failed');
+    if (mybook_data.state == 4 || mybook_data.state == 5) return mybook_wrap.classList.add('failed');
 
     category_wrap.innerHTML = '';
     novel_data.category?.forEach(r => { 
@@ -229,7 +229,7 @@ async function resolveMybookData() {
         setLastMybookData({ tab: tab_att, category: category_att });
     }
 
-    if (!novel_data.books) return mybook_wrap.classList.add('empty');
+    if (mybook_data.state == 3) return mybook_wrap.classList.add('empty');
 
     novel_data.books.forEach(r => {
         const novel = document.createElement('novel-item');

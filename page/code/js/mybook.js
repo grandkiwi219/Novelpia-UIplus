@@ -102,7 +102,7 @@ async function loadMybookData(tab, category, page, order) {
         }, 400);
     }
 
-    return data.state == 2 || data.state == 3 ? data : null;
+    return data;
 }
 
 /* 
