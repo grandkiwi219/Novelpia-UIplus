@@ -233,7 +233,7 @@ async function resolveMybookData() {
 
     novel_data.books.forEach(r => {
         const novel = document.createElement('novel-item');
-        novel.setAttribute('title', r.title);
+        novel.setAttribute('novel', r.title);
         novel.setAttribute('author', r.author.name);
         novel.setAttribute('author-id', r.author.id);
         novel.setAttribute('thumb', r.thumbnail);
@@ -319,7 +319,7 @@ async function resolveMybookData() {
 class NovelItem extends HTMLElement {
     connectedCallback() {
         const data = {
-            title: this.getAttribute('title'),
+            title: this.getAttribute('novel'),
             author: {
                 name: this.getAttribute('author'),
                 id: this.getAttribute('author-id')
