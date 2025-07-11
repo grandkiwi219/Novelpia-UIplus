@@ -4,6 +4,10 @@
 
     --p-body-width: 370px;
     --p-body-height: 550px;
+
+    --p-header-gap: 10px;
+
+    --p-header-btn-size: 20px;
 }
 
 html, body {
@@ -21,16 +25,27 @@ header.p-container {
     height: fit-content;
     padding: var(--p-margin);
     display: flex;
-    justify-content: end;
-    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--p-header-gap);
     transition: all var(--theme-transition-speed);
+
+    #novel-logo {
+        width: var(--p-header-btn-size);
+        height: var(--p-header-btn-size);
+    }
+}
+
+.p-cleaner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--p-header-gap);
 }
 
 button#options > svg {
-    --options-button-size: 18px;
-
-    width: var(--options-button-size);
-    height: var(--options-button-size);
+    width: var(--p-header-btn-size);
+    height: var(--p-header-btn-size);
 }
 
 #box {

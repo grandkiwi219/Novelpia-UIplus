@@ -102,7 +102,7 @@ async function loadMybookData(tab, category, page, order) {
         }, 400);
     }
 
-    return data.state == 2 || data.state == 3 ? data.data : null;
+    return data.state == 2 || data.state == 3 ? data : null;
 }
 
 /* 
@@ -118,7 +118,7 @@ async function loadMybookData(tab, category, page, order) {
  * state > 2 = 성공, 3 = 카테고리에 등록된 책이 존재하지 않음, 4 = 로그인 상태가 아님, 5 = 정보를 가져올 수 없음/데이터 변환 도중 오류
  */
 async function mybookData(tab, category = undefined, page = 1, order = 'date') {
-    let fetch_url = `https://novelpia.com/mybook/${tab}/`;
+    let fetch_url = `${novelpia}/mybook/${tab}/`;
 
     const fetch_url_plus = `${category}/${order}/${page}`;
 
@@ -157,7 +157,11 @@ async function mybookData(tab, category = undefined, page = 1, order = 'date') {
         state = 5;
     }
 
-    const data = { state: state, data: { books: mybook_data, category: category_data, page: page_data } }
+    const data = {
+        state: state,
+        url: fetch_url,
+        data: { books: mybook_data, category: category_data, page: page_data }
+    };
 
     return data;
 }

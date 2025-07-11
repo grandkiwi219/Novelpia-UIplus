@@ -47,6 +47,7 @@ document.addEventListener('click', async e => {
     getNextEpAttribute(e);
 });
 
+
 async function mybookDataAttribute(e) {
     if (loadStateMybookData()) return;
 
@@ -85,7 +86,6 @@ function getNextEpAttribute(e) {
     getNextEp(data);
 }
 
-const novelpia = 'https://novelpia.com';
 
 async function getNextEp(novel_data) {
     try {
@@ -146,6 +146,12 @@ async function setInitNextEp(novel_data) {
 }
 
 
+function changeNovelLogo(url) {
+    document.querySelector('a.normal-button:has(#novel-logo)')
+    .href = url;
+}
+
+
 
 
 /* 처음 열렸을 때 */
@@ -187,7 +193,11 @@ async function resolveMybookData() {
     const page_att = mb_att.getAttribute('page');
     const order_att = mb_att.getAttribute('order');
 
-    const novel_data = await loadMybookData(last_data.tab, last_data.category, page_att, order_att);
+    const mybook_data = await loadMybookData(last_data.tab, last_data.category, page_att, order_att);
+
+    changeNovelLogo(mybook_data.url);
+
+    const novel_data = mybook_data.data;
 
     setLastMybookData({ tab: mb_att.getAttribute('tab'), category: mb_att.getAttribute('category') });
 
