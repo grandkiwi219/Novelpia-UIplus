@@ -103,9 +103,9 @@ npup.options.header.options['search-result'].system = function(r) {
             });
         
         // 검색바 최소화 선택이 되어 있을 시
-        } else if (r['nav'] || r[npup.options.header.options.search]) {
+        } else if (r['nav'] || r['search']) {
             new MutationObserver((mus, ob) => {
-                let searcher = document.getElementById(`${npup.project.prefix.css + npup.options.header.options.search}-form`);
+                let searcher = document.getElementById(`${npup.project.prefix.css}search-form`);
 
                 if (!searcher) return;
 

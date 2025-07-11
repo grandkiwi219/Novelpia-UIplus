@@ -1,3 +1,14 @@
+window.addEventListener("DOMContentLoaded", () => {
+    const searchForm = document.getElementById(`${npup.project.prefix.css}search-form`);
+
+    if (!searchForm) return;
+
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        npupPcSearch();
+    });
+});
+
 function npupPcSearch() {
     let value = document.getElementById('search_input').value.replace(/[\/%?,]/g, '');
 

@@ -1,5 +1,5 @@
 (() => {
-    const presr = npup.project.prefix.css + 'save-result';
+    const presr = npup.project.prefix.css + 'search-result';
 
     const nothing = document.createElement('div');
     nothing.style = 'padding: 20px 0; width: 100%; text-align: center;';

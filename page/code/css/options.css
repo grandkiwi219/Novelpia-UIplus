@@ -263,6 +263,7 @@ html[dark='true'] .chucheon {
     padding: 4px 9px;
     border: var(--border-normal);
     border-radius: var(--border-normal-radius);
+    text-align: center;
     position: relative;
     transition: var(--theme-header-transition), filter var(--theme-header-transition-speed);
 

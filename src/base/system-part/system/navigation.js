@@ -59,9 +59,9 @@ npup.options.nav.options.nav.system = function(r) {
     let header_position = false;
 
     if (window.innerWidth > 891)
-        headerLocation(r[l.nav_align], nav), header_position = true;
+        headerLocation(r['nav-align'], nav), header_position = true;
 
-    const delay = laze_check_time;
+    const delay = npup.etc.laze_check_time;
     let timer = null;
 
     window.addEventListener('resize', function () {
@@ -84,7 +84,7 @@ npup.options.nav.options.nav.system = function(r) {
  * @param {Element} nav nav 요소
  */
 function headerLocation(re, nav) {
-    nav.classList.add(`${project_prefix}nav`);
+    nav.classList.add(`${npup.project.prefix.css}nav`);
 
     if (re == 'center')
         document.querySelector('.header-top > div:not(.header-icon-menu, .hader-logo)')
@@ -102,7 +102,7 @@ function headerLocation(re, nav) {
  * @param {Element} nav nav 요소
  */
 function navLocation(nav) {
-    nav.classList.remove(`${project_prefix}nav`);
+    nav.classList.remove(`${npup.project.prefix.css}nav`);
 
     document.querySelector('header.mobile_hidden')
         .appendChild(nav);

@@ -33,6 +33,7 @@ function smoothScroll() {
 
 
 const mb_func_att = 'mybook-data';
+const gne_func_att = 'get-next-ep';
 
 
 document.getElementById(npup_need_id).addEventListener('click', async e => {
@@ -42,6 +43,11 @@ document.getElementById(npup_need_id).addEventListener('click', async e => {
 });
 
 document.addEventListener('click', async e => {
+    mybookDataAttribute(e);
+    getNextEpAttribute(e);
+});
+
+async function mybookDataAttribute(e) {
     if (loadStateMybookData()) return;
 
     if (!e.target.getAttribute(mb_func_att)) return;
@@ -63,7 +69,82 @@ document.addEventListener('click', async e => {
     mybook_wrap.setAttribute('order', data.order);
 
     await resolveMybookData();
-});
+}
+
+function getNextEpAttribute(e) {
+    if (!e.target.getAttribute(gne_func_att)) return;
+
+    const att_data = e.target.getAttribute(gne_func_att).split(',');
+
+    const data = {
+        'mode': 'get_next_episode',
+        'novel_no': parseInt(att_data[0]),
+        'novel_epi_no': att_data.length > 1 ? parseInt(att_data[1]) : 0
+    }
+
+    getNextEp(data);
+}
+
+const novelpia = 'https://novelpia.com';
+
+async function getNextEp(novel_data) {
+    try {
+        const response = await fetch(novelpia + '/proc/mybook', {
+            method: 'POST',
+            body: new URLSearchParams(novel_data)
+        });
+
+        const data = await response.json();
+
+        if (data.status == '200') {
+            if (data.result.next_episode_no && data.result.next_episode_no !== '') {
+                if (data.result.wait_episode == '1') {
+                    console.log(`공개 전 소설 (id: ${novel_data['novel_no']})`, `\n다음 소설 회차 오픈시간: ${data.result.content_viewdate}`);
+                } else {
+                    console.log(`다음 회차로 이동합니다. (id: ${novel_data['novel_no']}) (ep_id: ${data.result.next_episode_no})`);
+                    window.open(novelpia + '/viewer/' + data.result.next_episode_no);
+                }
+            } else {
+                if (data.result.end_episode == '1') {
+                    console.log('마지막 회차 소설.');
+                } else {
+                    setInitNextEp(novel_data);
+                }
+            }
+        } else if (data.status == '401') {
+            console.log('로그인이 필요함.');
+        } else {
+            console.log(data.errmsg);
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+async function setInitNextEp(novel_data) {
+    novel_data['mode'] = 'set_init_next_episode';
+
+    try {
+        const response = await fetch(novelpia + '/proc/mybook', {
+            method: 'POST',
+            body: new URLSearchParams(novel_data)
+        });
+
+        const data = await response.json();
+
+        if (data.status == '200') {
+            console.log(data);
+            console.log(data.result);
+        } else if (data.status == '401') {
+            console.log('로그인이 필요함.');
+        } else {
+            console.log(data.errmsg);
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
 
 
 
@@ -151,7 +232,7 @@ async function resolveMybookData() {
         novel.setAttribute('cont-ep', r.continue.ep);
         novel.setAttribute('cont-id', r.continue.id);
         novel.setAttribute('next-state', r.next.state);
-        novel.setAttribute('next-id', r.next.id);
+        novel.setAttribute('next-parameter', r.next.parameter);
 
         mybook_wrap.appendChild(novel);
     });
@@ -242,7 +323,7 @@ class NovelItem extends HTMLElement {
             },
             next: {
                 state: this.getAttribute('next-state'), 
-                id: this.getAttribute('next-id')
+                parameter: this.getAttribute('next-parameter')
             }
             
         }
@@ -317,8 +398,7 @@ class NovelItem extends HTMLElement {
             next_btn.classList.add('normal-button');
             next_btn.classList.add('next');
             if (data.next.state == 'true') {
-                next_btn.href = `${novelpia}viewer/${data.next.id}`;
-                next_btn.target = '_blank';
+                next_btn.setAttribute('get-next-ep', data.next.parameter);
                 next_btn.textContent = '다음화 보기';
             }
             else {

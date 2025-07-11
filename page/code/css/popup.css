@@ -6,7 +6,7 @@
     --p-body-height: 550px;
 }
 
-body {
+html, body {
     min-width: var(--p-body-width);
     min-height: var(--p-body-height);
     width: 100%;

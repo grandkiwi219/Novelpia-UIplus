@@ -167,7 +167,7 @@ function mybookJson(data) {
 
     for (let i = 0; i < data.children.length - 1; i++) {
         let data_html = data.children[i].outerHTML;
-        let next_href = data_html.match(/get_next_episode\((\d+),/) ? data_html.match(/get_next_episode\((\d+),/)[1] : undefined;
+        //let next_href = data_html.match(/get_next_episode\((\d+),/) ? data_html.match(/get_next_episode\((\d+),/)[1] : undefined;
 
         let cont_ep = data_html.match(/EP\.(\d+)/);
         let cont_id = data_html.match(/viewer\/(\d+)/);
@@ -178,7 +178,7 @@ function mybookJson(data) {
                 id: data_html.match(/user\/(\d+)/)[1]
             },
             title: data.children[i].getElementsByClassName('novel-name')[0].textContent.replace('\n', '').trim(),
-            thumbnail: data.children[i].getElementsByClassName('cover_style ')[0].src.replace('chrome-extension://', 'https://'),
+            thumbnail: data.children[i].getElementsByClassName('cover_style ')[0].src.replace(/[a-zA-Z0-9+.-]+-extension:\/\//, 'https://'),
             id: data_html.match(/novel\/(\d+)/)[1],
             adult: data.children[i].getElementsByClassName('age-mark')[0] ? true : false,
             continue: { 
@@ -186,11 +186,12 @@ function mybookJson(data) {
                 id: cont_id ? cont_id[1] : undefined
             },
             next: { 
-                state: data.children[i].getElementsByClassName('novel-btn-nothing')[0] ? false : true, 
-                id: next_href
+                state: data.children[i].getElementsByClassName('novel-btn-nothing')[0] ? false : true,
+                parameter: ''
             }
-
         }
+
+        data_data.next.parameter = `${data_data.id},${data_data.continue.ep}`;
 
         data_arr.push(data_data);
     }
