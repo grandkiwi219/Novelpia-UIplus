@@ -269,8 +269,7 @@ npup.options = { ...npup.options,
             'quick-mybook': {
                 desc: '빠른 내서재 (확장프로그램 아이콘 클릭 시)',
                 type: {
-                    option: 'switch',
-                    structure: ['system']
+                    option: 'switch'
                 },
             }
         },

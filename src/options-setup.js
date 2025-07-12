@@ -13,10 +13,24 @@ function optionBinding(ca, op) {
 
     if (!(engine.includes(STRUCTURE.SYSTEM.ENGINE.name) || src == 'all')) return;
 
+    let opbi_types = [];
+
+    if (Array.isArray(op.type.structure)) {
+        opbi_types = op.type.structure;
+    }
+    else if (!Array.isArray(op.type.structure) && typeof op.type.structure == 'string') {
+        opbi_types = [op.type.structure];
+    } 
+    else if (op.type.structure != undefined || op.type.structure != null) {
+        npup.dev(`경고) ${op.key}의 구조 유형이 불안정합니다. 문자열 혹은 문자열 배열이어야 합니다.`);
+    }
+
+    if (opbi_types.length < 1) return;
+
     let opbi = new SystemStructure(op.key, ...op.type.structure)
         .setDescription(op.desc);
 
-    if (op.values?.length && op.type.structure.includes(STRUCTURE.SELECTOR.TYPE)) {
+    if (op.values?.length && op.type.structure?.includes(STRUCTURE.SELECTOR.TYPE)) {
         let opbi_values = op.values.map(va => va.value);
         opbi.setOptions(true, ...opbi_values);
     }
