@@ -266,9 +266,9 @@ npup.options = { ...npup.options,
                 }
             },
         },
-        setups: {                                         // 옵션 카테고리 UI '특수' 설정
+        /* setups: {                                         // 옵션 카테고리 UI '특수' 설정
             length: 2
-        }
+        } */
     },
 
     custom_css: {
