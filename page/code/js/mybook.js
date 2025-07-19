@@ -76,11 +76,11 @@ async function loadMybookData(tab, category, page, order) {
     let data = await mybookData(tab, category, page, order);
 
 
-    console.log(`데이터 변환 결과 상태 코드: ${data.state}`);
+    console.log(`데이터 변환 결과 상태 코드: ${data.status}`);
 
 
     if (initial_html) {
-        switch (data.state)  {
+        switch (data.status)  {
             case 2:
             case 3:
                 load_data_el.innerHTML = `${npup_success} 새로고침 완료`;
@@ -115,7 +115,7 @@ async function loadMybookData(tab, category, page, order) {
 /**
  * id=npup_need_id 를 지닌 요소 있으면 데이터 연동 중 표시
  * tab = [last_view, collect, alarm, like]
- * state > 2 = 성공, 3 = 카테고리에 등록된 책이 존재하지 않음, 4 = 로그인 상태가 아님, 5 = 정보를 가져올 수 없음/데이터 변환 도중 오류
+ * status > 2 = 성공, 3 = 카테고리에 등록된 책이 존재하지 않음, 4 = 로그인 상태가 아님, 5 = 정보를 가져올 수 없음/데이터 변환 도중 오류
  */
 async function mybookData(tab, category = undefined, page = 1, order = 'date') {
     let fetch_url = `${novelpia}/mybook/${tab}/`;
@@ -128,7 +128,7 @@ async function mybookData(tab, category = undefined, page = 1, order = 'date') {
 
     console.log(`데이터 URL: ${fetch_url}`);
 
-    let mybook_data = null, category_data = null, page_data = null, state;
+    let mybook_data = null, category_data = null, page_data = null, status;
     try {
         await fetch(fetch_url)
             .then(res => { 
@@ -140,13 +140,13 @@ async function mybookData(tab, category = undefined, page = 1, order = 'date') {
                 const doc = parser.parseFromString(html, "text/html");
                 const item = doc.querySelector('.mybook-data-list-items');
 
-                if (!doc.querySelector('.recommend-botton-section')) return state = 4
+                if (!doc.querySelector('.recommend-botton-section')) return status = 4
 
                 if (doc.getElementsByClassName('novel-list-real-container')[0]) {
-                    state = 2, mybook_data = mybookJson(item);
+                    status = 2, mybook_data = mybookJson(item);
                     page_data = pageJson(item, page);
                 }
-                else state = 3;
+                else status = 3;
 
                 const category = doc.querySelector('#submenu_bar');
 
@@ -154,11 +154,11 @@ async function mybookData(tab, category = undefined, page = 1, order = 'date') {
             });
     } catch (e) {
         console.error(e);
-        state = 5;
+        status = 5;
     }
 
     const data = {
-        state: state,
+        status: status,
         url: fetch_url,
         data: { books: mybook_data, category: category_data, page: page_data }
     };
@@ -190,7 +190,7 @@ function mybookJson(data) {
                 id: cont_id ? cont_id[1] : undefined
             },
             next: { 
-                state: data.children[i].getElementsByClassName('novel-btn-nothing')[0] ? false : true,
+                status: data.children[i].getElementsByClassName('novel-btn-nothing')[0] ? false : true,
                 parameter: ''
             }
         }

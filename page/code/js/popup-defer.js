@@ -193,7 +193,15 @@ async function resolveMybookData() {
     const page_att = mb_att.getAttribute('page');
     const order_att = mb_att.getAttribute('order');
 
-    const mybook_data = await loadMybookData(last_data.tab, last_data.category, page_att, order_att);
+    let mybook_data;
+    
+    try {
+        mybook_data = await loadMybookData(last_data.tab, last_data.category, page_att, order_att);
+    } catch (e) {
+        console.error(e);
+        return mybook_wrap.classList.add('failed');
+    }
+
 
     changeNovelLogo(mybook_data.url);
 
@@ -203,7 +211,7 @@ async function resolveMybookData() {
 
     mybook_wrap.classList.remove('waiting');
 
-    if (mybook_data.state == 4 || mybook_data.state == 5) return mybook_wrap.classList.add('failed');
+    if (mybook_data.status == 4 || mybook_data.status == 5) return mybook_wrap.classList.add('failed');
 
     category_wrap.innerHTML = '';
     novel_data.category?.forEach(r => { 
@@ -229,7 +237,7 @@ async function resolveMybookData() {
         setLastMybookData({ tab: tab_att, category: category_att });
     }
 
-    if (mybook_data.state == 3) return mybook_wrap.classList.add('empty');
+    if (mybook_data.status == 3) return mybook_wrap.classList.add('empty');
 
     novel_data.books.forEach(r => {
         const novel = document.createElement('novel-item');
@@ -241,7 +249,7 @@ async function resolveMybookData() {
         novel.setAttribute('adult', r.adult);
         novel.setAttribute('cont-ep', r.continue.ep);
         novel.setAttribute('cont-id', r.continue.id);
-        novel.setAttribute('next-state', r.next.state);
+        novel.setAttribute('next-status', r.next.status);
         novel.setAttribute('next-parameter', r.next.parameter);
 
         mybook_wrap.appendChild(novel);
@@ -332,7 +340,7 @@ class NovelItem extends HTMLElement {
                 id: this.getAttribute('cont-id')
             },
             next: {
-                state: this.getAttribute('next-state'), 
+                status: this.getAttribute('next-status'), 
                 parameter: this.getAttribute('next-parameter')
             }
             
@@ -407,7 +415,7 @@ class NovelItem extends HTMLElement {
             const next_btn = document.createElement('a');
             next_btn.classList.add('normal-button');
             next_btn.classList.add('next');
-            if (data.next.state == 'true') {
+            if (data.next.status == 'true') {
                 next_btn.setAttribute('get-next-ep', data.next.parameter);
                 next_btn.textContent = '다음화 보기';
             }
