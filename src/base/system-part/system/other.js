@@ -4,13 +4,39 @@ npup.options.other.options['notice'].system = function(r) {
     if (window.location.pathname != "/") return;
 
     window.addEventListener("DOMContentLoaded", () => {
-        let notice_why_id_copyright = document.getElementById('copyright_bar').cloneNode(true);
+        let notice_bar = document.getElementById('copyright_bar').cloneNode(true);
+        notice_bar.id = `${npup.project.prefix.css}${notice_bar.id}`;
         let main = document.getElementById('vue_main_wrapper');
 
-        notice_why_id_copyright.classList.add(`${npup.project.prefix.css}notice`);
-        notice_why_id_copyright.style = "";
+        // system-content.css => notice css
+        notice_bar.classList.add(`${npup.project.prefix.css}notice`);
+        notice_bar.style = "";
+
+        notice_bar.firstElementChild.firstElementChild.classList.remove('justify-content-start');
+        notice_bar.firstElementChild.firstElementChild.classList.add('justify-content-between');
+
+        let notice_list_btn = document.createElement('a');
+        notice_list_btn.classList.add('d-flex');
+        notice_list_btn.classList.add('align-items-center');
+        notice_list_btn.classList.add('s_inv');
+        notice_list_btn.href = `/notice/list/1`;
+
+        const list_color = '#000';
+        notice_list_btn.innerHTML = ``
+        + `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">`
+            + `<circle cx="4" cy="6" r="1.5" fill="${list_color}" />`
+            + `<rect x="7" y="5" width="13" height="2" rx="1" fill="${list_color}" />`
+
+            + `<circle cx="4" cy="12" r="1.5" fill="${list_color}" />`
+            + `<rect x="7" y="11" width="13" height="2" rx="1" fill="${list_color}" />`
+
+            + `<circle cx="4" cy="18" r="1.5" fill="${list_color}" />`
+            + `<rect x="7" y="17" width="13" height="2" rx="1" fill="${list_color}" />`
+        + `</svg>`;
+
+        notice_bar.firstElementChild.firstElementChild.appendChild(notice_list_btn);
     
-        main.insertAdjacentElement("beforebegin", notice_why_id_copyright);
+        main.insertAdjacentElement("beforebegin", notice_bar);
     });
 }
 
@@ -72,18 +98,20 @@ npup.options.other.options['last-ep'].system = async function(r) {
     redirect.classList.add('last-ep-redirect');
     redirect.href = data?.href?.novel || '#';
 
+    const list_color = '#fff';
+
     const redirect_list = document.createElement('a');
     ['last-ep-redirect', 'last-ep-list'].forEach(cl => redirect_list.classList.add(cl));
     redirect_list.innerHTML = ``
         + `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">`
-            + `<circle cx="4" cy="6" r="1.5" fill="#fff" />`
-            + `<rect x="7" y="5" width="13" height="2" rx="1" fill="#fff" />`
+            + `<circle cx="4" cy="6" r="1.5" fill="${list_color}" />`
+            + `<rect x="7" y="5" width="13" height="2" rx="1" fill="${list_color}" />`
 
-            + `<circle cx="4" cy="12" r="1.5" fill="#fff" />`
-            + `<rect x="7" y="11" width="13" height="2" rx="1" fill="#fff" />`
+            + `<circle cx="4" cy="12" r="1.5" fill="${list_color}" />`
+            + `<rect x="7" y="11" width="13" height="2" rx="1" fill="${list_color}" />`
 
-            + `<circle cx="4" cy="18" r="1.5" fill="#fff" />`
-            + `<rect x="7" y="17" width="13" height="2" rx="1" fill="#fff" />`
+            + `<circle cx="4" cy="18" r="1.5" fill="${list_color}" />`
+            + `<rect x="7" y="17" width="13" height="2" rx="1" fill="${list_color}" />`
         + `</svg>`;
     redirect_list.href = data?.href?.list || '#';
     
