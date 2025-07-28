@@ -243,7 +243,7 @@ notice css
 
 .npup-notice {
     background-color: rgba(0, 0, 0, 0) !important;
-    padding: 9.5px 15px 9px;
+    padding: 9.5px 15px 3.5px;
 }
 
 @media screen and (min-width: 892px) {
