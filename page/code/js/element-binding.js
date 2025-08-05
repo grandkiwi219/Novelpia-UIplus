@@ -29,7 +29,7 @@ class SettingSwitch extends HTMLElement {
 
         ss_storage.get([key]).then(r => {
             r[key] ? setting_switch.setAttribute('check', 'true') : setting_switch.setAttribute('check', 'false');
-        })
+        });
     }
 }
 customElements.define('setting-switch', SettingSwitch);
@@ -62,7 +62,7 @@ class SettingSelect extends HTMLElement {
 
         let arrow_pointer = document.createElement('div');
         arrow_pointer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -2 14 14">`
-                                    + `<path d="M0 3 4 7.2 8 3 0 3" fill="#ffffff" stroke="rgb(145, 145, 145)" stroke-width=".5px"/>`
+                                    + `<path d="M0 3 4 7.2 8 3 0 3" fill="currentColor" stroke="rgb(145, 145, 145)" stroke-width=".5px"/>`
                                 + `</svg>`
 
         selector_value.appendChild(value_name), selector_value.appendChild(arrow_pointer);
@@ -141,3 +141,49 @@ class SettingTextarea extends HTMLElement {
     }
 }
 customElements.define('setting-textarea', SettingTextarea);
+
+
+
+// 세팅 매핑 컴포넌트
+class SettingMapping extends HTMLElement {
+    connectedCallback() {
+        let key = this.getAttribute('key');
+        let storage_type = this.getAttribute('storage');
+
+        let center = document.createElement('div');
+        center.classList.add('center');
+
+        let wrap = document.createElement('div');
+        wrap.classList.add('mapping-wrap');
+
+        let input = document.createElement('div');
+        Object.assign(input, {
+            className: 'mapping',
+            tabIndex: "0"
+        });
+
+        let cancel = document.createElement('div');
+        cancel.classList.add('mapping-cancel');
+        cancel.innerHTML = ''
+        + `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="20" height="20" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round">`
+            + `<path d="M5 5 L25 25 M5 25 L25 5" />`
+        + `</svg>`;
+
+        wrap.appendChild(input);
+        wrap.appendChild(cancel);
+
+        center.appendChild(wrap);
+        this.appendChild(center);
+
+        let ss_storage = storage_type == 'local' ? local : storage;
+
+        ss_storage.get([key]).then(r => {
+            if (r[key] && (r[key].code || r[key].key)) {
+                input.textContent = wordMapping(r[key]);
+            } else {
+                input.innerHTML = `<div class="mapping-nothing">설정 필요</div>`;
+            }
+        });
+    }
+}
+customElements.define('setting-mapping', SettingMapping);

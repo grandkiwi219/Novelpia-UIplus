@@ -1,5 +1,5 @@
 npup.options.novel.options['novel-page'].system = function(r) {
-    if (!r[this.key] || !pathChecker('/novel/')) return;
+    if (!pathChecker('/novel/')) return;
 
     new MutationObserver((mus, ob) => {
         if (!document.getElementById('episode_table')) return;

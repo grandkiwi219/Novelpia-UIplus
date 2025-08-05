@@ -183,7 +183,7 @@ npup.options = { ...npup.options,
                 desc: '하단 내비게이션 삭제 (기본적으로 기존 헤더로 변경)',
                 type: {
                     option: 'switch',
-                    structure: ['switch']
+                    structure: ['switch', 'system']
                 },
             },
         },
@@ -362,6 +362,63 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
         }
     },
 
+    mapping: {
+        icon: '⌨️',
+        name: '조작',
+        engine: 'all',
+        options: {
+            'after-ep': {
+                desc: '다음화로 가기 (뷰어)',
+                type: {
+                    option: 'mapping'
+                },
+                engine: '뷰어',
+            },
+            'before-ep': {
+                desc: '이전화로 가기 (뷰어)',
+                type: {
+                    option: 'mapping'
+                },
+                engine: '뷰어',
+            },
+            /* 'ep-home': {
+                desc: '소설 페이지로 이동 (뷰어)',
+                type: {
+                    option: 'mapping'
+                },
+                engine: '뷰어',
+            }, */
+            /* 'ep-comment': {
+                desc: '댓글창 열기 (뷰어)',
+                type: {
+                    option: 'mapping'
+                },
+                engine: '뷰어',
+            }, */
+            'move-mb': {
+                desc: '내서재로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'page-dark': {
+                desc: '노벨피아 다크모드 사용',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'viewer-dark': {
+                desc: '노벨피아 뷰어 다크모드 사용',
+                type: {
+                    option: 'mapping'
+                },
+            },
+        },
+        /* setups: {
+            length: 2
+        } */
+    },
+
     extension: {
         icon: '🪡',
         name: '확장프로그램',
@@ -369,7 +426,9 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
         options: {
             'extension-sync': {
                 desc: '이 장치에서의 설정 동기화',
-                type: 'switch',
+                type: {
+                    option: 'switch'
+                },
                 settings: {
                     storage: 'local'
                 }

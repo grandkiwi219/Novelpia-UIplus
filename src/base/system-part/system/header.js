@@ -1,5 +1,4 @@
 npup.options.header.options.adult.system = async function(r) {
-    if (!r[this.key]) return;
 
     new MutationObserver((mus, ob) => {
         let switch_adult = document.querySelector('.switch-adult');
@@ -22,7 +21,6 @@ npup.options.header.options.adult.system = async function(r) {
 
 
 npup.options.header.options.search.system = function(r) {
-    if (!r['nav'] && !r[this.key]) return;
     
     document.getElementsByClassName('header-search')[0]?.remove();
 
@@ -57,7 +55,7 @@ delete_all.innerHTML = '잔체삭제';
 
 
 npup.options.header.options['search-result'].system = function(r) {
-    if (!r[this.key] || path == '/comic_search') return;
+    if (path == '/comic_search') return;
     
     sr = this.key
     presr += this.key;
@@ -203,7 +201,6 @@ function resultBoxContent() {
 
 
 npup.options.header.options.alarm.system = function(r) {
-    if (!r[this.key] || r[this.key] == 'comment') return;
 
     let where_href = '/';
 

@@ -4,7 +4,7 @@ npup.log('노벨피아를 감지했습니다.');
 
 // ready start
 function ready(r) {
-    STRUCTURE.ON_OFF.ENGINE.on();
+    STRUCTURE.SWITCH.ENGINE.on();
 
     STRUCTURE.SELECTOR.ENGINE.on();
 

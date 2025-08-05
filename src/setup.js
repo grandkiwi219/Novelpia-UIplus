@@ -19,7 +19,7 @@ const observer_setup = npup.settings.observer;
 
 const ENGINE_TYPE = {
     ALL: 'all', // for Addon class
-    ON_OFF: 'switch',
+    SWITCH: 'switch',
     SELECTOR: 'selector',
     SYSTEM: 'system',
 };
@@ -87,8 +87,8 @@ class EngineStructure {
                         this.#engine.SYSTEM(r)
                     break;
 
-                case ENGINE_TYPE.ON_OFF:
-                    this.#engine.ON_OFF(r);
+                case ENGINE_TYPE.SWITCH:
+                    this.#engine.SWITCH(r);
                     break;
 
                 case ENGINE_TYPE.SELECTOR:
@@ -101,7 +101,7 @@ class EngineStructure {
     }
 
     #engine = {
-        ON_OFF: (r) => {
+        SWITCH: (r) => {
             this.#getKeys().forEach(key =>{
                 if (r[key])
                     html.setAttribute(npup.project.prefix.css + key, '');
@@ -116,14 +116,19 @@ class EngineStructure {
         },
         SELECTOR: (r) => {
             this.#getKeys().forEach(key => {
-                if (r[key] && r[key] != this.#getSystemStructure(key).options[0])
+                if (r[key] && r[key] != this.getSystemStructure(key).options[0])
                     html.setAttribute(npup.project.prefix.css + key, r[key]);
             });
         },
         SYSTEM: (r) => {
             this.#getKeys().forEach(key => {
+                if (!r[key]) return;
+
+                const this_options = this.getSystemStructure(key).options;
+                if (this_options.length && r[key] == this_options[0]) return;
+
                 tryChecker(() => {
-                    this.#getSystemStructure(key)
+                    this.getSystemStructure(key)
                         .system(r);
                 }, key, false);
             });
@@ -159,7 +164,7 @@ class EngineStructure {
 
     #getAddons(key) {
         const addons = [...new Set(
-            this.#getSystemStructure(key).addons
+            this.getSystemStructure(key).addons
                 .filter(r => r.type == ENGINE_TYPE.ALL || r.type == this.type)
                 .flatMap(r => r.addons)
         )];
@@ -172,12 +177,13 @@ class EngineStructure {
      * @param {string} key 
      * @returns {SystemStructure} key's SystemStructure
      */
-    #getSystemStructure(key) {
-        /* if (!this.#systems_structures.has(key)) {
+    getSystemStructure(key) {
+        if (!this.#systems_structures.has(key)) {
             console.warn(`System ${key} does not exist in ${this.name} engine.`);
             return new SystemStructure('', this.type);
-        } */
-        return this.#systems_structures.get(key);
+        }
+        else 
+            return this.#systems_structures.get(key);
     }
 }
 
@@ -185,7 +191,7 @@ class EngineStructure {
 
 
 const STRUCTURE = {
-    ON_OFF:      { TYPE: 'switch',     ENGINE: new EngineStructure('스위치', ENGINE_TYPE.ON_OFF)},
+    SWITCH:      { TYPE: 'switch',     ENGINE: new EngineStructure('스위치', ENGINE_TYPE.SWITCH)},
     SELECTOR:    { TYPE: 'selector',   ENGINE: new EngineStructure('선택자', ENGINE_TYPE.SELECTOR)},
     CUSTOM:      { TYPE: 'custom',     ENGINE: new EngineStructure('커스텀', ENGINE_TYPE.SYSTEM, false)},
     PRE_COMMON:  { TYPE: 'pre-common',  ENGINE: new EngineStructure('헤드 공통', ENGINE_TYPE.SYSTEM)},
@@ -293,8 +299,8 @@ class SystemStructure {
     setOptions(first_option, ...options) {
         if (!first_option) 
             console.warn(`You answered that it is not in order. The first option in the selector type of ${this.key} system is not applied.`)
-        else if (!this.types.includes(STRUCTURE.SELECTOR.TYPE))
-            console.warn(`The type in ${this.key} structure does not include the options, so it may not be used.`);
+        //else if (!this.types.includes(STRUCTURE.SELECTOR.TYPE))
+        //    console.warn(`The type in ${this.key} structure does not include the options, so it may not be used.`);
 
         this.options = options;
         return this;
@@ -321,10 +327,32 @@ class SystemStructure {
  * 입력한 파일 위치를 사이트 페이지에 삽입합니다
  * @param {string} path 파일 위치
  */
-const scriptInjection = (path) => {
+function scriptInjection(path) {
     if (!path) return;
 
     const script = document.createElement('script');
     script.src = chrome.runtime.getURL(path);
     document.head.appendChild(script);
+}
+
+/**
+ * basically use system about key
+ * @param {string} key system key
+ * @param {*} r 
+ */
+function basicUseSystem(key, r, ...settings) {
+    if (!r[key])
+        searchSystem(key, r, ...settings);
+}
+
+/**
+ * search system about key
+ * @param {string} key system key
+ * @param {*} r 
+ */
+function searchSystem(key, r, ...settings) {
+    if (!key || typeof key != 'string') return npup.error('키 값이 없거나 문자열 형식이 아닙니다.');
+    const data = STRUCTURE.SYSTEM.ENGINE.getSystemStructure(key);
+    if (!data.key) return npup.error('옵션을 찾을 수 없는 키 값 입니다.');
+    data.system(r, ...settings);
 }

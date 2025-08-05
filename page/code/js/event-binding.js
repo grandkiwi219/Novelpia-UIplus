@@ -102,3 +102,97 @@ function saveSuccess(r, black, active) {
         }, 1200);
     }, 600);
 }
+
+
+
+// 세팅 매핑
+function wordMapping(e) {
+    let input_key = e.code ? (
+        e.code
+        .replace('Key', '')
+        .replace('Digit', '')
+        .replace('Numpad', 'Num')
+    ) : e.key;
+
+    const keyMap = {
+        ShiftLeft: '왼쪽 Shift',
+        ShiftRight: '오른쪽 Shift',
+        Shift: '오른쪽 Shift',
+        ControlLeft: '왼쪽 Ctrl',
+        ControlRight: '오른쪽 Ctrl',
+        AltLeft: '왼쪽 Alt',
+        AltRight: '오른쪽 Alt',
+        Escape: 'Esc',
+        ArrowUp: '↑',
+        ArrowDown: '↓',
+        ArrowLeft: '←',
+        ArrowRight: '→',
+        Slash: '/',
+        NumDivide: 'Num/',
+        NumMultiply: 'Num*',
+        Minus: '-',
+        NumSubtract: 'Num-',
+        Equal: '+',
+        NumAdd: 'Num+',
+        NumDecimal: 'Num.',
+        MetaRight: '오른쪽 Win/⌘',
+        MetaLeft: '왼쪽 Win/⌘',
+        Backslash: '₩',
+        Backquote: '`',
+        Semicolon: ';',
+        Semicolon: ';',
+        Comma: ',',
+        Period: '.',
+        ContextMenu: 'Menu',
+        BracketLeft: '[',
+        BracketRight: ']',
+    };
+
+
+    if (keyMap[input_key]) {
+        input_key = keyMap[input_key];
+    } else if (e.key == 'HangulMode') {
+        input_key = '한/영';
+    } else if (e.key == 'HanjaMode') {
+        input_key = '한자';
+    }
+
+    return input_key.replace('Num', 'Num ');
+}
+
+document.addEventListener('keydown', async e => {
+    const target = document.activeElement;
+    if (!target.classList.contains('mapping')) return;
+
+    e.preventDefault();
+
+    const setting = target.parentElement.parentElement.parentElement;
+    const key = setting.getAttribute('key');
+    const storage_type = setting.getAttribute('storage');
+    const ss_storage = storage_type == 'local' ? local : storage;
+
+    await ss_storage.get([key]).then(() => {
+        ss_storage.set({ [key]: { code: e.code, key: e.key } });
+    });
+
+    target.textContent = wordMapping(e);
+});
+
+document.addEventListener('click', async e => {
+    document.querySelectorAll('.mapping-cancel').forEach(async r => {
+        let is_click = r.contains(e.target);
+
+        if (!is_click) return;
+
+        const setting = r.parentElement.parentElement.parentElement;
+        const key = setting.getAttribute('key');
+        const storage_type = setting.getAttribute('storage');
+        const ss_storage = storage_type == 'local' ? local : storage;
+
+        await ss_storage.get([key]).then(() => {
+            ss_storage.set({ [key]: { code: undefined, key: undefined } });
+        });
+
+        r.previousElementSibling.innerHTML = `<div class="mapping-nothing">설정 필요</div>`;
+    }); 
+});

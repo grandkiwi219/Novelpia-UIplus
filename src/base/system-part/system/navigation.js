@@ -1,5 +1,4 @@
-npup.options.nav.options['nav-mybook'].system = function(r) {
-    if (!r[this.key] || r[this.key] == 'normal') return;
+npup.options.nav.options['nav-mybook'].system = function(r, get_data) {
 
     let where_href = '/';
     let where_name;
@@ -23,7 +22,10 @@ npup.options.nav.options['nav-mybook'].system = function(r) {
             break;
         default:
             where_href = '';
+            break;
     }
+
+    if (get_data) return { href: where_href, name: where_name };
 
     document.querySelectorAll('.top_nav > a:last-child').forEach(b => {
         b.href += where_href;
@@ -53,7 +55,7 @@ npup.options.nav.options['nav-mybook'].system = function(r) {
 
 
 npup.options.nav.options.nav.system = function(r) {
-    if (!r[this.key]) return;
+    basicUseSystem('search', r);    // '기본적으로' 검색바 최소화 '사용하기'
 
     const nav = document.getElementsByClassName('top_nav')[0];
     let header_position = false;

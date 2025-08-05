@@ -15,7 +15,10 @@ function optionBinding(ca, op) {
 
     let opbi_types = [];
 
-    if (Array.isArray(op.type.structure)) {
+    if (op.type.option == 'mapping') {
+        opbi_types = ['system'];
+    }
+    else if (Array.isArray(op.type.structure)) {
         opbi_types = op.type.structure;
     }
     else if (!Array.isArray(op.type.structure) && typeof op.type.structure == 'string') {
@@ -27,10 +30,10 @@ function optionBinding(ca, op) {
 
     if (opbi_types.length < 1) return;
 
-    let opbi = new SystemStructure(op.key, ...op.type.structure)
+    let opbi = new SystemStructure(op.key, ...opbi_types)
         .setDescription(op.desc);
 
-    if (op.values?.length && op.type.structure?.includes(STRUCTURE.SELECTOR.TYPE)) {
+    if (op.values?.length /* && op.type.structure?.includes(STRUCTURE.SELECTOR.TYPE) */) {
         let opbi_values = op.values.map(va => va.value);
         opbi.setOptions(true, ...opbi_values);
     }
@@ -48,7 +51,7 @@ function optionBinding(ca, op) {
     if (op.options) {
         Object.values(op.options).forEach(opop => {
             optionBinding(ca, opop);
-        })
+        });
     }
 
     delete opbi;

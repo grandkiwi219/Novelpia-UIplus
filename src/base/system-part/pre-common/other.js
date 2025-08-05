@@ -1,8 +1,7 @@
 npup.options.other.options['web-title'].system = function (r) {
-    if (!r[this.key] || r[this.key] == 'normal') return;
 
     //노벨피아 - 웹소설로 꿈꾸는 세상! - PAGE
-    let tc = document.title.split('-').map(r => r.trim());
+    let tc = document.title.split('-').map(t => t.trim());
 
     //normal/short/reverse-short/single/reverse-normal
     switch (r[this.key]) {

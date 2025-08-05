@@ -1,6 +1,5 @@
 /** system: other */
 npup.options.other.options['notice'].system = function(r) {
-    if (!r[this.key]) return;
     if (window.location.pathname != "/") return;
 
     window.addEventListener("DOMContentLoaded", () => {
@@ -45,7 +44,6 @@ npup.options.other.options['notice'].system = function(r) {
 
 
 npup.options.other.options['last-ep'].system = async function(r) {
-    if (!r[this.key]) return;
     if (r['last-ep-home'] && window.location.pathname != "/") return;
 
     const last_ep_timestamp = 'last-ep-timestamp';

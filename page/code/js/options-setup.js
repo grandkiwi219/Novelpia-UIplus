@@ -71,11 +71,14 @@ function toolsBinding(item, op, sub = false) {
         case 'selector':
             tools_item = settingSelector(op.desc, op.key, op.values, op.settings, sub);
             break;
+        case 'mapping':
+            tools_item = settingMapping(op.desc, op.key, op.settings, sub);
+            break;
         case 'textarea':
             tools_item = settingTextarea(op.desc, op.key, op.settings.placeholder, op.settings);
             break;
         default:
-            tools_item = settingSwitch(op.desc, op.key, op.settings, sub);
+            tools_item = setTForm(op.desc, op.settings, sub, document.createElement('setting-undefined'), 'undefined');
             break;
     }
 
@@ -105,35 +108,38 @@ function tForm(node, type) {
     return { node, type: type.toLowerCase() };
 }
 
-function settingSwitch(desc, key, settings = {}, sub = false) {
+function setTForm(desc, settings = {}, sub = false, setting_structure, setting_type) {
     const tools_chid_item = subChecker(desc, sub);
 
-    const setting_switch = document.createElement('setting-switch');
-    setting_switch.setAttribute('key', key);
-
     Object.keys(settings).forEach(r => {
-        setting_switch.setAttribute(r, settings[r]);
+        setting_structure.setAttribute(r, settings[r]);
     });
 
-    tools_chid_item.appendChild(setting_switch);
+    tools_chid_item.appendChild(setting_structure);
 
-    return tForm(tools_chid_item, 'switch');
+    return tForm(tools_chid_item, setting_type);
+}
+
+function settingSwitch(desc, key, settings = {}, sub = false) {
+    const el = document.createElement('setting-switch');
+    el.setAttribute('key', key);
+
+    return setTForm(desc, settings, sub, el, 'switch');
 }
 
 function settingSelector(desc, key, values, settings = {}, sub = false) {
-    const tools_chid_item = subChecker(desc, sub);
+    const el = document.createElement('setting-selector');
+    el.setAttribute('key', key);
+    el.textContent = values.map(v => `${v.name} {${v.value}}`).join('|');
 
-    const setting_selector = document.createElement('setting-selector');
-    setting_selector.setAttribute('key', key);
-    setting_selector.textContent = values.map(v => `${v.name} {${v.value}}`).join('|');
+    return setTForm(desc, settings, sub, el, 'selector');
+}
 
-    Object.keys(settings).forEach(r => {
-        setting_selector.setAttribute(r, settings[r]);
-    });
+function settingMapping(desc, key, settings = {}, sub = false) {
+    const el = document.createElement('setting-mapping');
+    el.setAttribute('key', key);
 
-    tools_chid_item.appendChild(setting_selector);
-
-    return tForm(tools_chid_item, 'selector');
+    return setTForm(desc, settings, sub, el, 'mapping');
 }
 
 function settingTextarea(desc, key, placeholder = '입력', settings = {}) {

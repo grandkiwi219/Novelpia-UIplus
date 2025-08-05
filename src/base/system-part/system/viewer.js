@@ -1,6 +1,4 @@
 npup.options.viewer.options['old-icon'].system = function(r) {
-    if (!r[this.key]) return;
-
     window.addEventListener('DOMContentLoaded', iconSetup);
 }
 
@@ -92,8 +90,6 @@ function iconSetup() {
 
 
 npup.options.viewer.options['click-alert'].system = function(r) {
-    if (!r[this.key]) return;
-
     npup.log('우클릭 제거 준비가 완료되었습니다.');
 
     scriptInjection('src/base/file/delete-click-alert.js');
