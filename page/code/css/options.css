@@ -799,6 +799,8 @@ html[dark=true] .text-area-wrap > textarea::placeholder {
     --mapping-transition-speed: .3s;
     --mapping-height: 28px;
     --mapping-radius: var(--border-normal-radius);
+    --mapping-border-base: 1px;
+    --mapping-border-left: 8px;
 
     box-sizing: border-box;
     width: 140px;
@@ -808,9 +810,15 @@ html[dark=true] .text-area-wrap > textarea::placeholder {
     position: relative;
     overflow: hidden;
     user-select: none;
+    transition: border var(--mapping-transition-speed);
 
     * {
         user-select: none;
+    }
+
+    &:has(.mapping:focus) {
+        border: var(--mapping-border-base) solid var(--purple);
+        border-left: var(--mapping-border-left) solid var(--purple);
     }
 }
 
@@ -840,20 +848,18 @@ html[dark=true] .mapping-nothing {
     color: silver;
 }
 
-.mapping-wrap::before {
-    content: '';
-    width: 5px;
-    height: 0;
-    background-color: var(--purple);
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    transition: height var(--mapping-transition-speed);
-}
+.mapping-wrap {
 
-.mapping-wrap:has(.mapping:focus)::before {
-    height: 100%;
-    top: 0;
+    &::before {
+        content: '';
+        width: 0;
+        height: 100%;
+        background-color: var(--purple);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        transition: width var(--mapping-transition-speed);
+    }
 }
 
 .mapping-cancel {

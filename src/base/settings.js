@@ -381,13 +381,13 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 },
                 engine: '뷰어',
             },
-            /* 'ep-home': {
+            'ep-home': {
                 desc: '소설 페이지로 이동 (뷰어)',
                 type: {
                     option: 'mapping'
                 },
                 engine: '뷰어',
-            }, */
+            },
             /* 'ep-comment': {
                 desc: '댓글창 열기 (뷰어)',
                 type: {
@@ -414,9 +414,9 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 },
             },
         },
-        /* setups: {
+        setups: {
             length: 2
-        } */
+        }
     },
 
     extension: {

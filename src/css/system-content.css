@@ -623,3 +623,121 @@ last episode alarm
         height: 100%;
     }
 }
+
+
+/* 
+toast alert
+*/
+
+#npup-alert-container {
+    width: fit-content;
+    height: fit-content;
+    padding: 0;
+    margin: 10px;
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1020;
+}
+
+.npup-alert-box {
+    box-sizing: border-box;
+    width: 300px;
+    height: 70px;
+    padding: 10px;
+    box-shadow: 0 0 10px rgba(80, 80, 80, 0.5);
+    border-radius: 10px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    opacity: 0;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+
+    &.active {
+        opacity: 80%;
+
+        &:hover {
+            opacity: 100%;
+        }
+    }
+}
+
+@media screen and (max-width: 480px) {
+    
+    .npup-alert-box {
+        width: 250px;
+        height: 60px;
+    }
+}
+
+.npup-alert-icon {
+    --npup-alert-icon-size: 40px;
+
+    width: var(--npup-alert-icon-size);
+    height: var(--npup-alert-icon-size);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    perspective: 100px;
+
+    * {
+        width: var(--npup-alert-icon-size);
+        height: var(--npup-alert-icon-size);
+    }
+
+    .npup-alert-icon-head {
+        width: 6px;
+        height: 30px;
+        border-radius: 2px;
+        background-color: var(--novelpia-color);
+        transform: translate3d(0px, 6px, 20px) rotateX(-50deg);
+        transform-origin: top;
+    }
+
+    .npup-alert-icon-foot {
+        width: 6px;
+        height: 6px;
+        border-radius: 2px;
+        background-color: var(--novelpia-color);
+    }
+}
+
+.npup-alert-content {
+    display: flex;
+    flex-direction: column;
+
+    .npup-alert-title {
+        font-weight: 600;
+    }
+}
+
+.npup-alert-countdown {
+    width: 0;
+    height: 4px;
+    background-color: var(--novelpia-color);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transition: width 1.6s linear;
+
+    &.once {
+        transition: width 4s linear;
+    }
+
+    &.pause {
+        width: 100%;
+        height: 0;
+        transition: none;
+    }
+}

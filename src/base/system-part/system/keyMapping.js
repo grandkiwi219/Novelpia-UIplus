@@ -29,9 +29,9 @@ npup.options.mapping.options['before-ep'].system = keyMappingBase('before-ep', r
     document.getElementsByClassName('menu-bottom-item')[0].click();
 });
 
-/* npup.options.mapping.options['ep-home'].system = keyMappingBase('ep-home', r => {
+npup.options.mapping.options['ep-home'].system = keyMappingBase('ep-home', r => {
     document.getElementsByClassName('menu-top-home')[0].click();
-}); */
+});
 
 npup.options.mapping.options['move-mb'].system = keyMappingBase('move-mb', async r => {
     let where_href;
@@ -95,22 +95,29 @@ function hasCookie(name) {
 const base_domain = '.novelpia.com';
 
 function toggleCookie(name, domain = base_domain) {
-    if (hasCookie(name))
+    if (hasCookie(name)) {
         removeCookie(name, { path: '/', domain: domain });
-    else 
+        return false;
+    } else {
         setCookie(name, 1, { expires: 365, path: '/' ,domain: domain});
+        return true;
+    }
 }
 
 npup.options.mapping.options['page-dark'].system = keyMappingBase('page-dark', r => {
-    toggleCookie('DARKMODE_S');
+    const result = toggleCookie('DARKMODE_S');
 
     if (STRUCTURE.SYSTEM.ENGINE.name == '페이지') 
         location.reload();
+    else 
+        npup.func.toastAlert({ title: '다크모드', msg: `다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });
 
 npup.options.mapping.options['viewer-dark'].system = keyMappingBase('viewer-dark', r => {
-    toggleCookie('DARKMODE');
+    const result = toggleCookie('DARKMODE');
 
     if (STRUCTURE.SYSTEM.ENGINE.name == '뷰어') 
         location.reload();
+    else 
+        npup.func.toastAlert({ title: '뷰어 다크모드', msg: `뷰어 다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });

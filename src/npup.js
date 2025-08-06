@@ -46,7 +46,14 @@ const npup = {
          * @param {string | boolean} not_engine 콘텐츠 스크립트의 기본적인 함수인 엔진이 아니라면 무엇이라고 할 것 입니까? 만약 아무것도 아니라면 spacing 해주세요. 코멘트만을 원하면 '' 처리를 해주세요. 콘솔 출력을 하고 싶지 않다면 false를 해주세요.
          * @param  {...any} comment 추가 코멘트 작성.
          */
-        tryChecker() {}
+        tryChecker() {},
+
+        /**
+         * 간단한 알림
+         * @param {string} title 제목
+         * @param {string} msg 메세지
+         */
+        toastAlert() {},
     },
 
     log(...content) {
@@ -152,4 +159,96 @@ npup.func.tryChecker = (func, type, not_engine, ...comment) => {
             return npup.error((type ? type + space + `${system_type} `: '') + `오류 발생.\n원인: ${err}`);
         }
     } else return npup.error('엔진을 실행할 수 없습니다.\n원인: 함수가 아닙니다.');
+}
+
+
+npup.func.toastAlert = ({ title = undefined, msg }) => {
+    let alert_container = document.getElementById(`${npup.project.prefix.css}alert-container`);
+
+    if (!alert_container) {
+        alert_container = document.createElement('div');
+        alert_container.id = `${npup.project.prefix.css}alert-container`;
+        alert_container.className = 's_inv';
+        document.body.appendChild(alert_container);
+    }
+
+    const alert_box = document.createElement('div');
+    alert_box.classList.add(`${npup.project.prefix.css}alert-box`);
+
+    const alert_countdown = document.createElement('div');
+    alert_countdown.classList.add(`${npup.project.prefix.css}alert-countdown`);
+    alert_countdown.classList.add('pause');
+    alert_countdown.classList.add('once');
+
+    const alert_icon = document.createElement('div');
+    alert_icon.classList.add(`${npup.project.prefix.css}alert-icon`);
+    
+    const alert_icon_head = document.createElement('div');
+    alert_icon_head.classList.add(`${npup.project.prefix.css}alert-icon-head`);
+    const alert_icon_foot = document.createElement('div');
+    alert_icon_foot.classList.add(`${npup.project.prefix.css}alert-icon-foot`);
+
+    alert_icon.appendChild(alert_icon_head);
+    alert_icon.appendChild(alert_icon_foot);
+
+    const alert_content = document.createElement('div');
+    alert_content.classList.add(`${npup.project.prefix.css}alert-content`);
+
+    if (title) {
+        const alert_title = document.createElement('div');
+        alert_title.classList.add(`${npup.project.prefix.css}alert-title`);
+        alert_title.textContent = title;
+        alert_content.appendChild(alert_title);
+    }
+
+    const alert_msg = document.createElement('div');
+    //alert_msg.classList.add(`${npup.project.prefix.css}alert-msg`);
+    alert_msg.textContent = msg;
+    alert_content.appendChild(alert_msg);
+
+    alert_box.appendChild(alert_icon);
+    alert_box.appendChild(alert_content);
+    alert_box.appendChild(alert_countdown);
+
+    alert_container.insertAdjacentElement('afterbegin', alert_box);
+
+    let alert_time;
+    setTimeout(() => {
+        alert_box.classList.add(`active`);
+        alert_time = setTime(true);
+
+        alert_box.addEventListener('click', () => {
+            clearTime(alert_time);
+            removeAlert();
+        });
+
+        alert_box.addEventListener('mouseover', () => {
+            clearTime(alert_time);
+        });
+
+        alert_box.addEventListener('mouseout', () => {
+            alert_time = setTime();
+        });
+    }, 100);
+
+    
+    function setTime(once = false) {
+        if (!once) alert_countdown.classList.remove('once'); 
+        alert_countdown.classList.remove('pause');
+        return setTimeout(() => {
+            removeAlert();
+        }, (once ? 4 : 1.6) * 1000 - (once ? 100 : 0));
+    }
+
+    function clearTime(func) {
+        alert_countdown.classList.add('pause');
+        clearTimeout(func);
+    }
+
+    function removeAlert() {
+        alert_box.classList.remove(`active`);
+        setTimeout(() => {
+            alert_box.remove();
+        }, 0.4 * 1000);
+    }
 }
