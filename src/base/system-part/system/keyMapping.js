@@ -94,6 +94,19 @@ function removeCookie(name, options = {}) {
     document.cookie = cookieStr;
 }
 
+function getCookie(name) {
+    const encodedName = encodeURIComponent(name) + "=";
+    const cookies = document.cookie.split('; ');
+
+    for (const cookie of cookies) {
+        if (cookie.startsWith(encodedName)) {
+            return decodeURIComponent(cookie.slice(encodedName.length));
+        }
+    }
+
+    return null; // 쿠키가 존재하지 않을 경우
+}
+
 function hasCookie(name) {
     const encodedName = encodeURIComponent(name) + "=";
     return document.cookie.split('; ').some(cookie => cookie.startsWith(encodedName));
@@ -102,11 +115,11 @@ function hasCookie(name) {
 const base_domain = '.novelpia.com';
 
 function toggleCookie(name, domain = base_domain) {
-    if (hasCookie(name)) {
-        removeCookie(name, { path: '/', domain: domain });
+    if (getCookie(name)) {
+        setCookie(name, '', { expires: 365, path: '/', domain: domain});
         return false;
     } else {
-        setCookie(name, 1, { expires: 365, path: '/' ,domain: domain});
+        setCookie(name, 1, { expires: 365, path: '/', domain: domain});
         return true;
     }
 }

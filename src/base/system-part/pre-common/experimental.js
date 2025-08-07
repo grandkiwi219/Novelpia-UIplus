@@ -1,6 +1,6 @@
 npup.options.experimental.options['frosted-glass'].system = function (r) {
     let blur_intensity = 18;
-    const box_shadow_color_page = hasCookie('DARKMODE_S') ? '255, 255, 255, 0.32' : '0, 0, 0, 0.16';
+    const box_shadow_color_page = getCookie('DARKMODE_S') ? '255, 255, 255, 0.32' : '0, 0, 0, 0.16';
 
     let style = document.createElement('style');
     style.id = `${npup.project.prefix.css}frosted-glass-css`;
@@ -69,7 +69,7 @@ header {
 
     let dark_style = undefined;
 
-    if (engineChecker('페이지') && hasCookie('DARKMODE_S')) {
+    if (engineChecker('페이지') && getCookie('DARKMODE_S')) {
         dark_style = document.createElement('style');
         dark_style.id = `${npup.project.prefix.css}frosted-glass-css-page-dark`;
         dark_style.insertAdjacentHTML('afterbegin', `
@@ -91,7 +91,7 @@ header,
 }
 `);
     }
-    else if (engineChecker('뷰어') && hasCookie('DARKMODE')) {
+    else if (engineChecker('뷰어') && getCookie('DARKMODE')) {
         dark_style = document.createElement('style');
         dark_style.id = `${npup.project.prefix.css}frosted-glass-css-viewer-dark`;
         dark_style.insertAdjacentHTML('afterbegin', `
