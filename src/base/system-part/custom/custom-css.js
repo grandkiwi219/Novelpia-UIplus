@@ -1,6 +1,7 @@
 npup.options.custom_css.options['custom-css'].system = function (r) {
 
     let style = document.createElement('style');
+    style.id = `${npup.project.prefix.css}custom-css`;
     style.insertAdjacentHTML('afterbegin', r[this.key]);
 
     tryChecker(() => {

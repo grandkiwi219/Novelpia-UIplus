@@ -12,7 +12,7 @@ local.get([npup.keys.sync, 'custom-css']).then(r => {
 
 
 
-const { tryChecker, pathChecker, domainChecker } = npup.func;
+const { tryChecker, pathChecker, domainChecker, engineChecker, toastAlert } = npup.func;
 const observer_setup = npup.settings.observer;
 
 

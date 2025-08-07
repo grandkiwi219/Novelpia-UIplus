@@ -643,6 +643,7 @@ toast alert
     top: 0;
     right: 0;
     z-index: 1020;
+    user-select: none;
 }
 
 .npup-alert-box {

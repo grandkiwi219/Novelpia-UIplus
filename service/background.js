@@ -13,7 +13,7 @@ chrome.runtime.onInstalled.addListener(async d => {
     }
     else if (d.reason === "update") {
         await chrome.storage.local.set({ [update_key]: true });
-        /* chrome.runtime.openOptionsPage();  */
+        /* chrome.runtime.openOptionsPage(); */
     }
 });
 

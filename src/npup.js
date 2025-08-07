@@ -49,6 +49,13 @@ const npup = {
         tryChecker() {},
 
         /**
+         * 간단한 현재 시스템 엔진 이름 확인 함수
+         * @param {*} name 엔진 이름
+         * @returns {boolean}
+         */
+        engineChecker() {},
+
+        /**
          * 간단한 알림
          * @param {string} title 제목
          * @param {string} msg 메세지
@@ -159,6 +166,12 @@ npup.func.tryChecker = (func, type, not_engine, ...comment) => {
             return npup.error((type ? type + space + `${system_type} `: '') + `오류 발생.\n원인: ${err}`);
         }
     } else return npup.error('엔진을 실행할 수 없습니다.\n원인: 함수가 아닙니다.');
+}
+
+
+npup.func.engineChecker = (name) => {
+    if (!STRUCTURE) return undefined;
+    return STRUCTURE.SYSTEM.ENGINE.name == name ? true: false;
 }
 
 

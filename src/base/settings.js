@@ -388,13 +388,13 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 },
                 engine: '뷰어',
             },
-            /* 'ep-comment': {
+            'ep-comment': {
                 desc: '댓글창 열기 (뷰어)',
                 type: {
                     option: 'mapping'
                 },
                 engine: '뷰어',
-            }, */
+            },
             'move-mb': {
                 desc: '내서재로 이동',
                 type: {
@@ -431,6 +431,21 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 },
                 settings: {
                     storage: 'local'
+                }
+            },
+        }
+    },
+
+    experimental: {
+        icon: '🧬',
+        name: '실험 기능',
+        engine: 'all',
+        options: {
+            'frosted-glass': {
+                desc: '간유리(Frosted glass) 효과 적용',
+                type: {
+                    option: 'switch',
+                    structure: ['pre-common']
                 }
             },
         }

@@ -155,8 +155,8 @@ npup.options.mobile.options['top-ep'].system = function(r) {
         top_ep.firstElementChild.style = 'max-width: 585px; width: 100%; margin-top: 20px;';
         if (top_ep.children.length > 1) top_ep.lastElementChild.style.display = 'none';
 
-        const info_box = document.querySelector('.novel-info-mobile-wrapper > .info-graybox');
+        const target = document.querySelector('.epnew-mobile-btn-area-relative');
 
-        info_box.insertAdjacentElement('afterend', top_ep);
+        target.insertAdjacentElement('beforebegin', top_ep);
     }).observe(document.body, observer_setup);
 }
