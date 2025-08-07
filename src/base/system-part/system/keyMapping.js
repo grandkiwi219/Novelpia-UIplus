@@ -57,7 +57,7 @@ npup.options.mapping.options['move-mb'].system = keyMappingBase('move-mb', async
 
 function setCookie(name, value, options = {}) {
     const {
-        days = null,
+        expires = null,
         path = '/',
         domain = '',
         secure = false,
@@ -66,9 +66,9 @@ function setCookie(name, value, options = {}) {
 
     let cookieStr = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
 
-    if (days) {
+    if (expires) {
         const date = new Date();
-        date.setTime(date.getTime() + (days * 86400000));
+        date.setTime(date.getTime() + (expires * 86400000));
         cookieStr += `; expires=${date.toUTCString()}`;
     }
 
