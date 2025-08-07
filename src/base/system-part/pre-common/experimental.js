@@ -1,6 +1,7 @@
 npup.options.experimental.options['frosted-glass'].system = function (r) {
     let blur_intensity = 18;
     const box_shadow_color_page = getCookie('DARKMODE_S') ? '255, 255, 255, 0.32' : '0, 0, 0, 0.16';
+    const border_color = '200, 200, 200';
 
     let style = document.createElement('style');
     style.id = `${npup.project.prefix.css}frosted-glass-css`;
@@ -21,7 +22,7 @@ header {
 
 @media screen and (min-width: 892px) {
     .header-top-wrapper {
-        border-bottom: 1px solid rgba(200, 200, 200, 0.35) !important;
+        border-color: rgba(${border_color}, 0.35) !important;
     }
 }
 
@@ -70,6 +71,8 @@ header {
     let dark_style = undefined;
 
     if (engineChecker('페이지') && getCookie('DARKMODE_S')) {
+
+
         dark_style = document.createElement('style');
         dark_style.id = `${npup.project.prefix.css}frosted-glass-css-page-dark`;
         dark_style.insertAdjacentHTML('afterbegin', `
@@ -83,6 +86,16 @@ header,
 
     & > * {
         filter: invert(1);
+    }
+}
+
+#tab_top + table {
+    border-color: rgba(${border_color}, 0.35) !important;
+    background-color: rgba(60, 60, 60, 0.35) !important;
+
+    .active {
+        border-left: 2px solid rgba(${border_color}, 0.70) !important;
+        border-right: 2px solid rgba(${border_color}, 0.70) !important;
     }
 }
 

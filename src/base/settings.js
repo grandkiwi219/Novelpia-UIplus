@@ -419,6 +419,21 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
         }
     },
 
+    experimental: {
+        icon: '🧬',
+        name: '실험 기능',
+        engine: 'all',
+        options: {
+            'frosted-glass': {
+                desc: '간유리(Frosted glass) 효과 적용',
+                type: {
+                    option: 'switch',
+                    structure: ['pre-common']
+                }
+            },
+        }
+    },
+
     extension: {
         icon: '🪡',
         name: '확장프로그램',
@@ -435,21 +450,6 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
             },
         }
     },
-
-    experimental: {
-        icon: '🧬',
-        name: '실험 기능',
-        engine: 'all',
-        options: {
-            'frosted-glass': {
-                desc: '간유리(Frosted glass) 효과 적용',
-                type: {
-                    option: 'switch',
-                    structure: ['pre-common']
-                }
-            },
-        }
-    }
 }
 
 
