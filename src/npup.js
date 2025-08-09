@@ -1,4 +1,6 @@
 const npup = {
+    debug: false,
+
     options: {},
 
     project: {
@@ -48,6 +50,8 @@ const npup = {
          */
         tryChecker() {},
 
+        tryFunc() {},
+
         /**
          * 간단한 현재 시스템 엔진 이름 확인 함수
          * @param {*} name 엔진 이름
@@ -80,7 +84,7 @@ const npup = {
     etc: {
         hf: 'high-performance',
         laze_check_time: 100
-    }
+    },
     
 }
 
@@ -159,13 +163,38 @@ npup.func.tryChecker = (func, type, not_engine, ...comment) => {
         try {
             func();
             let log = (type ? type + space + `${system_type}(이)가 ` : '') + '실행 중입니다.';
-            if (!no_console) return;
-            else if (!comment) return npup.log(log);
-            else return npup.log(log, ...comment);
+            if (!no_console) '';
+            else if (!comment) npup.log(log);
+            else npup.log(log, ...comment);
+
+            return { status: 2, error: undefined };
         } catch (err) {
-            return npup.error((type ? type + space + `${system_type} `: '') + `오류 발생.\n원인: ${err}`);
+            npup.error((type ? type + space + `${system_type} `: '') + `오류 발생.\n원인: ${err.stack}`);
+            if (npup.debug) npup.func.toastAlert({
+                    title: `오류 발생`,
+                    msg: `'${type ? type + space + `${system_type} `: ''}'오류 발생\n원인: ${err}`,
+                    type: 'error'
+                });
+            return { status: 3, error: err };
         }
-    } else return npup.error('엔진을 실행할 수 없습니다.\n원인: 함수가 아닙니다.');
+    } else {
+        npup.error('엔진을 실행할 수 없습니다.\n원인: 함수가 아닙니다.');
+        if (npup.debug) npup.func.toastAlert({
+                    title: `오류 발생`,
+                    msg: `'${type ? type + space + `${system_type}`: ''}' 오류 발생\n원인: ${err}`,
+                    type: 'error'
+                });
+        return { status: 4, error: '실행할 함수를 찾을 수 없습니다.' };
+    }
+}
+
+
+npup.func.tryFunc = (func) => {
+    return function(...params) {
+        tryChecker(() => {
+            func(...params);
+        }, '', false);
+    }
 }
 
 
@@ -175,7 +204,7 @@ npup.func.engineChecker = (name) => {
 }
 
 
-npup.func.toastAlert = ({ title = undefined, msg }) => {
+npup.func.toastAlert = ({ title = undefined, msg, type = undefined }) => {
     let alert_container = document.getElementById(`${npup.project.prefix.css}alert-container`);
 
     if (!alert_container) {
@@ -187,6 +216,10 @@ npup.func.toastAlert = ({ title = undefined, msg }) => {
 
     const alert_box = document.createElement('div');
     alert_box.classList.add(`${npup.project.prefix.css}alert-box`);
+
+    if (type) {
+        alert_box.classList.add(type);
+    }
 
     const alert_countdown = document.createElement('div');
     alert_countdown.classList.add(`${npup.project.prefix.css}alert-countdown`);
@@ -214,10 +247,12 @@ npup.func.toastAlert = ({ title = undefined, msg }) => {
         alert_content.appendChild(alert_title);
     }
 
-    const alert_msg = document.createElement('div');
-    //alert_msg.classList.add(`${npup.project.prefix.css}alert-msg`);
-    alert_msg.textContent = msg;
-    alert_content.appendChild(alert_msg);
+    msg.split('\n').forEach(m => {
+        const alert_msg = document.createElement('div');
+        //alert_msg.classList.add(`${npup.project.prefix.css}alert-msg`);
+        alert_msg.textContent = m;
+        alert_content.appendChild(alert_msg);
+    });
 
     alert_box.appendChild(alert_icon);
     alert_box.appendChild(alert_content);

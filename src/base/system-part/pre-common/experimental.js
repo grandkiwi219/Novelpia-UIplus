@@ -9,7 +9,7 @@ npup.options.experimental.options['frosted-glass'].system = function (r) {
 header,
 #bottom-nav-bar,
 #header_bar, #footer_bar,
-.last-ep-alarm, .npup-alert-box
+.last-ep-alarm
 {
     background-color: rgba(255, 255, 255, 0.35) !important;
     backdrop-filter: blur(${blur_intensity}px);
@@ -18,6 +18,10 @@ header,
 header {
     border: none !important;
     ${window.location.pathname == "/" ? '' : `box-shadow: rgba(${box_shadow_color_page}) 0px 1px 4px 0px;`}
+}
+
+#search_input {
+    background-color: rgba(255, 255, 255, 0);
 }
 
 @media screen and (min-width: 892px) {
@@ -59,10 +63,10 @@ header {
         home_style.insertAdjacentHTML('afterbegin', box_shadow_lock);
 
         document.addEventListener('scroll', () => {
-            if (window.scrollY > 10) {
+            if (window.scrollY > 10 && home_style.textContent != box_shadow) {
                 home_style.textContent = box_shadow;
             }
-            else {
+            else if (window.scrollY <= 10  && home_style.textContent != box_shadow_lock){
                 home_style.textContent = box_shadow_lock;
             }
         });

@@ -1,18 +1,24 @@
 let storage = chrome.storage.sync;
 const local = chrome.storage.local;
+let storage_type = 'sync';
 
-local.get([npup.keys.sync, 'custom-css']).then(r => {
+local.get([npup.keys.sync]).then(r => {
     if (!r[npup.keys.sync] && typeof r[npup.keys.sync] != 'boolean')
         local.set({ [npup.keys.sync]: true });
     else if (!r[npup.keys.sync]) {
-        storage = local;
+        storage = local, storage_type = 'local', storage_changed = true;
     } 
     ready(r);
 });
 
+local.get(['debug-mode']).then(r => {
+    if (r['debug-mode'])
+        npup.debug = true;
+});
 
 
-const { tryChecker, pathChecker, domainChecker, engineChecker, toastAlert } = npup.func;
+
+const { tryChecker, pathChecker, domainChecker, engineChecker, toastAlert, tryFunc } = npup.func;
 const observer_setup = npup.settings.observer;
 
 
@@ -102,9 +108,18 @@ class EngineStructure {
 
     #engine = {
         SWITCH: (r) => {
-            this.#getKeys().forEach(key =>{
-                if (r[key])
+            this.#getKeys().forEach(async key =>{
+                const system_structure = this.getSystemStructure(key);
+
+                const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+
+                if (r[key] && !system_check)
                     html.setAttribute(npup.project.prefix.css + key, '');
+                else if (system_check) {
+                    if (await local.get([key])[key])
+                        html.setAttribute(npup.project.prefix.css + key, '');
+                } else 
+                    return;
 
                 const addons = this.#getAddons(key);
 
@@ -115,20 +130,42 @@ class EngineStructure {
             });
         },
         SELECTOR: (r) => {
-            this.#getKeys().forEach(key => {
-                if (r[key] && r[key] != this.getSystemStructure(key).options[0])
-                    html.setAttribute(npup.project.prefix.css + key, r[key]);
+            this.#getKeys().forEach(async key => {
+                const system_structure = this.getSystemStructure(key);
+
+                const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+
+                if (!r[key] || system_check) {
+                    if (system_check) {
+                        r = await local.get([key]);
+
+                        if (!r[key]) return;
+                    } else return;
+                }
+
+                if (r[key] == system_structure.options[0]) return;
+
+                html.setAttribute(npup.project.prefix.css + key, r[key]);
             });
         },
         SYSTEM: (r) => {
-            this.#getKeys().forEach(key => {
-                if (!r[key]) return;
+            this.#getKeys().forEach(async key => {
+                const system_structure = this.getSystemStructure(key);
 
-                const this_options = this.getSystemStructure(key).options;
-                if (this_options.length && r[key] == this_options[0]) return;
+                const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+
+                if (!r[key] || system_check) {
+                    if (system_check) { 
+                        r = await local.get([key]);
+
+                        if (!r[key]) return;
+                    } else return;
+                }
+
+                if (system_structure.options.length && r[key] == system_structure.options[0]) return;
 
                 tryChecker(() => {
-                    this.getSystemStructure(key)
+                    system_structure
                         .system(r);
                 }, key, false);
             });
@@ -233,7 +270,7 @@ class SystemStructure {
      * @param {string} key data key name
      * @param {string} types  (STRUCTURE.TYPES) switch | selector | system
      */
-    constructor(key, ...types) {
+    constructor(key, types, settings) {
         this.key = typeof key == 'string' && key ? key.trim() : undefined;
         /**
          * @type {Addons[]} 
@@ -241,8 +278,10 @@ class SystemStructure {
         this.addons = [];
         this.description = undefined;
         this.types = types;
-        this.system = () => { return undefined };
+        this.system = () => { return /* npup.dev(`The system for "${this.key}" could not find`) */; };
         this.options = [];
+
+        this.settings = settings;
     }
 
     /**
@@ -335,14 +374,18 @@ function scriptInjection(path) {
     document.head.appendChild(script);
 }
 
+let basic_use_system = {};
+
 /**
  * basically use system about key
  * @param {string} key system key
  * @param {*} r 
  */
 function basicUseSystem(key, r, ...settings) {
-    if (!r[key])
-        searchSystem(key, r, ...settings);
+    if (!r[key] && !basic_use_system[key]) {
+        basic_use_system[key] = true;
+        searchSystem(key).system(r, ...settings);
+    }
 }
 
 /**
@@ -350,9 +393,9 @@ function basicUseSystem(key, r, ...settings) {
  * @param {string} key system key
  * @param {*} r 
  */
-function searchSystem(key, r, ...settings) {
+function searchSystem(key) {
     if (!key || typeof key != 'string') return npup.error('키 값이 없거나 문자열 형식이 아닙니다.');
     const data = STRUCTURE.SYSTEM.ENGINE.getSystemStructure(key);
     if (!data.key) return npup.error('옵션을 찾을 수 없는 키 값 입니다.');
-    data.system(r, ...settings);
+    return data;
 }

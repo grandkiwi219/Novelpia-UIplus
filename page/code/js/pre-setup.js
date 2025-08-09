@@ -17,12 +17,17 @@ const sun = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -2.5 22 19">'
 
 
 // 로딩 전 다크모드 여부 확인
-local.get(['dark']).then(r => {
-    if (!r.dark && typeof r.dark == 'boolean') {
-        document.getElementsByTagName('html')[0].setAttribute('dark', 'false');
+try {
+    let dark = JSON.parse(localStorage.dark);
+
+    if (!dark) {
+        document.getElementsByTagName('html')[0]
+            .setAttribute('dark', 'false');
         prevDark = false;
-    }
-});
+    } 
+} catch (error) {
+    localStorage.dark = 1;
+}
 
 // 로딩 전 로컬 스토리지의 싱크 키 존재 유무 확인
 local.get([sync_key]).then(r => {

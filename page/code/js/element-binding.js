@@ -18,14 +18,14 @@ class SettingSwitch extends HTMLElement {
         let center = document.createElement('div');
         let setting_switch = document.createElement('button');
         let key = this.getAttribute('key');
-        let storage_type = this.getAttribute('storage');
+        let local_storage = this.getAttribute('local');
 
         center.className = 'center';
         this.appendChild(center);
         center.appendChild(setting_switch);
         setting_switch.className='switch';
 
-        let ss_storage = storage_type == 'local' ? local : storage;
+        let ss_storage = local_storage == 'true' ? local : storage;
 
         ss_storage.get([key]).then(r => {
             r[key] ? setting_switch.setAttribute('check', 'true') : setting_switch.setAttribute('check', 'false');
@@ -46,7 +46,7 @@ class SettingSelect extends HTMLElement {
         this.innerHTML = '';
 
         let key = this.getAttribute('key');
-        let storage_type = this.getAttribute('storage');
+        let local_storage = this.getAttribute('local');
 
         let selector = document.createElement('div');
         selector.classList.add('selector');
@@ -86,7 +86,7 @@ class SettingSelect extends HTMLElement {
         selector_list_wrap.appendChild(selector_list);
         selector.appendChild(selector_list_wrap);
 
-        let ss_storage = storage_type == 'local' ? local : storage;
+        let ss_storage = local_storage == 'true' ? local : storage;
 
         ss_storage.get([key]).then(r => {
             if (r[key]) {
@@ -124,7 +124,7 @@ class SettingTextarea extends HTMLElement {
         ta.placeholder = placeholder;
         ta.name = key;
 
-        const storage_type = this.getAttribute('storage'), ss_storage = storage_type == 'local' ? local : storage;
+        const local_storage = this.getAttribute('local'), ss_storage = local_storage == 'true' ? local : storage;
         ss_storage.get([key]).then(r => typeof r[key] == 'string' ? ta.value = r[key] : (ta.value = value, ss_storage.set({ [key]: value })));
 
         ta_wrap.appendChild(ta);
@@ -148,7 +148,7 @@ customElements.define('setting-textarea', SettingTextarea);
 class SettingMapping extends HTMLElement {
     connectedCallback() {
         let key = this.getAttribute('key');
-        let storage_type = this.getAttribute('storage');
+        let local_storage = this.getAttribute('local');
 
         let center = document.createElement('div');
         center.classList.add('center');
@@ -175,7 +175,7 @@ class SettingMapping extends HTMLElement {
         center.appendChild(wrap);
         this.appendChild(center);
 
-        let ss_storage = storage_type == 'local' ? local : storage;
+        let ss_storage = local_storage == 'true' ? local : storage;
 
         ss_storage.get([key]).then(r => {
             if (r[key] && (r[key].code || r[key].key)) {

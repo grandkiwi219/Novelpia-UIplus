@@ -185,8 +185,10 @@ id
         border-radius: var(--border-normal-radius);
         transition: var(--theme-header-transition);
 
-        &:hover {
-            background-color: var(--dark-hb-hover);
+        @media (hover: hover) and (pointer: fine) {
+            &:hover {
+                background-color: var(--dark-hb-hover);
+            }
         }
 
         &:active {
@@ -205,8 +207,10 @@ html[dark=true] #update-banner {
 
     .update-button {
 
-        &:hover {
-            background-color: var(--bright-hb-hover);
+        @media (hover: hover) and (pointer: fine) {
+            &:hover {
+                background-color: var(--bright-hb-hover);
+            }
         }
     
         &:active {
@@ -272,8 +276,10 @@ html[dark='true'] .chucheon {
         padding: 7px;
     }
 
-    &:hover {
-        background-color: var(--header-button-hover);
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            background-color: var(--header-button-hover);
+        }
     }
 
     &:active {
@@ -324,8 +330,10 @@ button.header-button {
     font-family: var(--head-font);
 }
 
-.header-button:hover {
-    background-color: var(--header-button-hover);
+@media (hover: hover) and (pointer: fine) {
+    .header-button:hover {
+        background-color: var(--header-button-hover);
+    }
 }
 
 .header-button:active {
@@ -654,8 +662,10 @@ html[dark=true] .selector {
     transition: background-color .24s;
 }
 
-.selector-option:hover {
-    background-color: var(--gradation-purple);
+@media (hover: hover) and (pointer: fine) {
+    .selector-option:hover {
+        background-color: var(--gradation-purple);
+    }
 }
 
 .selector-option:active {
@@ -760,8 +770,14 @@ html[dark=true] .text-area-wrap > textarea::placeholder {
     left: -10px;
 }
 
-.text-area-submit:hover::before {
-    animation: textarea-bgc-rotate var(--textarea-transition-slow-speed) linear 0s infinite reverse;
+@media (hover: hover) and (pointer: fine) {
+    .text-area-submit:hover::before {
+        animation: textarea-bgc-rotate var(--textarea-transition-slow-speed) linear 0s infinite reverse;
+    }
+
+    .text-area-submit:not(.tas-active):hover::after {
+        content: '저장?';
+    }
 }
 
 .text-area-submit::after {
@@ -781,10 +797,6 @@ html[dark=true] .text-area-wrap > textarea::placeholder {
 
 .text-area-submit:not(.tas-active)::after {
     content: '저장';
-}
-
-.text-area-submit:not(.tas-active):hover::after {
-    content: '저장?';
 }
 
 .tas-black {
@@ -883,9 +895,17 @@ html[dark=true] .mapping-nothing {
         height: var(--mapping-cancel-size);
     }
 
-    &:hover {
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            svg {
+                transform: scale(115%);
+            }
+        }
+    }
+
+    &:active {
         svg {
-            transform: scale(115%);
+            transform: scale(130%);
         }
     }
 }

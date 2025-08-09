@@ -1,7 +1,6 @@
 // 옵션 페이지 다크 모드
 const headerThemeButton = document.getElementById('theme');
 const html = document.querySelector('html');
-//const prevDark = html.getAttribute('dark');
 
 
 
@@ -13,11 +12,11 @@ headerThemeButton.addEventListener('click', function () {
     if (currentDark == 'true') {
         html.setAttribute('dark', 'false');
         headerThemeButton.innerHTML = moon;
-        local.set({ dark: false });
+        localStorage.dark = 0;
     } else {
         html.setAttribute('dark', 'true');
         headerThemeButton.innerHTML = sun;
-        local.set({ dark: true });
+        localStorage.dark = 1;
     }
 });
 

@@ -46,13 +46,13 @@ npup.options.other.options['notice'].system = function(r) {
 npup.options.other.options['last-ep'].system = async function(r) {
     if (r['last-ep-home'] && window.location.pathname != "/") return;
 
-    const last_ep_timestamp = 'last-ep-timestamp';
+    let cooltime;
 
-    let cooltime = false;
-
-    await local.get([last_ep_timestamp]).then(rt => {
-        cooltime = rt[last_ep_timestamp];
-    });
+    try {
+        cooltime = JSON.parse(localStorage.last_episode_timestamp);
+    } catch (error) {
+        cooltime = null;
+    }
 
     const current = new Date().getTime()
 
@@ -65,6 +65,8 @@ npup.options.other.options['last-ep'].system = async function(r) {
 
         return npup.log(`알림 쿨타임 남은 시간: ${hours}시간 ${minutes}분 ${seconds}초`);
     }
+
+    localStorage.removeItem('last_episode_timestamp');
 
     const data = JSON.parse(localStorage.last_episode); 
     
@@ -147,6 +149,6 @@ npup.options.other.options['last-ep'].system = async function(r) {
 
         timestamp.setMinutes(timestamp.getMinutes() + add_time);
 
-        local.set({ [last_ep_timestamp]: timestamp.getTime() });
+        localStorage.last_episode_timestamp = JSON.stringify(timestamp.getTime());
     });
 }

@@ -70,7 +70,7 @@ npup.options.nav.options.nav.system = function(r) {
         clearTimeout(timer);
         timer = setTimeout(function () {
             if (window.innerWidth > 891 && !header_position)
-                headerLocation(r[l.nav_align], nav), header_position = true;
+                headerLocation(r['nav-align'], nav), header_position = true;
 
             else if (window.innerWidth <= 891 && header_position)
                 navLocation(nav), header_position = false;

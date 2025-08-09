@@ -13,28 +13,39 @@ function ready(r) {
     // --- Head Common Engine ---
     STRUCTURE.PRE_COMMON.ENGINE.on();
 
+    // --- body checker ---
+    if (document.body) {
+        start();
+    } else {
+        new MutationObserver((mus, ob) => {
+            for (const mu of mus) for (const node of mu.addedNodes)
+                if (node.localName === 'body') {
+                    start();
+
+                    return ob.disconnect();
+                }
+        }).observe(html, { childList: true });
+    }
+
     // --- initial-setup injection ---
     scriptInjection('src/npup.js');
 }
 
+function start() {
+    // --- Body Common Engine ---
+    STRUCTURE.COMMON.ENGINE.on();
 
+    // --- System Engine ---
+    if (!STRUCTURE.SYSTEM.ENGINE.name) npup.log('개별 엔진이 존재하지 않는 페이지입니다.');
+    else STRUCTURE.SYSTEM.ENGINE.on();
 
+    additionalExecution();
+}
 
-
-
-// --- body checker ---
-let engine = STRUCTURE.SYSTEM.ENGINE;
-
-new MutationObserver((mus, ob) => {
-    for (const mu of mus) for (const node of mu.addedNodes)
-        if (node.localName === 'body') {
-            // --- Body Common Engine ---
-            STRUCTURE.COMMON.ENGINE.on();
-
-            // --- System Engine ---
-            if (!engine.name) npup.log('개별 엔진이 존재하지 않는 페이지입니다.');
-            else engine.on();
-
-            return ob.disconnect();
-        }
-}).observe(html, { childList: true });
+function additionalExecution() {
+    try {
+        if (JSON.parse(localStorage.secret_alert))
+            toastAlert({ title: '시크릿 모드', msg: '시크릿 모드가 켜졌습니다.' });
+        delete localStorage.secret_alert;
+    } catch (e) {}
+}

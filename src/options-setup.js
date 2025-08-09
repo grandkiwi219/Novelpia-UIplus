@@ -30,7 +30,7 @@ function optionBinding(ca, op) {
 
     if (opbi_types.length < 1) return;
 
-    let opbi = new SystemStructure(op.key, ...opbi_types)
+    let opbi = new SystemStructure(op.key, opbi_types, op.settings)
         .setDescription(op.desc);
 
     if (op.values?.length /* && op.type.structure?.includes(STRUCTURE.SELECTOR.TYPE) */) {

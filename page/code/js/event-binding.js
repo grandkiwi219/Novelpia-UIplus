@@ -3,9 +3,9 @@ document.querySelectorAll('.switch').forEach(r => {
     r.addEventListener('click', () => {
         let key = r.parentElement.parentElement.getAttribute('key');
 
-        let storage_type = r.parentElement.parentElement.getAttribute('storage');
+        let local_storage = r.parentElement.parentElement.getAttribute('local');
 
-        let ss_storage = storage_type == 'local' ? local : storage;
+        let ss_storage = local_storage == 'true' ? local : storage;
 
         ss_storage.get([key]).then(s => {
             if (s[key] == true) {
@@ -50,11 +50,11 @@ document.querySelectorAll('.selector-option').forEach(r => {
     r.addEventListener('click', () => {
         let selector = r.parentElement.parentElement.parentElement;
         let key = selector.parentElement.getAttribute('key');
-        let storage_type = selector.parentElement.getAttribute('storage');
+        let local_storage = selector.parentElement.getAttribute('local');
         let value = r.getAttribute('value');
         let value_name = r.innerHTML;
 
-        let ss_storage = storage_type == 'local' ? local : storage;
+        let ss_storage = local_storage == 'true' ? local : storage;
 
         ss_storage.get([key]).then(() => {
             ss_storage.set({ [key]: value });
@@ -78,8 +78,8 @@ document.querySelectorAll('.text-area-submit').forEach(r => {
         const textarea = setting.querySelector('textarea');
         const value = textarea.value;
 
-        const storage_type = setting.getAttribute('storage');
-        const ss_storage = storage_type == 'local' ? local : storage;
+        const local_storage = setting.getAttribute('local');
+        const ss_storage = local_storage == 'true' ? local : storage;
 
         ss_storage.get([key]).then(() => {
             ss_storage.set({ [key]: value });
@@ -106,6 +106,43 @@ function saveSuccess(r, black, active) {
 
 
 // 세팅 매핑
+document.addEventListener('keydown', async e => {
+    const target = document.activeElement;
+    if (!target.classList.contains('mapping')) return;
+
+    e.preventDefault();
+
+    const setting = target.parentElement.parentElement.parentElement;
+    const key = setting.getAttribute('key');
+    const local_storage = setting.getAttribute('local');
+    const ss_storage = local_storage == 'true' ? local : storage;
+
+    await ss_storage.get([key]).then(() => {
+        ss_storage.set({ [key]: { code: e.code, key: e.key } });
+    });
+
+    target.textContent = wordMapping(e);
+});
+
+document.addEventListener('click', async e => {
+    document.querySelectorAll('.mapping-cancel').forEach(async r => {
+        let is_click = r.contains(e.target);
+
+        if (!is_click) return;
+
+        const setting = r.parentElement.parentElement.parentElement;
+        const key = setting.getAttribute('key');
+        const local_storage = setting.getAttribute('local');
+        const ss_storage = local_storage == 'true' ? local : storage;
+
+        await ss_storage.get([key]).then(() => {
+            ss_storage.set({ [key]: { code: undefined, key: undefined } });
+        });
+
+        r.previousElementSibling.innerHTML = `<div class="mapping-nothing">설정 필요</div>`;
+    }); 
+});
+
 function wordMapping(e) {
     let input_key = e.code ? (
         e.code
@@ -159,40 +196,3 @@ function wordMapping(e) {
 
     return input_key.replace('Num', 'Num ');
 }
-
-document.addEventListener('keydown', async e => {
-    const target = document.activeElement;
-    if (!target.classList.contains('mapping')) return;
-
-    e.preventDefault();
-
-    const setting = target.parentElement.parentElement.parentElement;
-    const key = setting.getAttribute('key');
-    const storage_type = setting.getAttribute('storage');
-    const ss_storage = storage_type == 'local' ? local : storage;
-
-    await ss_storage.get([key]).then(() => {
-        ss_storage.set({ [key]: { code: e.code, key: e.key } });
-    });
-
-    target.textContent = wordMapping(e);
-});
-
-document.addEventListener('click', async e => {
-    document.querySelectorAll('.mapping-cancel').forEach(async r => {
-        let is_click = r.contains(e.target);
-
-        if (!is_click) return;
-
-        const setting = r.parentElement.parentElement.parentElement;
-        const key = setting.getAttribute('key');
-        const storage_type = setting.getAttribute('storage');
-        const ss_storage = storage_type == 'local' ? local : storage;
-
-        await ss_storage.get([key]).then(() => {
-            ss_storage.set({ [key]: { code: undefined, key: undefined } });
-        });
-
-        r.previousElementSibling.innerHTML = `<div class="mapping-nothing">설정 필요</div>`;
-    }); 
-});

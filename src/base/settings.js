@@ -175,9 +175,15 @@ npup.options = { ...npup.options,
                     option: 'switch',
                     structure: ['switch', 'system']
                 },
-                addons: [
-                    { type: 'system', keys: ['bottom-nav'] }
-                ]
+                options: {
+                    'scroll-hidden-header': {
+                        desc: '스크롤 시 헤더 숨김',
+                        type: {
+                            option: 'switch',
+                            structure: ['system']
+                        },
+                    },
+                }
             },
             'bottom-nav': {
                 desc: '하단 내비게이션 삭제 (기본적으로 기존 헤더로 변경)',
@@ -367,7 +373,39 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
         name: '조작',
         engine: 'all',
         options: {
+            'quick-mapping-menu': {
+                tag: {                                // 다른 함수들에 쓰일지 말지 자율적으로 
+                    quick_mapping_menu: false
+                },
+                desc: '조작 퀵 메뉴',
+                type: {
+                    option: 'selector',    
+                    structure: ['selector', 'system']
+                },
+                values: [
+                    { name: '사용 안함', value: 'normal' },
+                    { name: '오른쪽 위', value: 'right-top' },
+                    { name: '오른쪽 아래', value: 'right-bottom' },
+                    { name: '왼쪽 위', value: 'left-top' },
+                    { name: '왼쪽 아래', value: 'right-bottom' },
+                ],
+                options: {
+                    'quick-mapping-menu-viewer': {
+                        desc: '뷰어에서도 사용',
+                        type: {
+                            option: 'switch',
+                            structure: ['system']
+                        }
+                    }
+                },
+                settings: {
+                    local: true
+                }
+            },
             'after-ep': {
+                tag: {
+                    quick_mapping_menu: false
+                },
                 desc: '다음화로 가기 (뷰어)',
                 type: {
                     option: 'mapping'
@@ -375,6 +413,9 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 engine: '뷰어',
             },
             'before-ep': {
+                tag: {
+                    quick_mapping_menu: false
+                },
                 desc: '이전화로 가기 (뷰어)',
                 type: {
                     option: 'mapping'
@@ -382,6 +423,9 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 engine: '뷰어',
             },
             'ep-home': {
+                tag: {
+                    quick_mapping_menu: false
+                },
                 desc: '소설 페이지로 이동 (뷰어)',
                 type: {
                     option: 'mapping'
@@ -389,6 +433,9 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 engine: '뷰어',
             },
             'ep-comment': {
+                tag: {
+                    quick_mapping_menu: false
+                },
                 desc: '댓글창 열기 (뷰어)',
                 type: {
                     option: 'mapping'
@@ -396,19 +443,37 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 engine: '뷰어',
             },
             'move-mb': {
+                tag: {
+                    quick_mapping_menu: false
+                },
                 desc: '내서재로 이동',
                 type: {
                     option: 'mapping'
                 },
             },
             'page-dark': {
-                desc: '노벨피아 다크모드 사용',
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '노벨피아 \'다크모드\' 사용',
                 type: {
                     option: 'mapping'
                 },
             },
             'viewer-dark': {
-                desc: '노벨피아 뷰어 다크모드 사용',
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '노벨피아 \'뷰어 다크모드\' 사용',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'secret': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '노벨피아 \'시크릿 모드\' 사용',
                 type: {
                     option: 'mapping'
                 },
@@ -445,7 +510,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                     option: 'switch'
                 },
                 settings: {
-                    storage: 'local'
+                    local: true
                 }
             },
         }

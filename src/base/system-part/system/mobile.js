@@ -1,8 +1,66 @@
 npup.options.mobile.options['bottom-nav'].system = function (r) {
     basicUseSystem('origin-header', r);
-    basicUseSystem('bottom-heart-alarm', r);
 }
 
+
+
+
+npup.options.mobile.options['origin-header'].options['scroll-hidden-header'].system = function(r) {
+    if (!r['origin-header'] && !r['bottom-nav']) return;
+
+    const header = document.querySelector('header.mobile_hidden');
+
+    header.style.top = 0;
+
+    let scrollY = window.scrollY;
+
+    window.addEventListener('DOMContentLoaded', () => {    
+        document.addEventListener('scroll', () => {
+            if (window.innerWidth >= 892) {
+                header.style.top = '0px';
+                scrollY = window.scrollY;
+                return;
+            }
+
+            const scroll_gap = window.scrollY - scrollY;
+            scrollY = window.scrollY;
+
+            let header_top = parseFloat(header.style.top) || 0;
+            const header_height = getHeaderHeight(header);
+            const header_calc = header_top - scroll_gap;
+
+            if (scroll_gap > 0 && window.scrollY > 0) { // scroll up
+                if (header_top == -header_height) return;
+                header_top = header_calc < -header_height ? -header_height : header_calc;
+            }
+            else if (scroll_gap < 0) { // scroll down
+                if (header_top == 0) return;
+                header_top = header_calc > 0 ? 0 : header_calc;
+            }
+
+            if (pathChecker('/novel/')) {
+                const menu_tap = document.getElementsByClassName('menu_alarm_m')[0];
+                const menu_tap_calc = header.getBoundingClientRect().height - 1 + header_top;
+                menu_tap.style.setProperty('top', `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`, 'important');
+            }
+
+            header.style.top = `${header_top}px`;
+        });
+        scrollY = window.scrollY;
+    });
+}
+
+function getHeaderHeight(el) {
+    const shadow = getComputedStyle(el).boxShadow;
+
+    if (!shadow || shadow == 'none')
+        return el.getBoundingClientRect().height;
+
+    const match = shadow.match(/(-?\d+px)/g) || [];
+    const height =  parseFloat(match[1]), blur = parseFloat(match[2]), spread = parseFloat(match[3]);
+
+    return el.getBoundingClientRect().height + height + (blur + spread) * 2;
+}
 
 
 
@@ -143,7 +201,7 @@ function widthObserver(continue_ep, style) {
 npup.options.mobile.options['top-ep'].system = function(r) {
     if (!pathChecker('/novel')) return;
 
-    new MutationObserver((mus, ob) => {
+    new MutationObserver(tryFunc((mus, ob) => {
         const continue_ep_mobile = document.getElementsByClassName('btn-view-run')[0];
 
         if (!continue_ep_mobile) return;
@@ -158,5 +216,5 @@ npup.options.mobile.options['top-ep'].system = function(r) {
         const target = document.querySelector('.epnew-mobile-btn-area-relative');
 
         target.insertAdjacentElement('beforebegin', top_ep);
-    }).observe(document.body, observer_setup);
+    })).observe(document.body, observer_setup);
 }

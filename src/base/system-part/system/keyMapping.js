@@ -1,5 +1,17 @@
-function keyMappingBase(key, callback) {
-    return function(r) {
+function keyMappingBase(callback) {
+    return function(r, quick_mapping_menu = false) {
+        if (quick_mapping_menu) {
+            const result = tryChecker(() => {
+                callback(r);
+            }, `<keyMappingBase - quick-mapping-menu> ${this.key}`, false);
+            if (result.status != 2) toastAlert({
+                    title: `오류 발생 | ${this.key}`,
+                    msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
+                    type: 'error'
+                });
+            return;
+        }
+        
         document.addEventListener('keydown', e => {
             const active = document.activeElement;
 
@@ -9,38 +21,81 @@ function keyMappingBase(key, callback) {
                 active.isContentEditable
             ) return;
 
-            if (e.code != r[key].code) 
-                if (e.key != r[key].key) return;
+            const key_match = e.code != r[this.key].code && e.key != r[this.key].key;
+            if (
+                (key_match) ||
+                (!key_match && (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey))
+            ) return
 
             e.preventDefault();
 
-            tryChecker(() => {
+            const result = tryChecker(() => {
                 callback(r);
-            }, `<keyMappingBase> ${key}`, false);
+            }, `<keyMappingBase> ${this.key}`, false);
+
+            if (result.status != 2) toastAlert({
+                    title: `오류 발생 | ${this.key}`,
+                    msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
+                    type: 'error'
+                });
         });
     }
 }
 
-npup.options.mapping.options['after-ep'].system = keyMappingBase('after-ep', r => {
+npup.options.mapping.options['quick-mapping-menu'].system = function(r) {
+    const menu_wrap = document.createElement('div');
+    menu_wrap.classList.add(`${npup.project.prefix.css}qmm-wrap`);
+    menu_wrap.classList.add(`s_inv`);
+
+    const menu_btn = document.createElement('div');
+    menu_btn.classList.add(`${npup.project.prefix.css}qmm`); 
+    const list_color = 'black';
+    menu_btn.innerHTML = ``
+        + `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">`
+            + `<circle cx="4" cy="6" r="1.5" fill="${list_color}" />`
+            + `<rect x="7" y="5" width="13" height="2" rx="1" fill="${list_color}" />`
+
+            + `<circle cx="4" cy="12" r="1.5" fill="${list_color}" />`
+            + `<rect x="7" y="11" width="13" height="2" rx="1" fill="${list_color}" />`
+
+            + `<circle cx="4" cy="18" r="1.5" fill="${list_color}" />`
+            + `<rect x="7" y="17" width="13" height="2" rx="1" fill="${list_color}" />`
+        + `</svg>`;
+
+    menu_wrap.appendChild(menu_btn);    
+    document.body.appendChild(menu_wrap);
+}
+
+npup.options.mapping.options['after-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-next-item')[0].click();
 });
 
-npup.options.mapping.options['before-ep'].system = keyMappingBase('before-ep', r => {
+npup.options.mapping.options['before-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-bottom-item')[0].click();
 });
 
-npup.options.mapping.options['ep-home'].system = keyMappingBase('ep-home', r => {
+npup.options.mapping.options['ep-home'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-top-home')[0].click();
 });
 
-npup.options.mapping.options['ep-comment'].system = keyMappingBase('ep-comment', r => { 
+npup.options.mapping.options['ep-comment'].system = keyMappingBase(r => {
+/*     if (document.getElementById('header_bar').style.display != 'block')
+        document.getElementById('novel_drawing').click();
+
+    let comment_display = false;
+    if (document.getElementById('comment_box').style.display != 'none')
+        comment_display = true; */
+
     if (r['old-icon']) 
         document.getElementsByClassName('comment-ep')[0].click();
     else 
         document.getElementsByClassName('menu-bottom-item')[3].click();
+/* 
+    if (comment_display)
+        setTimeout(() => document.getElementById('novel_drawing').click(), 100); */
 });
 
-npup.options.mapping.options['move-mb'].system = keyMappingBase('move-mb', async r => {
+npup.options.mapping.options['move-mb'].system = keyMappingBase(async r => {
     let where_href;
 
     if (STRUCTURE.SYSTEM.ENGINE.name == '페이지')
@@ -116,7 +171,7 @@ const base_domain = '.novelpia.com';
 
 function toggleCookie(name, domain = base_domain) {
     if (getCookie(name)) {
-        setCookie(name, '', { expires: 365, path: '/', domain: domain});
+        removeCookie(name, {path: '/', domain: domain});
         return false;
     } else {
         setCookie(name, 1, { expires: 365, path: '/', domain: domain});
@@ -124,7 +179,7 @@ function toggleCookie(name, domain = base_domain) {
     }
 }
 
-npup.options.mapping.options['page-dark'].system = keyMappingBase('page-dark', r => {
+npup.options.mapping.options['page-dark'].system = keyMappingBase(r => {
     const result = toggleCookie('DARKMODE_S');
 
     if (engineChecker('페이지')) 
@@ -133,11 +188,17 @@ npup.options.mapping.options['page-dark'].system = keyMappingBase('page-dark', r
         toastAlert({ title: '다크모드', msg: `다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });
 
-npup.options.mapping.options['viewer-dark'].system = keyMappingBase('viewer-dark', r => {
+npup.options.mapping.options['viewer-dark'].system = keyMappingBase(r => {
     const result = toggleCookie('DARKMODE');
 
     if (engineChecker('뷰어')) 
         location.reload();
     else 
         toastAlert({ title: '뷰어 다크모드', msg: `뷰어 다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
+});
+
+npup.options.mapping.options['secret'].system = keyMappingBase(r => {
+    const result = toggleCookie('secret_mode');
+    location.reload();
+    if (result) localStorage.secret_alert = true;
 });
