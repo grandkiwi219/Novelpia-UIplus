@@ -385,9 +385,11 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 values: [
                     { name: '사용 안함', value: 'normal' },
                     { name: '오른쪽 위', value: 'right-top' },
+                    { name: '오른쪽 중앙', value: 'right-center' },
                     { name: '오른쪽 아래', value: 'right-bottom' },
                     { name: '왼쪽 위', value: 'left-top' },
-                    { name: '왼쪽 아래', value: 'right-bottom' },
+                    { name: '왼쪽 중앙', value: 'left-center' },
+                    { name: '왼쪽 아래', value: 'left-bottom' },
                 ],
                 options: {
                     'quick-mapping-menu-viewer': {

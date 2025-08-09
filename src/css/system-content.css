@@ -788,8 +788,9 @@ quick mapping menu
 */
 
 .npup-qmm-wrap {
-    --npup-qmm-wrap-top: 250px;
+    --npup-qmm-wrap-top: 230px;
     --npup-qmm-wrap-bottom: 80px;
+    --npup-qmm-wrap-center: 40%;
     --npup-qmm-btn-size: 44px;
 
     --npup-qmm-wrap-right-left: 20px;
@@ -797,8 +798,8 @@ quick mapping menu
     width: fit-content;
     height: fit-content;
     position: fixed;
-
     z-index: 999;
+    transition: all .3s;
 
     @media screen and (max-width: 400px) {
         --npup-qmm-wrap-bottom: 134px;
@@ -818,6 +819,11 @@ quick mapping menu
         top: var(--npup-qmm-wrap-top);
     }
 
+    html[npup-quick-mapping-menu=right-center] & {
+        right: var(--npup-qmm-wrap-right-left);
+        bottom: var(--npup-qmm-wrap-center);
+    }
+
     html[npup-quick-mapping-menu=right-bottom] & {
         right: var(--npup-qmm-wrap-right-left);
         bottom: var(--npup-qmm-wrap-bottom);
@@ -826,6 +832,11 @@ quick mapping menu
     html[npup-quick-mapping-menu=left-top] & {
         left: var(--npup-qmm-wrap-right-left);
         top: var(--npup-qmm-wrap-top);
+    }
+
+    html[npup-quick-mapping-menu=left-center] & {
+        right: var(--npup-qmm-wrap-right-left);
+        bottom: var(--npup-qmm-wrap-center);
     }
 
     html[npup-quick-mapping-menu=left-bottom] & {
