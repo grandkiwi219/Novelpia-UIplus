@@ -12,8 +12,14 @@ local.get([npup.keys.sync]).then(r => {
 });
 
 local.get(['debug-mode']).then(r => {
-    if (r['debug-mode'])
-        npup.debug = true;
+    npup.debug = r['debug-mode'];
+    /* 
+    {
+        alert: true,
+        storage: true,
+        key: true
+    }
+    */
 });
 
 
@@ -85,6 +91,8 @@ class EngineStructure {
      */
     on() {
         return storage.get(this.#getAllKeys()).then(r => {
+            this.#debugStorage(r);
+
             switch (this.type) {
                 case ENGINE_TYPE.SYSTEM:
                     if (this.system_tryChecker)
@@ -150,6 +158,8 @@ class EngineStructure {
         },
         SYSTEM: (r) => {
             this.#getKeys().forEach(async key => {
+                this.#debugKey(key);
+
                 const system_structure = this.getSystemStructure(key);
 
                 const system_check = (storage_type == 'sync' && system_structure.settings?.local);
@@ -157,6 +167,8 @@ class EngineStructure {
                 if (!r[key] || system_check) {
                     if (system_check) { 
                         r = await local.get([key]);
+
+                        this.#debugStorage(r, true);
 
                         if (!r[key]) return;
                     } else return;
@@ -171,6 +183,16 @@ class EngineStructure {
             });
         }
     };
+
+    #debugStorage(r, local) {
+        if (npup.debug?.storage)
+            npup.dev(`${this.name} ${storage_type} storage value${local ? ' (local) ' : ' '}------------\n`, r);
+    }
+
+    #debugKey(key) {
+        if (npup.debug?.key)
+            npup.dev(key, this.getSystemStructure(key));
+    }
 
     /**
      * Function to retrieve key values ​​from extension storage
@@ -393,9 +415,25 @@ function basicUseSystem(key, r, ...settings) {
  * @param {string} key system key
  * @param {*} r 
  */
-function searchSystem(key) {
-    if (!key || typeof key != 'string') return npup.error('키 값이 없거나 문자열 형식이 아닙니다.');
-    const data = STRUCTURE.SYSTEM.ENGINE.getSystemStructure(key);
-    if (!data.key) return npup.error('옵션을 찾을 수 없는 키 값 입니다.');
+function searchSystem(key, engine = 'system') {
+    if (!key || typeof key != 'string') {
+        const msg = '키 값이 없거나 문자열 형식이 아닙니다.';
+        toastAlert({
+            title: `오류 발생`,
+            msg: msg,
+            type: 'error'
+        })
+        return npup.error(msg);
+    }
+    const data = STRUCTURE[engine.toUpperCase().replace('-', '_')].ENGINE.getSystemStructure(key);
+    if (!data.key) {
+        const msg = '옵션을 찾을 수 없는 키 값 입니다.';
+        toastAlert({
+            title: `오류 발생`,
+            msg: msg,
+            type: 'error'
+        })
+        return npup.error(msg);
+    }
     return data;
 }

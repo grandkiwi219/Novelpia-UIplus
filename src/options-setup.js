@@ -16,7 +16,7 @@ function optionBinding(ca, op) {
     let opbi_types = [];
 
     if (op.type.option == 'mapping') {
-        opbi_types = ['system'];
+        opbi_types = ['common'];
     }
     else if (Array.isArray(op.type.structure)) {
         opbi_types = op.type.structure;

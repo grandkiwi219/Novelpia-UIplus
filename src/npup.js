@@ -1,5 +1,5 @@
 const npup = {
-    debug: false,
+    debug: undefined,
 
     options: {},
 
@@ -128,8 +128,10 @@ npup.func.pathChecker = (paths) => {
             path_check = path.startsWith(paths[i]);
         }
         return path_check;
-    } else
+    } else {
+        npup.warn('경로 형식을 알 수 없습니다.')
         return false;
+    }
 }
 
 
@@ -170,18 +172,18 @@ npup.func.tryChecker = (func, type, not_engine, ...comment) => {
             return { status: 2, error: undefined };
         } catch (err) {
             npup.error((type ? type + space + `${system_type} `: '') + `오류 발생.\n원인: ${err.stack}`);
-            if (npup.debug) npup.func.toastAlert({
+            if (npup.debug?.alert) npup.func.toastAlert({
                     title: `오류 발생`,
-                    msg: `'${type ? type + space + `${system_type} `: ''}'오류 발생\n원인: ${err}`,
+                    msg: `${type ? type + space + `${system_type} | `: ''}오류 발생\n원인: ${err}`,
                     type: 'error'
                 });
             return { status: 3, error: err };
         }
     } else {
         npup.error('엔진을 실행할 수 없습니다.\n원인: 함수가 아닙니다.');
-        if (npup.debug) npup.func.toastAlert({
+        if (npup.debug?.alert) npup.func.toastAlert({
                     title: `오류 발생`,
-                    msg: `'${type ? type + space + `${system_type}`: ''}' 오류 발생\n원인: ${err}`,
+                    msg: `${type ? type + space + `${system_type} | `: ''}오류 발생\n원인: ${err}`,
                     type: 'error'
                 });
         return { status: 4, error: '실행할 함수를 찾을 수 없습니다.' };

@@ -160,7 +160,7 @@ html[npup-bottom-nav] {
     /* 10px is margin */
     --npup-ep-li-al-width: calc(var(--npup-ep-width) + 10px + 44px + 10px + 44px);
 
-    .epnew-mobile-btn-area-relative + .btn-view-episode {
+    .btn-view-episode {
         left: calc(50% - ((var(--npup-ep-li-al-width) / 2) - (var(--npup-ep-width) / 2)));
     }
 

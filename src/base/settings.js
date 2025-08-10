@@ -380,7 +380,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 desc: '조작 퀵 메뉴',
                 type: {
                     option: 'selector',    
-                    structure: ['selector', 'system']
+                    structure: ['selector', 'common']
                 },
                 values: [
                     { name: '사용 안함', value: 'normal' },
@@ -396,7 +396,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                         desc: '뷰어에서도 사용',
                         type: {
                             option: 'switch',
-                            structure: ['system']
+                            structure: ['common']
                         }
                     }
                 },

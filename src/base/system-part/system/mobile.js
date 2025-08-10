@@ -133,38 +133,60 @@ npup.options.mobile.options['origin-header'].system = function(r) {
 
 
 npup.options.mobile.options['bottom-heart-alarm'].system = function(r) {
-    if (!pathChecker('/novel')) return;
+    if (pathChecker('/novel/'))
+        new MutationObserver((mus, ob) => {
+            const continue_ep = document.querySelector('.btn-view-episode');
+        
+            if (!continue_ep) return;
 
-    new MutationObserver((mus, ob) => {
-        const continue_ep = document.querySelector('.epnew-mobile-btn-area-relative + .btn-view-episode');
-    
-        if (!continue_ep) return;
+            ob.disconnect();
 
-        ob.disconnect();
+            setBottomHeartAlarm(continue_ep);
+        }).observe(document.body, observer_setup);
+    else if (pathChecker('/comic_episode/'))
+        new MutationObserver((mus, ob) => {
+            const continue_ep = document.querySelector('.btn-view-episode');
 
-        const bottom_button = 'btn-view-episode';
-        const inner_style = 'width: 40px; height: 44px; padding: 11px 0;';
+            if (!continue_ep) return;
 
-        let like = document.getElementsByClassName('sbm_icon_heart')[0].parentElement.cloneNode(true);
-        let alarm = document.getElementsByClassName('sbm_icon_alert')[0].parentElement.cloneNode(true);
+            ob.disconnect();
 
-        const ep_width = continue_ep.getBoundingClientRect().width;
-        let style = document.createElement('style');
+            new MutationObserver((mus2, ob2) => {
+                const continue_ep = document.querySelector('.btn-view-episode');
 
-        if (ep_width != 0) style.insertAdjacentHTML('afterbegin', epWidth(ep_width)), document.head.appendChild(style);
-        else widthObserver(continue_ep, style);
+                ob2.disconnect();
 
-        [like, alarm].forEach(el => {
-            el.classList.add(bottom_button);
-            el.firstElementChild.classList.add('bg-black');
-            el.firstElementChild.classList.remove('s_inv'); // novelpia dark class 없애서 다크모드에서 화이트가 되는 현상 제거
-            el.firstElementChild.style = inner_style;
-
-            continue_ep.insertAdjacentElement('afterend', el);
-        });
-    }).observe(document.body, observer_setup);
+                setBottomHeartAlarm(continue_ep);
+            }).observe(document.querySelector('.btn-view-episode'), observer_setup);
+        }).observe(document.body, observer_setup);
+    else
+        return;
 
     /* 위치 속성은 css에서 / bottom-like-alarm 참고 */
+}
+
+function setBottomHeartAlarm(continue_ep) {
+    const bottom_button = 'btn-view-episode';
+    const inner_style = 'width: 40px; height: 44px; padding: 11px 0;';
+
+    let like = document.getElementsByClassName('sbm_icon_heart')[0].parentElement.cloneNode(true);
+    let alarm = document.getElementsByClassName('sbm_icon_alert')[0].parentElement.cloneNode(true);
+
+    const ep_width = continue_ep.offsetWidth/* getBoundingClientRect().width */;
+    let style = document.createElement('style');
+    style.id = `${npup.project.prefix.css}${this.key}`
+
+    if (ep_width != 0) style.insertAdjacentHTML('afterbegin', epWidth(ep_width)), document.head.appendChild(style);
+    else widthObserver(continue_ep, style);
+
+    [like, alarm].forEach(el => {
+        el.classList.add(bottom_button);
+        el.firstElementChild.classList.add('bg-black');
+        el.firstElementChild.classList.remove('s_inv'); // novelpia dark class 없애서 다크모드에서 화이트가 되는 현상 제거
+        el.firstElementChild.style = inner_style;
+
+        continue_ep.insertAdjacentElement('afterend', el);
+    });
 }
 
 

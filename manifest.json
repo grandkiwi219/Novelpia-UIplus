@@ -56,8 +56,9 @@
                 "./src/base/system-part/system/mobile.js",
                 "./src/base/system-part/system/other.js",
                 "./src/base/system-part/system/viewer.js",
-                "./src/base/system-part/system/keyMapping.js",
-
+                
+                "./src/base/system-part/common/keyMapping.js",
+                
                 "./src/base/system-part/custom/custom-css.js",
 
                 "./src/base/system-part/pre-common/other.js",

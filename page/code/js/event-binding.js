@@ -1,21 +1,21 @@
 // 세팅 스위치 크롬 스토리지 상호작용
 document.querySelectorAll('.switch').forEach(r => {
-    r.addEventListener('click', () => {
+    r.addEventListener('click', async () => {
         let key = r.parentElement.parentElement.getAttribute('key');
 
         let local_storage = r.parentElement.parentElement.getAttribute('local');
 
         let ss_storage = local_storage == 'true' ? local : storage;
 
-        ss_storage.get([key]).then(s => {
-            if (s[key] == true) {
-                r.setAttribute('check', 'false');
-                ss_storage.set({ [key]: false });
-            } else {
-                r.setAttribute('check', 'true');
-                ss_storage.set({ [key]: true });
-            }
-        });
+        const data = await ss_storage.get([key]);
+        
+        if (data[key] == true) {
+            r.setAttribute('check', 'false');
+            await ss_storage.set({ [key]: false });
+        } else {
+            r.setAttribute('check', 'true');
+            await ss_storage.set({ [key]: true });
+        }
 
         if (key == sync_key) return location.reload();
     });
