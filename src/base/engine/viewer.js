@@ -1,9 +1,15 @@
 // --- Viewer Engine ---
 STRUCTURE.SYSTEM.ENGINE.name = '뷰어';
 
-STRUCTURE.SYSTEM.ENGINE.setAdditionalExecution(() => {
-    window.addEventListener("DOMContentLoaded", () => {
-        // save last episode history
-        scriptInjection('src/base/file/save-last-episode.js');
+STRUCTURE.SYSTEM.ENGINE.setAdditionalExecution((r, _this) => {
+    window.addEventListener("DOMContentLoaded", async () => {
+        const last_ep = 'last-ep';
+        const last_ep_data_sync = await chrome.storage.sync.get(last_ep);
+        const last_ep_data_local = await chrome.storage.sync.get(last_ep);
+
+        if (last_ep_data_sync[last_ep] || last_ep_data_local[last_ep])
+            scriptInjection('src/base/file/save-last-episode.js'); // save last episode history
+        else 
+            scriptInjection('src/base/file/remove-last-episode.js'); // remove last episode history
     });
 });

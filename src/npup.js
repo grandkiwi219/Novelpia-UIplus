@@ -206,8 +206,16 @@ npup.func.tryFunc = (func) => {
 
 
 npup.func.engineChecker = (name) => {
-    if (!STRUCTURE) return undefined;
-    return STRUCTURE.SYSTEM.ENGINE.name == name ? true: false;
+    try {
+        return STRUCTURE.SYSTEM.ENGINE.name == name ? true: false;
+    } catch (e) {
+        const engine_data = html.getAttribute(`${npup.project.prefix.css}engine`).split(' ');
+
+        if (engine_data?.length)
+            return engine_data.includes(name) ? true : false;
+        else
+            return undefined;
+    }
 }
 
 
@@ -217,11 +225,12 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined }) => {
     if (!alert_container) {
         alert_container = document.createElement('div');
         alert_container.id = `${npup.project.prefix.css}alert-container`;
-        if (engineChecker('페이지'))
-            alert_container.className = 's_inv';
-        else
-            if (getCookie('DARKMODE'))
-                alert_container.style.filter = 'invert(1)';
+        if (!type)
+            if (npup.func.engineChecker('페이지'))
+                alert_container.className = 's_inv';
+            else
+                if (getCookie('DARKMODE'))
+                    alert_container.style.filter = 'invert(1)';
         document.body.appendChild(alert_container);
     }
 
@@ -309,5 +318,75 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined }) => {
         setTimeout(() => {
             alert_box.remove();
         }, 0.4 * 1000);
+    }
+}
+
+
+function setCookie(name, value, options = {}) {
+    const {
+        expires = null,
+        path = '/',
+        domain = '',
+        secure = false,
+        sameSite = ''
+    } = options;
+
+    let cookieStr = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+
+    if (expires) {
+        const date = new Date();
+        date.setTime(date.getTime() + (expires * 86400000));
+        cookieStr += `; expires=${date.toUTCString()}`;
+    }
+
+    if (path) cookieStr += `; path=${path}`;
+    if (domain) cookieStr += `; domain=${domain}`;
+    if (secure) cookieStr += `; secure`;
+    if (sameSite) cookieStr += `; samesite=${sameSite}`;
+
+    document.cookie = cookieStr;
+}
+
+function removeCookie(name, options = {}) {
+    const {
+        path = '/',
+        domain = ''
+    } = options;
+
+    let cookieStr = `${encodeURIComponent(name)}=null; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+
+    if (path) cookieStr += `; path=${path}`;
+    if (domain) cookieStr += `; domain=${domain}`;
+
+    document.cookie = cookieStr;
+}
+
+function getCookie(name) {
+    const encodedName = encodeURIComponent(name) + "=";
+    const cookies = document.cookie.split('; ');
+
+    for (const cookie of cookies) {
+        if (cookie.startsWith(encodedName)) {
+            return decodeURIComponent(cookie.slice(encodedName.length));
+        }
+    }
+
+    return null; // 쿠키가 존재하지 않을 경우
+}
+
+function hasCookie(name) {
+    const encodedName = encodeURIComponent(name) + "=";
+    return document.cookie.split('; ').some(cookie => cookie.startsWith(encodedName));
+}
+
+const base_domain = '.novelpia.com';
+
+function toggleCookie(name, domain = base_domain) {
+    if (getCookie(name)) {
+        removeCookie(name, {path: '/', domain: domain});
+        return false;
+    } else {
+        setCookie(name, 1, { expires: 365, path: '/', domain: domain});
+        return true;
     }
 }

@@ -790,13 +790,13 @@ quick mapping menu
 .npup-qmm-base {
     --npup-qmm-bgc: rgba(255, 255, 255, 0.7);
 
-    --npup-qmm-wrap-top: 200px;
-    --npup-qmm-wrap-bottom: calc(100lvh - 183px);
-    --npup-qmm-wrap-center: 45lvh;
+    --npup-qmm-wrap-top: 156px;
+    --npup-qmm-wrap-bottom: calc(100svh - 203px);
+    --npup-qmm-wrap-center: 60svh;
 
     --npup-qmm-btn-size: 44px;
 
-    --npup-qmm-menu-top: 200px;
+    --npup-qmm-menu-top: var(--npup-qmm-wrap-top);
     --npup-qmm-menu-bottom: var(--npup-qmm-wrap-bottom);
     --npup-qmm-menu-width: calc(100vw - (var(--npup-qmm-wrap-right-left) * 2));
     --npup-qmm-menu-height: 300px;
@@ -823,22 +823,10 @@ quick mapping menu
     }
 
     width: 0;
-    height: 100lvh;
+    height: 100svh;
     color: black;
     position: fixed;
-    top: 0;
-
-    &.web-comic-white {
-        top: -58px;
-
-        @media screen and (min-width: 892px) {
-            top: -62px;
-        }
-    }
-
-    #footer_bar & {
-        top: -100lvh;
-    }
+    bottom: 0;
 
     z-index: 999;
     user-select: none;

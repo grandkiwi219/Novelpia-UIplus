@@ -138,8 +138,7 @@ npup.options.mapping.options['quick-mapping-menu'].system = async function(r) {
         window.addEventListener('DOMContentLoaded', () => document.getElementById('footer_bar').appendChild(menu_base)),
         getCookie('DARKMODE') ? menu_base.style.filter = 'invert(1)' : 0;
     else if (comic_viewer && !r[`${this.key}-viewer`])
-        window.addEventListener('DOMContentLoaded', () => document.getElementsByClassName('viewer_bottom')[0].appendChild(menu_base)),
-        getCookie('DARKMODE') ? menu_base.style.top = '-100lvh' : menu_base.classList.add(`web-comic-white`);
+        window.addEventListener('DOMContentLoaded', () => document.getElementsByClassName('viewer_bottom')[0].appendChild(menu_base));
     else if (!r[`${this.key}-page`])
         menu_base.classList.add(`s_inv`), document.body.appendChild(menu_base);
     else 

@@ -26,5 +26,12 @@
         document.getElementsByClassName('menu-top-nineteen')[0])
         last_episode_form.adult = true;
 
+    if (!last_episode_form.href.list) 
+        npup.func.toastAlert({ title: '경고', msg: '현재 보고 있는 작품의 \'소설 소개 페이지\' 주소 저장에 실패했습니다.', type: 'warn' }),
+        npup.warn('현재 보고 있는 작품의 \'소설 소개 페이지\' 주소 저장에 실패했습니다.');
+
+    if (!last_episode_form.thumbnail) 
+        npup.warn('현재 보고 있는 작품의 \'썸네일\' 주소 저장에 실패했습니다.');
+
     localStorage.last_episode = JSON.stringify(last_episode_form);
 })();
