@@ -393,12 +393,25 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 ],
                 options: {
                     'quick-mapping-menu-viewer': {
-                        desc: '뷰어에서도 사용',
+                        desc: '뷰어에서 사용하지 않음',
                         type: {
                             option: 'switch',
                             structure: ['common']
+                        },
+                        settings: {
+                            local: true
                         }
-                    }
+                    },
+                    'quick-mapping-menu-page': {
+                        desc: '뷰어 이외의 곳에서 사용하지 않음',
+                        type: {
+                            option: 'switch',
+                            structure: ['common']
+                        },
+                        settings: {
+                            local: true
+                        }
+                    },
                 },
                 settings: {
                     local: true

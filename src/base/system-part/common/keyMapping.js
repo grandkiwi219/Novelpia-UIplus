@@ -43,7 +43,7 @@ function keyMappingBase(callback) {
 }
 
 
-npup.options.mapping.options['quick-mapping-menu'].system = function(r) {
+npup.options.mapping.options['quick-mapping-menu'].system = async function(r) {
     const qmm = `${npup.project.prefix.css}qmm`;
 
     const menu_base = document.createElement('div');
@@ -130,15 +130,20 @@ npup.options.mapping.options['quick-mapping-menu'].system = function(r) {
     menu_base.appendChild(menu_menu);
 
     const comic_viewer = pathChecker('/comic_viewer/');
+
+    if (storage_type == 'sync') 
+        r = { ...r, ...await local.get([`${this.key}-viewer`, `${this.key}-page`]) };
     
-    if (engineChecker('뷰어') || pathChecker('/viewer_collect/'))
+    if ((engineChecker('뷰어') || pathChecker('/viewer_collect/')) && !r[`${this.key}-viewer`])
         window.addEventListener('DOMContentLoaded', () => document.getElementById('footer_bar').appendChild(menu_base)),
         getCookie('DARKMODE') ? menu_base.style.filter = 'invert(1)' : 0;
-    else if (comic_viewer)
+    else if (comic_viewer && !r[`${this.key}-viewer`])
         window.addEventListener('DOMContentLoaded', () => document.getElementsByClassName('viewer_bottom')[0].appendChild(menu_base)),
         getCookie('DARKMODE') ? menu_base.style.top = '-100lvh' : menu_base.classList.add(`web-comic-white`);
-    else
+    else if (!r[`${this.key}-page`])
         menu_base.classList.add(`s_inv`), document.body.appendChild(menu_base);
+    else 
+        return;
 
 
     // 열림 닫힘
