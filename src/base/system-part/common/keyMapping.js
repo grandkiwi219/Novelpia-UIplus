@@ -133,9 +133,10 @@ npup.options.mapping.options['quick-mapping-menu'].system = function(r) {
     
     if (engineChecker('뷰어') || pathChecker('/viewer_collect/'))
         window.addEventListener('DOMContentLoaded', () => document.getElementById('footer_bar').appendChild(menu_base)),
-        getCookie('DARKMODE') ? menu_base.style.filter = 'invert(1)' : 0 ;
+        getCookie('DARKMODE') ? menu_base.style.filter = 'invert(1)' : 0;
     else if (comic_viewer)
-        window.addEventListener('DOMContentLoaded', () => document.getElementsByClassName('viewer_top')[0].appendChild(menu_base));
+        window.addEventListener('DOMContentLoaded', () => document.getElementsByClassName('viewer_bottom')[0].appendChild(menu_base)),
+        getCookie('DARKMODE') ? menu_base.style.top = '-100lvh' : menu_base.classList.add(`web-comic-white`);
     else
         menu_base.classList.add(`s_inv`), document.body.appendChild(menu_base);
 
@@ -246,13 +247,7 @@ npup.options.mapping.options['quick-mapping-menu'].system = function(r) {
 
             ss_storage.get([this.key]).then(() => {
                 ss_storage.set({ [this.key]: value });
-                if (!comic_viewer) menu_menu.style.display = 'none';
-                else document.getElementsByClassName(`${qmm}-menu`)[0].style.display = 'none';
                 html.setAttribute(`${npup.project.prefix.css}${this.key}`, value);
-                setTimeout(() => {
-                    if (!comic_viewer) menu_menu.style.display = '';
-                    else document.getElementsByClassName(`${qmm}-menu`)[0].style.display = '';
-                }, 50);
                 menu_base.querySelector(`.${npup.project.prefix.css}value-name`).innerHTML = value_name;
             });
         });

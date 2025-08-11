@@ -791,15 +791,15 @@ quick mapping menu
     --npup-qmm-bgc: rgba(255, 255, 255, 0.7);
 
     --npup-qmm-wrap-top: 200px;
-    --npup-qmm-wrap-bottom: 183px;
+    --npup-qmm-wrap-bottom: calc(100lvh - 183px);
     --npup-qmm-wrap-center: 45lvh;
 
     --npup-qmm-btn-size: 44px;
 
     --npup-qmm-menu-top: 200px;
-    --npup-qmm-menu-bottom: calc(var(--npup-qmm-wrap-bottom) - var(--npup-qmm-btn-size));
+    --npup-qmm-menu-bottom: var(--npup-qmm-wrap-bottom);
     --npup-qmm-menu-width: calc(100vw - (var(--npup-qmm-wrap-right-left) * 2));
-    --npup-qmm-menu-height: calc(100lvh - ((var(--npup-qmm-menu-top) * (4/5)) + (var(--npup-qmm-menu-bottom) * (4/5))));
+    --npup-qmm-menu-height: 300px;
     --npup-qmm-menu-hide: calc(-1 * (var(--npup-qmm-wrap-right-left) + var(--npup-qmm-btn-size) + var(--npup-qmm-menu-width)));
     --npup-qmm-menu-padding-top: 45px;
     --npup-qmm-menu-padding: 12px;
@@ -827,6 +827,14 @@ quick mapping menu
     color: black;
     position: fixed;
     top: 0;
+
+    &.web-comic-white {
+        top: -58px;
+
+        @media screen and (min-width: 892px) {
+            top: -62px;
+        }
+    }
 
     #footer_bar & {
         top: -100lvh;
@@ -925,8 +933,13 @@ quick mapping menu
 
                 @media (hover: hover) and (pointer: fine) {
                     &:hover {
-                        background-color: rgba(230, 230, 230, 0.7);
+                        background-color: rgba(240, 240, 240, 0.7);
                     }
+                }
+
+                &:active {
+                    background-color: rgba(220, 220, 220, 0.7);
+                    transition: background-color 0s;
                 }
             }
         }
@@ -1047,20 +1060,30 @@ quick mapping menu
 
     html[npup-quick-mapping-menu$=bottom] & {
         .npup-qmm-wrap {
-            bottom: var(--npup-qmm-wrap-bottom);
+            top: var(--npup-qmm-wrap-bottom);
         }
 
         .npup-qmm-menu {
-            bottom: var(--npup-qmm-menu-bottom);
+            top: var(--npup-qmm-menu-bottom);
+            transform: translateY(calc(-100% + var(--npup-qmm-btn-size)));
             padding: var(--npup-qmm-menu-padding) var(--npup-qmm-menu-padding) var(--npup-qmm-menu-padding-top);
 
             .npup-qmm-menu-cancel {
                 bottom: var(--npup-qmm-menu-cancel-margin);
             }
+            
+            .npup-qmm-menu-content {
+                transform: scaleY(-1);
+
+                * {
+                    transform: scaleY(-1);
+                }
+            }
 
             .npup-selector {
                 bottom: var(--npup-selector-qmm-margin);
             }
+
         }
 
     }

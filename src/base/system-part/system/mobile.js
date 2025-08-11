@@ -43,6 +43,11 @@ npup.options.mobile.options['origin-header'].options['scroll-hidden-header'].sys
                 const menu_tap_calc = header.getBoundingClientRect().height - 1 + header_top;
                 menu_tap.style.setProperty('top', `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`, 'important');
             }
+            else if (pathChecker('/comic_main/')) {
+                const menu_tap = document.getElementsByClassName('comic-new-header-wp')[0];
+                const menu_tap_calc = header.getBoundingClientRect().height - 1 + header_top;
+                menu_tap.style.top = `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`;
+            }
 
             header.style.top = `${header_top}px`;
         });

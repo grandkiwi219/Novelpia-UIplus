@@ -6,7 +6,7 @@ html[npup-origin-header], html[npup-bottom-nav] {
     
     header.mobile_show,
     #renewal-header {
-        top: -90px !important;
+        top: -100px !important;
     }
 
     div#renewal-header, /* 공지 페이지 */
