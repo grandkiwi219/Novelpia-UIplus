@@ -444,15 +444,6 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 },
                 engine: '뷰어',
             },
-            'move-mb': {
-                tag: {
-                    quick_mapping_menu: false
-                },
-                desc: '내서재로 이동',
-                type: {
-                    option: 'mapping'
-                },
-            },
             'page-dark': {
                 tag: {
                     quick_mapping_menu: true
@@ -476,6 +467,15 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                     quick_mapping_menu: true
                 },
                 desc: '노벨피아 \'시크릿 모드\' 사용',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'move-mb': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '내서재로 이동',
                 type: {
                     option: 'mapping'
                 },

@@ -212,7 +212,11 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined }) => {
     if (!alert_container) {
         alert_container = document.createElement('div');
         alert_container.id = `${npup.project.prefix.css}alert-container`;
-        alert_container.className = 's_inv';
+        if (engineChecker('페이지'))
+            alert_container.className = 's_inv';
+        else
+            if (getCookie('DARKMODE'))
+                alert_container.style.filter = 'invert(1)';
         document.body.appendChild(alert_container);
     }
 

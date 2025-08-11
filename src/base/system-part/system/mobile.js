@@ -15,7 +15,7 @@ npup.options.mobile.options['origin-header'].options['scroll-hidden-header'].sys
     let scrollY = window.scrollY;
 
     window.addEventListener('DOMContentLoaded', () => {    
-        document.addEventListener('scroll', () => {
+        window.addEventListener('scroll', () => {
             if (window.innerWidth >= 892) {
                 header.style.top = '0px';
                 scrollY = window.scrollY;
@@ -165,7 +165,12 @@ npup.options.mobile.options['bottom-heart-alarm'].system = function(r) {
     /* 위치 속성은 css에서 / bottom-like-alarm 참고 */
 }
 
-function setBottomHeartAlarm(continue_ep) {
+/**
+ * bottom-heart-alarm system 함수
+ * @param {Element} continue_ep 측정할 이어보기 html 요소
+ * @param {boolean} comic 웹만화인가
+ */
+function setBottomHeartAlarm(continue_ep, comic = false) {
     const bottom_button = 'btn-view-episode';
     const inner_style = 'width: 40px; height: 44px; padding: 11px 0;';
 
@@ -177,11 +182,16 @@ function setBottomHeartAlarm(continue_ep) {
     style.id = `${npup.project.prefix.css}${this.key}`
 
     if (ep_width != 0) style.insertAdjacentHTML('afterbegin', epWidth(ep_width)), document.head.appendChild(style);
-    else widthObserver(continue_ep, style);
+    else 
+        if (!comic)
+            widthObserver(continue_ep, style);
+        else 
+            widthComicObserver(continue_ep, style);
 
     [like, alarm].forEach(el => {
         el.classList.add(bottom_button);
         el.firstElementChild.classList.add('bg-black');
+        el.firstElementChild.classList.add('mobile_show');
         el.firstElementChild.classList.remove('s_inv'); // novelpia dark class 없애서 다크모드에서 화이트가 되는 현상 제거
         el.firstElementChild.style = inner_style;
 
@@ -203,6 +213,7 @@ function epWidth(ep_width) {
 
 /**
  * 대형화면에서 시작해서 이어보기 크기가 display: none; 상태에서 width가 0이 되어 불편하게 보이는 것을 방지
+ * @param {Element} continue_ep 측정할 이어보기 html 요소
  * @param {HTMLStyleElement} style 미리 생성해놓은 style 노드
  */
 function widthObserver(continue_ep, style) {
@@ -211,10 +222,39 @@ function widthObserver(continue_ep, style) {
 
         ob.disconnect();
 
-        const ep_width = continue_ep.getBoundingClientRect().width;
-
-        style.insertAdjacentHTML('afterbegin', epWidth(ep_width)), document.head.appendChild(style);
+        setWidth(continue_ep, style)
     }).observe(document.body, { ...observer_setup, attributes: true });
+}
+
+/**
+ * 대형화면에서 시작해서 이어보기 크기가 display: none; 상태에서 width가 0이 되어 불편하게 보이는 것을 방지
+ * @param {Element} continue_ep 측정할 이어보기 html 요소
+ * @param {HTMLStyleElement} style 미리 생성해놓은 style 노드
+ */
+function widthObserver(continue_ep, style) {
+    if (window.innerWidth > 891) {
+        window.addEventListener('resize', resizeListener);
+
+        function resizeListener() {
+            if (window.innerWidth <= 891) {
+                setWidth(continue_ep, style);
+                window.removeEventListener('resize', resizeListener);
+            }
+        }
+    }
+    else
+        setWidth(continue_ep, style);
+}
+
+/**
+ * 이이보기 크기 style 삽입
+ * @param {Element} continue_ep 측정할 이어보기 html 요소
+ * @param {HTMLStyleElement} style 미리 생성해놓은 style 노드
+ */
+function setWidth(continue_ep, style) {
+    const ep_width = continue_ep.getBoundingClientRect().width;
+
+    style.insertAdjacentHTML('afterbegin', epWidth(ep_width)), document.head.appendChild(style);
 }
 
 

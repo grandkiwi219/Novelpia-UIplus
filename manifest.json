@@ -16,12 +16,7 @@
             "matches": ["*://*.novelpia.com/*"],
             "exclude_matches": [
                 "*://images.novelpia.com/*",
-                "*://image.novelpia.com/*",
-                
-                "*://novelpia.com/img/*",
-                "*://novelpia.com/css/*",
-                "*://novelpia.com/js/*",
-                "*://novelpia.com/lib/*"
+                "*://image.novelpia.com/*"
             ],
             "js": [
                 "./src/npup.js",
@@ -44,7 +39,13 @@
                 "*://novelpia.com/img/*",
                 "*://novelpia.com/css/*",
                 "*://novelpia.com/js/*",
-                "*://novelpia.com/lib/*"
+                "*://novelpia.com/lib/*",
+                "*://novelpia.com/proc/*",
+                "*://novelpia.com/json/*",
+                "*://novelpia.com/api/*",
+                "*://novelpia.com/error/*" ,
+                "*://novelpia.com/manifest.json" ,
+                "*://novelpia.com/robots.txt"
             ],
             "js": [
                 "./src/base/settings.js",
@@ -78,12 +79,7 @@
                 "*://novelpia.com/viewer/*",
                 "*://novelpia.com/viewer_collect/*",
                 "*://novelpia.com/comic_viewer/*",
-                "*://novelpia.com/page/block/*",
-
-                "*://novelpia.com/img/*",
-                "*://novelpia.com/css/*",
-                "*://novelpia.com/js/*",
-                "*://novelpia.com/lib/*"
+                "*://novelpia.com/page/block/*"
             ],
             "js": [
                 "./src/base/engine/page.js"
@@ -108,12 +104,7 @@
             "matches": ["*://*.novelpia.com/*"],
             "exclude_matches": [
                 "*://images.novelpia.com/*",
-                "*://image.novelpia.com/*",
-                
-                "*://novelpia.com/img/*",
-                "*://novelpia.com/css/*",
-                "*://novelpia.com/js/*",
-                "*://novelpia.com/lib/*"
+                "*://image.novelpia.com/*"
             ],
             "js": [
                 "./src/options-setup.js"

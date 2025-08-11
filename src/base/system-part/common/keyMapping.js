@@ -48,7 +48,6 @@ npup.options.mapping.options['quick-mapping-menu'].system = function(r) {
 
     const menu_base = document.createElement('div');
     menu_base.classList.add(`${qmm}-base`);
-    menu_base.classList.add(`s_inv`);
 
     const menu_wrap = document.createElement('div');
     menu_wrap.classList.add(`${qmm}-wrap`);
@@ -83,14 +82,24 @@ npup.options.mapping.options['quick-mapping-menu'].system = function(r) {
             + '<path d="M5 5 L25 25 M5 25 L25 5" />'
         + '</svg>';
 
-    Object.values(npup.options.mapping.options).forEach(op => {
+    Object.values(npup.options.mapping.options).forEach(async op => {
         if (!op.tag?.quick_mapping_menu) return;
+
+        /* if (op.key == 'move-mb' && engineChecker('페이지')) {
+            if (storage_type = 'sync') {
+                const ob = await storage.get(['origin-header', 'bottom-nav']);
+                if (ob['origin-header'] || ob['bottom-nav'])
+                    return;
+            }
+            else if (r['origin-header'] || r['bottom-nav'])
+                return;
+        } */
 
         const menu_touch = document.createElement('div');
         menu_touch.classList.add(`${qmm}-touch`);
         menu_touch.classList.add(`${qmm}-icon`);
         menu_touch.textContent = op.desc;
-        menu_touch.setAttribute('key', op.key);
+        menu_touch.setAttribute('value', op.key);
         menu_content.appendChild(menu_touch);
     });
 
@@ -100,7 +109,7 @@ npup.options.mapping.options['quick-mapping-menu'].system = function(r) {
         <div class="npup-value-name">${npup.options.mapping.options[this.key].values.find(v => v.value == r[this.key])?.name}</div>
         <div>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -2 14 14">
-                <path d="M0 3 4 7.2 8 3 0 3" fill="black" stroke="rgb(145, 145, 145)" stroke-width=".5px"></path>
+                <path d="M0 3 4 7.2 8 3 0 3" fill="black" stroke="rgb(145, 145, 145)" stroke-width=".5px" />
             </svg>
         </div>
     </div>
@@ -119,27 +128,89 @@ npup.options.mapping.options['quick-mapping-menu'].system = function(r) {
     menu_wrap.appendChild(menu_btn);
     menu_base.appendChild(menu_wrap); 
     menu_base.appendChild(menu_menu);
+
+    const comic_viewer = pathChecker('/comic_viewer/');
     
     if (engineChecker('뷰어') || pathChecker('/viewer_collect/'))
-        window.addEventListener('DOMContentLoaded', () => document.getElementById('header_bar').appendChild(menu_base));
-    else if (pathChecker('/comic_viewer/'))
+        window.addEventListener('DOMContentLoaded', () => document.getElementById('footer_bar').appendChild(menu_base)),
+        getCookie('DARKMODE') ? menu_base.style.filter = 'invert(1)' : 0 ;
+    else if (comic_viewer)
         window.addEventListener('DOMContentLoaded', () => document.getElementsByClassName('viewer_top')[0].appendChild(menu_base));
     else
-        document.body.appendChild(menu_base);
+        menu_base.classList.add(`s_inv`), document.body.appendChild(menu_base);
 
+
+    // 열림 닫힘
+    let click_el_data = undefined;
+    let click_el_cancel_data = undefined;
 
     document.addEventListener('click', e => {
+        if (comic_viewer) { 
+            const base = document.getElementsByClassName(`${qmm}-base`)[0];
+
+            if (!base) return;
+
+            if (!click_el_data)
+                click_el_data = [...document.getElementsByClassName(`${qmm}-menu`), ...document.getElementsByClassName(`${qmm}`)];
+
+            if (base.classList.contains('focus')) {
+                if (!click_el_cancel_data) 
+                    click_el_cancel_data = document.getElementsByClassName(`${qmm}-menu-cancel`);
+
+                let cancel = false;
+                for (let i = 0; i < click_el_cancel_data.length; i++)
+                    if (click_el_cancel_data[i].contains(e.target)) {
+                        base.classList.remove(`focus`);
+                        cancel = true;
+                        break;
+                    }
+
+                if (!cancel) {
+                    let check = false;
+                    for (let i = 0; i < click_el_data.length; i++)
+                        if (click_el_data[i].contains(e.target)) {
+                            check = true;
+                            break;
+                        }
+
+                    if (!check) base.classList.remove(`focus`);
+                }
+            }
+            else {
+                for (let i = 0; i < click_el_data.length; i++) 
+                    if (click_el_data[i].contains(e.target)) {
+                        base.classList.add(`focus`);
+                        break;
+                    }
+            }
+
+            return;
+        }
+
         if ((!menu_btn.contains(e.target) && !menu_menu.contains(e.target)) || menu_cancel.contains(e.target))
             return menu_base.classList.remove(`focus`);
 
         menu_base.classList.add(`focus`);
     });
 
+    // 이벤트 실행
     document.addEventListener('click', e => {
         const menu_touches = document.getElementsByClassName(`${qmm}-touch`);
         for (let i = 0; i < menu_touches.length; i++) {
             if (menu_touches[i].contains(e.target)) 
-                return searchSystem(menu_touches[i].getAttribute('key'), 'common').system(r, true);
+                return searchSystem(menu_touches[i].getAttribute('value'), 'common').system(r, true);
+        }
+    });
+
+    // 닫음
+    document.addEventListener('keydown', (e) => {
+        if (e.key == 'Escape') {
+            if (!comic_viewer) menu_base.classList.remove(`focus`);
+            else document.getElementsByClassName(`${qmm}-base`)[0].classList.remove('focus');
+
+            document.querySelectorAll(`.${npup.project.prefix.css}selector-value`).forEach(r => {
+                r.parentElement.classList.remove(`${npup.project.prefix.css}selector-active`);
+            });
         }
     });
 
@@ -147,33 +218,27 @@ npup.options.mapping.options['quick-mapping-menu'].system = function(r) {
     // 세팅 셀렉터 스크립트
     // 세팅 셀럭터 창 열림
     document.addEventListener('click', (event) => {
-        document.querySelectorAll('.npup-selector-value').forEach(r => {
+        document.querySelectorAll(`.${npup.project.prefix.css}selector-value`).forEach(r => {
             let is_click = r.contains(event.target);
 
-            if (!is_click) return r.parentElement.classList.remove('npup-selector-active');
+            if (!is_click) return r.parentElement.classList.remove(`${npup.project.prefix.css}selector-active`);
 
-            r.parentElement.classList.toggle('npup-selector-active');
+            r.parentElement.classList.toggle(`${npup.project.prefix.css}selector-active`);
         });
-    });
-
-    // 세팅 셀렉처 창 닫힘
-    document.addEventListener('keydown', (e) => {
-        if (e.key == 'Escape') {
-            document.querySelectorAll('.npup-selector-value').forEach(r => {
-                r.parentElement.classList.remove('npup-selector-active')
-            });
-        }
     });
 
     // 세팅 셀럭터 크롬 스토리지 상호작용
     document.addEventListener('click', e => {
-        document.querySelectorAll('.npup-selector-option').forEach(r => {
+        document.querySelectorAll(`.${npup.project.prefix.css}selector-option`).forEach(r => {
             if (!r.contains(e.target)) return;
 
             let local_storage = this.settings?.local;
             let value = r.getAttribute('value');
 
-            if (value == this.options[0]) menu_base.remove();
+            if (value == this.options[0]) {
+                if (!comic_viewer) menu_base.remove();
+                else document.getElementsByClassName(`${qmm}-base`)[0].remove();
+            }
 
             let value_name = r.innerHTML;
 
@@ -181,12 +246,14 @@ npup.options.mapping.options['quick-mapping-menu'].system = function(r) {
 
             ss_storage.get([this.key]).then(() => {
                 ss_storage.set({ [this.key]: value });
-                menu_menu.style.display = 'none';
+                if (!comic_viewer) menu_menu.style.display = 'none';
+                else document.getElementsByClassName(`${qmm}-menu`)[0].style.display = 'none';
                 html.setAttribute(`${npup.project.prefix.css}${this.key}`, value);
                 setTimeout(() => {
-                    menu_menu.style.display = '';
-                }, 100);
-                menu_base.querySelector('.npup-value-name').innerHTML = value_name;
+                    if (!comic_viewer) menu_menu.style.display = '';
+                    else document.getElementsByClassName(`${qmm}-menu`)[0].style.display = '';
+                }, 50);
+                menu_base.querySelector(`.${npup.project.prefix.css}value-name`).innerHTML = value_name;
             });
         });
     });
@@ -235,76 +302,6 @@ npup.options.mapping.options['move-mb'].system = keyMappingBase(async r => {
 
     location.href ='https://novelpia.com/mybook' + where_href;
 });
-
-
-function setCookie(name, value, options = {}) {
-    const {
-        expires = null,
-        path = '/',
-        domain = '',
-        secure = false,
-        sameSite = ''
-    } = options;
-
-    let cookieStr = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
-
-    if (expires) {
-        const date = new Date();
-        date.setTime(date.getTime() + (expires * 86400000));
-        cookieStr += `; expires=${date.toUTCString()}`;
-    }
-
-    if (path) cookieStr += `; path=${path}`;
-    if (domain) cookieStr += `; domain=${domain}`;
-    if (secure) cookieStr += `; secure`;
-    if (sameSite) cookieStr += `; samesite=${sameSite}`;
-
-    document.cookie = cookieStr;
-}
-
-function removeCookie(name, options = {}) {
-    const {
-        path = '/',
-        domain = ''
-    } = options;
-
-    let cookieStr = `${encodeURIComponent(name)}=null; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-
-    if (path) cookieStr += `; path=${path}`;
-    if (domain) cookieStr += `; domain=${domain}`;
-
-    document.cookie = cookieStr;
-}
-
-function getCookie(name) {
-    const encodedName = encodeURIComponent(name) + "=";
-    const cookies = document.cookie.split('; ');
-
-    for (const cookie of cookies) {
-        if (cookie.startsWith(encodedName)) {
-            return decodeURIComponent(cookie.slice(encodedName.length));
-        }
-    }
-
-    return null; // 쿠키가 존재하지 않을 경우
-}
-
-function hasCookie(name) {
-    const encodedName = encodeURIComponent(name) + "=";
-    return document.cookie.split('; ').some(cookie => cookie.startsWith(encodedName));
-}
-
-const base_domain = '.novelpia.com';
-
-function toggleCookie(name, domain = base_domain) {
-    if (getCookie(name)) {
-        removeCookie(name, {path: '/', domain: domain});
-        return false;
-    } else {
-        setCookie(name, 1, { expires: 365, path: '/', domain: domain});
-        return true;
-    }
-}
 
 npup.options.mapping.options['page-dark'].system = keyMappingBase(r => {
     const result = toggleCookie('DARKMODE_S');

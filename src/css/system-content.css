@@ -791,13 +791,13 @@ quick mapping menu
     --npup-qmm-bgc: rgba(255, 255, 255, 0.7);
 
     --npup-qmm-wrap-top: 200px;
-    --npup-qmm-wrap-bottom: 154px;
+    --npup-qmm-wrap-bottom: 183px;
     --npup-qmm-wrap-center: 45lvh;
 
     --npup-qmm-btn-size: 44px;
 
     --npup-qmm-menu-top: 200px;
-    --npup-qmm-menu-bottom: var(--npup-qmm-wrap-bottom);
+    --npup-qmm-menu-bottom: calc(var(--npup-qmm-wrap-bottom) - var(--npup-qmm-btn-size));
     --npup-qmm-menu-width: calc(100vw - (var(--npup-qmm-wrap-right-left) * 2));
     --npup-qmm-menu-height: calc(100lvh - ((var(--npup-qmm-menu-top) * (4/5)) + (var(--npup-qmm-menu-bottom) * (4/5))));
     --npup-qmm-menu-hide: calc(-1 * (var(--npup-qmm-wrap-right-left) + var(--npup-qmm-btn-size) + var(--npup-qmm-menu-width)));
@@ -812,7 +812,7 @@ quick mapping menu
 
     @media screen and (min-width: 892px) {
         --npup-qmm-wrap-top: 283px;
-        --npup-qmm-wrap-bottom: calc(20px + var(--npup-qmm-btn-size));
+        /* --npup-qmm-wrap-bottom: calc(20px + var(--npup-qmm-btn-size)); */
 
         --npup-qmm-menu-width: 680px;
         --npup-qmm-menu-top: 202px;
@@ -824,8 +824,14 @@ quick mapping menu
 
     width: 0;
     height: 100lvh;
+    color: black;
     position: fixed;
     top: 0;
+
+    #footer_bar & {
+        top: -100lvh;
+    }
+
     z-index: 999;
     user-select: none;
 
@@ -889,7 +895,6 @@ quick mapping menu
             height: fit-content;
             cursor: pointer;
             position: absolute;
-            top: var(--npup-qmm-menu-cancel-margin);
             font-size: 0;
 
             @media (hover: hover) and (pointer: fine) {
@@ -914,7 +919,23 @@ quick mapping menu
             flex-flow: row wrap;
             gap: 10px;
             overflow: auto;
+
+            .npup-qmm-touch {
+                transition: all .3s;
+
+                @media (hover: hover) and (pointer: fine) {
+                    &:hover {
+                        background-color: rgba(230, 230, 230, 0.7);
+                    }
+                }
+            }
         }
+    }
+
+    .npup-selector {
+        --npup-selector-qmm-margin: calc(var(--npup-qmm-menu-cancel-margin) - 5px);
+
+        position: absolute;
     }
 
 
@@ -931,6 +952,14 @@ quick mapping menu
 
             .npup-qmm-menu-cancel {
                 right: var(--npup-qmm-menu-cancel-margin);
+            }
+
+            .npup-selector {
+                left: var(--npup-qmm-menu-cancel-margin);
+            }
+
+            .npup-qmm-menu-content {
+                flex-direction: row-reverse;
             }
         }
 
@@ -960,6 +989,10 @@ quick mapping menu
             .npup-qmm-menu-cancel {
                 left: var(--npup-qmm-menu-cancel-margin);
             }
+
+            .npup-selector {
+                right: var(--npup-qmm-menu-cancel-margin);
+            }
         }
 
         &.focus {
@@ -981,6 +1014,14 @@ quick mapping menu
         
         .npup-qmm-menu {
             top: var(--npup-qmm-menu-top);
+
+            .npup-qmm-menu-cancel {
+                top: var(--npup-qmm-menu-cancel-margin);
+            }
+
+            .npup-selector {
+                top: var(--npup-selector-qmm-margin);
+            }
         }
     }
 
@@ -992,7 +1033,16 @@ quick mapping menu
         .npup-qmm-menu {
             top: 50%;
             transform: translateY(-50%);
+
+            .npup-qmm-menu-cancel {
+                top: var(--npup-qmm-menu-cancel-margin);
+            }
+
+            .npup-selector {
+                top: var(--npup-selector-qmm-margin);
+            }
         }
+
     }
 
     html[npup-quick-mapping-menu$=bottom] & {
@@ -1002,7 +1052,17 @@ quick mapping menu
 
         .npup-qmm-menu {
             bottom: var(--npup-qmm-menu-bottom);
+            padding: var(--npup-qmm-menu-padding) var(--npup-qmm-menu-padding) var(--npup-qmm-menu-padding-top);
+
+            .npup-qmm-menu-cancel {
+                bottom: var(--npup-qmm-menu-cancel-margin);
+            }
+
+            .npup-selector {
+                bottom: var(--npup-selector-qmm-margin);
+            }
         }
+
     }
 }
 
@@ -1039,19 +1099,6 @@ selector
     z-index: 1;
     
     transition: border var(--npup-selector-transition-speed);
-
-    .npup-qmm-base & {
-        position: absolute;
-        top: calc(var(--npup-qmm-menu-cancel-margin) - 5px);
-
-        html[npup-quick-mapping-menu^=left] & {
-            right: var(--npup-qmm-menu-cancel-margin);
-        }
-
-        html[npup-quick-mapping-menu^=right] & {
-            left: var(--npup-qmm-menu-cancel-margin);
-        }
-    }
 }
 
 .npup-selector.npup-selector-active {
