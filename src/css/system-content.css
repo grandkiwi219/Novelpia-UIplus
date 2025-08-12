@@ -790,9 +790,9 @@ quick mapping menu
 .npup-qmm-base {
     --npup-qmm-bgc: rgba(255, 255, 255, 0.7);
 
-    --npup-qmm-wrap-top: 156px;
+    --npup-qmm-wrap-top: 180px;
     --npup-qmm-wrap-bottom: calc(100svh - 203px);
-    --npup-qmm-wrap-center: 60svh;
+    --npup-qmm-wrap-center: 55svh;
 
     --npup-qmm-btn-size: 44px;
 
