@@ -130,9 +130,6 @@ npup.options.mapping.options['quick-mapping-menu'].system = async function(r) {
     menu_base.appendChild(menu_menu);
 
     const comic_viewer = pathChecker('/comic_viewer/');
-
-    if (storage_type == 'sync') 
-        r = { ...r, ...await local.get([`${this.key}-viewer`, `${this.key}-page`]) };
     
     if ((engineChecker('뷰어') || pathChecker('/viewer_collect/')) && !r[`${this.key}-viewer`])
         window.addEventListener('DOMContentLoaded', () => document.getElementById('footer_bar').appendChild(menu_base)),
@@ -291,13 +288,9 @@ npup.options.mapping.options['ep-comment'].system = keyMappingBase(r => {
 npup.options.mapping.options['move-mb'].system = keyMappingBase(async r => {
     let where_href;
 
-    if (STRUCTURE.SYSTEM.ENGINE.name == '페이지')
-        where_href = npup.options.nav.options['nav-mybook'].system(r, true).href;
-    else {
-        await storage.get(['nav-mybook']).then(r1 => {
-            where_href = npup.options.nav.options['nav-mybook'].system(r1, true).href;
-        });
-    }
+    await storage.get(['nav-mybook']).then(r1 => {
+        where_href = searchSystem('nav-mybook').system(r1, true).href || '/';
+    });
 
     location.href ='https://novelpia.com/mybook' + where_href;
 });

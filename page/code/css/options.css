@@ -849,7 +849,7 @@ html[dark=true] .text-area-wrap > textarea::placeholder {
     caret-color: transparent;
     resize: none;
     transition: background-color var(--theme-transition-speed);
-    cursor: text;
+    cursor: cell;
 
     .mapping-nothing {
         color: rgb(117, 117, 117);

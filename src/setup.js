@@ -130,7 +130,8 @@ class EngineStructure {
                 if (r[key] && !system_check)
                     html.setAttribute(npup.project.prefix.css + key, '');
                 else if (system_check) {
-                    if (await local.get([key])[key])
+                    const key_data = await local.get([key]);
+                    if (key_data[key])
                         html.setAttribute(npup.project.prefix.css + key, '');
                 } else 
                     return;
@@ -172,7 +173,8 @@ class EngineStructure {
 
                 if (!r[key] || system_check) {
                     if (system_check) { 
-                        r = await local.get([key]);
+                        const key_data = await local.get([key]);
+                        r[key] = key_data[key];
 
                         this.#debugStorage(r, true);
 
