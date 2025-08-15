@@ -103,16 +103,6 @@ if (!path.endsWith('/')) path += '/';
 
 const html = document.getElementsByTagName('html')[0];
 
-new MutationObserver(() => {
-    let current_path = window.location.pathname + window.location.search;
-
-    if (path == current_path) return;
-    else path = current_path;
-
-    if (!path.endsWith('/')) path += '/';
-
-}).observe(html, { ...npup.settings.observer_setup, attributes: true, characterData: true }); 
-
 
 
 

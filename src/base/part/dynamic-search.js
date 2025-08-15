@@ -19,7 +19,7 @@ function searchMutationOption(mus, ob) {
                 /* l.nav, 다른 것들도 반영하는 것은 각 시스템별로 바디 부분에 npup- 를 삽입함으로써 이미 존재함을 증명시키게 할 것 */
                 /* 그렇다해도 searchResultSystem 내부에 resultBoxContent가 삽입되어 있으니 이 부분은 삭제하지 말 것 */
                 return storage.get(['search']).then(r1 => {
-                    return searchResultSystem({ ...r, ...r1 });
+                    return searchSystem('search-result').system({ ...r, ...r1 });
                 })
             }
             else
