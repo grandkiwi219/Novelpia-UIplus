@@ -108,7 +108,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                     local: true
                 }
             },
-            'after-ep': {
+            'books-after-ep': {
                 tag: {
                     quick_mapping_menu: false
                 },
@@ -117,7 +117,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                     option: 'mapping'
                 },
             },
-            'before-ep': {
+            'books-books-before-ep': {
                 tag: {
                     quick_mapping_menu: false
                 },
@@ -126,7 +126,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                     option: 'mapping'
                 },
             },
-            'ep-home': {
+            'books-ep-home': {
                 tag: {
                     quick_mapping_menu: false
                 },
@@ -135,7 +135,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                     option: 'mapping'
                 },
             },
-            /* 'page-dark': {
+            /* 'books-page-dark': {
                 tag: {
                     quick_mapping_menu: true
                 },
@@ -144,7 +144,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                     option: 'mapping'
                 },
             },
-            'viewer-dark': {
+            'books-viewer-dark': {
                 tag: {
                     quick_mapping_menu: true
                 },
@@ -153,7 +153,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                     option: 'mapping'
                 },
             }, */
-            'move-mb': {
+            'books-move-mb': {
                 tag: {
                     quick_mapping_menu: true
                 },

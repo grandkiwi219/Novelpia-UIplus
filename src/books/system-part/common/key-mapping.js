@@ -281,37 +281,37 @@ npup.options.mapping.options['books-quick-mapping-menu'].system = async function
 }
 
 
-npup.options.mapping.options['after-ep'].system = keyMappingBase(r => {
+npup.options.mapping.options['books-after-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-next')[0].click();
 },
 () => {
     return engineChecker('뷰어');
 });
 
-npup.options.mapping.options['before-ep'].system = keyMappingBase(r => {
+npup.options.mapping.options['books-before-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-prev')[0].click();
 },
 () => {
     return engineChecker('뷰어');
 });
 
-npup.options.mapping.options['ep-home'].system = keyMappingBase(r => {
+npup.options.mapping.options['books-ep-home'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-back')[0].click();
 },
 () => {
     return engineChecker('뷰어');
 });
 
-npup.options.mapping.options['move-mb'].system = keyMappingBase(async r => {
+npup.options.mapping.options['books-move-mb'].system = keyMappingBase(async r => {
     location.href ='/mybook';
 });
 
-/* npup.options.mapping.options['page-dark'].system = keyMappingBase(r => {
+/* npup.options.mapping.options['books-page-dark'].system = keyMappingBase(r => {
     const result = darkPage();
     toastAlert({ title: '다크모드', msg: `다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });
 
-npup.options.mapping.options['viewer-dark'].system = keyMappingBase(r => {
+npup.options.mapping.options['books-viewer-dark'].system = keyMappingBase(r => {
     const result = darkViewer();
     toastAlert({ title: '뷰어 다크모드', msg: `뷰어 다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 }); */
