@@ -4,7 +4,7 @@ npup.options = { ...npup.options,
         name: '기타',
         engine: '페이지',
         options: {
-            'web-title': {
+            'books-web-title': {
                 desc: '페이지 이름 변경',
                 type: {
                     option: 'selector',
