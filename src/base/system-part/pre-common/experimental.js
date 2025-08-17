@@ -22,6 +22,10 @@ header {
 
 #search_input {
     background-color: rgba(255, 255, 255, 0);
+
+    html[npup-nav] & {
+        background-color: rgba(255, 255, 255, 0.8);
+    }
 }
 
 @media screen and (min-width: 892px) {
