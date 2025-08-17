@@ -103,7 +103,7 @@ header {
     text-align: center;
     padding: var(--header-top-size) 0 var(--header-bottom-size) 0;
     user-select : none;
-    background-color: var(--background-color); /*0.4);*/
+    background-color: var(--background-color);
     font-family: var(--head-font);
     font-weight: normal; /* for firefox */
     transition: var(--theme-header-transition);
@@ -154,6 +154,32 @@ svg {
 /*
 id
 */
+
+#category {
+    --category-transition-speed: calc((var(--theme-header-transition-speed) + var(--theme-transition-speed)) / 2);
+
+    box-sizing: border-box;
+    height: fit-content;
+    border-bottom: var(--border-normal);
+    background-color: var(--background-color);
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    transition: all var(--category-transition-speed);
+    z-index: 1;
+
+    .container {
+        box-sizing: border-box;
+        padding: 5px 12px;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+        overflow-y: hidden;
+        overflow-x: auto;
+    }
+}
 
 #update-banner {
     box-sizing: border-box;
@@ -235,10 +261,12 @@ html[dark=true] #update-banner {
 }
 
 #box {
+    box-sizing: border-box;
     max-width: 100%;
-    height: calc(100% - var(--header-height));
+    max-height: calc(100% - var(--header-height));
     flex-wrap: wrap;
     overflow: auto;
+    position: relative;
 }
 
 
@@ -269,6 +297,7 @@ html[dark='true'] .chucheon {
     border-radius: var(--border-normal-radius);
     text-align: center;
     position: relative;
+    white-space: nowrap;
     transition: var(--theme-header-transition), filter var(--theme-header-transition-speed);
 
     &.icon {

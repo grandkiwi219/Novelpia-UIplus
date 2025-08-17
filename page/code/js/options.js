@@ -67,7 +67,7 @@ headerThemeButton.addEventListener('click', function () {
 
         banner_wrap.appendChild(banner);
 
-        document.getElementsByTagName('header')[0].insertAdjacentElement('afterend', banner_wrap);
+        document.getElementById('box').insertAdjacentElement('beforebegin', banner_wrap);
 
         setTimeout(() => {
             banner_wrap.classList.add('active');

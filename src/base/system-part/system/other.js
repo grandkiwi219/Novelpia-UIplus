@@ -2,7 +2,14 @@
 npup.options.other.options['notice'].system = function(r) {
     if (window.location.pathname != "/") return;
 
-    window.addEventListener("DOMContentLoaded", () => {
+    if (routing) {
+        setNotice();
+        return;
+    }
+
+    window.addEventListener("DOMContentLoaded", setNotice);
+
+    function setNotice() {
         let notice_bar = document.getElementById('copyright_bar').cloneNode(true);
         notice_bar.id = `${npup.project.prefix.css}${notice_bar.id}`;
         let main = document.getElementById('vue_main_wrapper');
@@ -36,7 +43,7 @@ npup.options.other.options['notice'].system = function(r) {
         notice_bar.firstElementChild.firstElementChild.appendChild(notice_list_btn);
     
         main.insertAdjacentElement("beforebegin", notice_bar);
-    });
+    }
 }
 
 
@@ -44,38 +51,20 @@ npup.options.other.options['notice'].system = function(r) {
 
 
 npup.options.other.options['last-ep'].system = async function(r) {
-    if (r['last-ep-home'] && window.location.pathname != "/") return;
+    let cooltime = null;
+    let freeze = false;
+    let data = undefined;
 
-    let cooltime;
-
-    try {
-        cooltime = JSON.parse(localStorage.last_episode_timestamp);
-    } catch (error) {
-        cooltime = null;
-    }
-
-    const current = new Date().getTime()
-
-    if (cooltime > current) {
-        const remaining = cooltime - current; 
-
-        const seconds = Math.floor(remaining / 1000) % 60;
-        const minutes = Math.floor(remaining / (1000 * 60)) % 60;
-        const hours = Math.floor(remaining / (1000 * 60 * 60));
-
-        return npup.log(`알림 쿨타임 남은 시간: ${hours}시간 ${minutes}분 ${seconds}초`);
-    }
-
-    localStorage.removeItem('last_episode_timestamp');
-
-    const data = JSON.parse(localStorage.last_episode); 
+    updateCooltime();
+    updateData();
     
     // system-content.css => last episode alarm
 
     const last_ep_alarm = document.createElement('div');
     last_ep_alarm.classList.add('last-ep-alarm'); 
-    if (pathChecker('/novel/')) last_ep_alarm.classList.add('novel-page');
     last_ep_alarm.classList.add('s_inv'); // novelpia dark class
+    last_ep_alarm.style.display = 'none';
+    setAlarmState(pathChecker);
 
     const off = document.createElement('div');
     off.classList.add('last-ep-off');
@@ -87,16 +76,17 @@ npup.options.other.options['last-ep'].system = async function(r) {
     content.classList.add('last-ep-content');
     
     const content_text = document.createElement('div');
-    content_text.innerHTML = `<p><b>${data?.novel || '소설 제목'}</b></p>`
-        + `<p><b>${data?.ep || 'EP.?'}</b> <span style="font-weight: 400;">${data?.title || '회차 제목'}</span></p>`
-        + `(을)를 이어보시겠습니까?`;
+    setContinueContent();
 
     const redirect_wrap = document.createElement('div');
     redirect_wrap.classList.add('last-ep-redirect-wrap');
 
     const redirect = document.createElement('a');
     redirect.classList.add('last-ep-redirect');
-    redirect.href = data?.href?.novel || '#';
+    setRedirectEp();
+
+    const redirect_content = document.createElement('div');
+    setRedirectEpContent();
 
     const list_color = '#fff';
 
@@ -113,10 +103,8 @@ npup.options.other.options['last-ep'].system = async function(r) {
             + `<circle cx="4" cy="18" r="1.5" fill="${list_color}" />`
             + `<rect x="7" y="17" width="13" height="2" rx="1" fill="${list_color}" />`
         + `</svg>`;
-    redirect_list.href = data?.href?.list || '#';
-    
-    const redirect_content = document.createElement('div');
-    redirect_content.innerHTML = `<b>${data?.ep || 'EP.?'}</b>&nbsp;이어보기`;
+    setRedirectNovel();
+
 
     content.appendChild(off);
     content.appendChild(content_text);
@@ -131,17 +119,126 @@ npup.options.other.options['last-ep'].system = async function(r) {
 
     document.body.appendChild(last_ep_alarm);
 
-    if (data?.adult) last_ep_alarm.classList.add('adult');
-
-    setTimeout(() => {
-        last_ep_alarm.classList.add('active');
-    }, 0.01);
+    if (data && !freeze) {
+        if (r['last-ep-home']) {
+            if (location.pathname == '/' || document.getElementsByClassName('new-top-header2')[0]) onEvent();
+        } else onEvent();
+    }
     
-    off.addEventListener('click', () => {
+    off.addEventListener('click', offClickEvent);
+
+    const routerEvent = (e) => {
+        if (e.detail.engine_is_changed) return;
+
+        if (updateData()) {
+            setAlarmState(e.detail.pathChecker);
+            setContinueContent();
+            setRedirectEp();
+            setRedirectEpContent();
+            setRedirectNovel();
+        }
+        updateCooltime();
+
+        if (data && !freeze) {
+            if (r['last-ep-home']) {
+                if (location.pathname == '/' || document.getElementsByClassName('new-top-header2')[0]) onEvent();
+                else offEvent();
+            } else onEvent();
+        } else offEvent();
+    }
+    window.addEventListener(npup.event.router, routerEvent);
+
+    removeEventForEngine(() => {
+        offEvent(true);
+        off.removeEventListener('click', offClickEvent);
+        window.removeEventListener(npup.event.router, routerEvent);
+    });
+
+
+    function updateData() {
+        let current_data = data;
+        try {
+            data = JSON.parse(localStorage.last_episode);
+            if (data?.href?.novel == current_data?.href?.novel)
+                return true;
+            else 
+                return false;
+        } catch (e) {
+            data = undefined;
+            npup.log('알림을 사용할 최근 본 화 기록이 존재하지 않습니다.');
+            return true;
+        }
+    }
+
+    function updateCooltime() {
+        try {
+            cooltime = JSON.parse(localStorage.last_episode_timestamp);
+        } catch (error) {
+            cooltime = null;
+        }
+
+        const current = new Date().getTime()
+
+        if (cooltime > current) {
+            freeze = true;
+
+            const remaining = cooltime - current;
+            const seconds = Math.floor(remaining / 1000) % 60;
+            const minutes = Math.floor(remaining / (1000 * 60)) % 60;
+            const hours = Math.floor(remaining / (1000 * 60 * 60));
+
+            npup.log(`알림 쿨타임 남은 시간: ${hours}시간 ${minutes}분 ${seconds}초`);
+        }
+        else {
+            localStorage.removeItem('last_episode_timestamp');
+        }
+    }
+
+
+    function setAlarmState(getPathChecker) {
+        if (getPathChecker('/novel/')) last_ep_alarm.classList.add('novel-page');
+        else last_ep_alarm.classList.remove('novel-page');
+
+        if (data?.adult) last_ep_alarm.classList.add('adult');
+        else last_ep_alarm.classList.remove('adult');
+    }
+
+    function setContinueContent() {
+        content_text.innerHTML = `<p><b>${data?.novel || '소설 제목'}</b></p>`
+            + `<p><b>${data?.ep ?? 'EP.?'}</b> <span style="font-weight: 400;">${data?.title ?? '회차 제목'}</span></p>`
+            + `(을)를 이어보시겠습니까?`;
+    }
+
+    function setRedirectEp() {
+        redirect.href = data?.href?.novel ?? '#';
+    }
+
+    function setRedirectEpContent() {
+        redirect_content.innerHTML = `<b>${data?.ep ?? 'EP.?'}</b>&nbsp;이어보기`;
+    }
+
+    function setRedirectNovel() {
+        redirect_list.href = data?.href?.list ?? '#';
+    }
+
+
+    function onEvent() {
+        last_ep_alarm.style.display = '';
+        setTimeout(() => {
+            last_ep_alarm.classList.add('active');
+        }, 0.1);
+    }
+
+    function offEvent(remove = false) {
         last_ep_alarm.classList.remove('active');
         setTimeout(() => {
-            last_ep_alarm.style.display = 'none';
-        }, 500);
+            if (remove) last_ep_alarm.remove();
+            else last_ep_alarm.style.display = 'none';
+        }, 500); 
+    }
+
+    function offClickEvent() {
+        offEvent();
 
         const timestamp = new Date();
 
@@ -150,5 +247,5 @@ npup.options.other.options['last-ep'].system = async function(r) {
         timestamp.setMinutes(timestamp.getMinutes() + add_time);
 
         localStorage.last_episode_timestamp = JSON.stringify(timestamp.getTime());
-    });
+    }
 }

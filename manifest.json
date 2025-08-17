@@ -3,7 +3,7 @@
     "name": "노벨피아 UI+",
     "description": "더 나은 노벨피아 UI를 경험해보세요!",
     "author": "grand-kiwi",
-    "version": "3.2.2.1",
+    "version": "3.3.0.0",
     "browser_specific_settings": {
         "gecko": {
             "id": "",
@@ -21,7 +21,8 @@
             "js": [
                 "./src/npup.js",
                 "./src/setup.js",
-                "./src/content.js"
+                "./src/content.js",
+                "./src/router.js"
             ],
             "css": [
                 "./src/css/setup-content.css",
@@ -32,8 +33,18 @@
         },
 
         
+
+
+
         {
-            "tag": "기본 웹소설 페이지 옵션",
+            "tag": "기본 노벨피아",
+            "matches": ["*://novelpia.com/*"],
+            "js": [
+                "./src/base/engine.js"
+            ],
+            "run_at": "document_start"
+        },
+        {
             "matches": ["*://novelpia.com/*"],
             "exclude_matches": [
                 "*://novelpia.com/img/*",
@@ -52,13 +63,12 @@
 
                 "./src/base/system-part/system/header.js",
                 "./src/base/system-part/system/navigation.js",
-                "./src/base/system-part/system/navigation.js",
                 "./src/base/system-part/system/novel.js",
                 "./src/base/system-part/system/mobile.js",
                 "./src/base/system-part/system/other.js",
                 "./src/base/system-part/system/viewer.js",
                 
-                "./src/base/system-part/common/keyMapping.js",
+                "./src/base/system-part/common/key-mapping.js",
                 
                 "./src/base/system-part/custom/custom-css.js",
 
@@ -68,29 +78,33 @@
             "run_at": "document_start"
         },
 
-
-
-
         
+
+
+
         {
-            "tag": "페이지 엔진 | 기본 웹소설 페이지에서 뷰어들을 제외한 모두",
-            "matches": ["*://novelpia.com/*"],
-            "exclude_matches": [
-                "*://novelpia.com/viewer/*",
-                "*://novelpia.com/viewer_collect/*",
-                "*://novelpia.com/comic_viewer/*",
-                "*://novelpia.com/page/block/*"
-            ],
+            "tag": "북스 노벨피아",
+            "matches": ["*://book.novelpia.com/*"],
             "js": [
-                "./src/base/engine/page.js"
+                "./src/books/engine.js"
             ],
             "run_at": "document_start"
         },
         {
-            "tag": "뷰어 엔진 | 기본 웹소설 페이지에서 기본 뷰어",
-            "matches": ["*://novelpia.com/viewer/*"],
+            "matches": ["*://book.novelpia.com/*"],
+            "exclude_matches": [
+                "*://book.novelpia.com/_nuxt/*",
+                "*://book.novelpia.com/scripts/*",
+                "*://book.novelpia.com/robots.txt"
+            ],
             "js": [
-                "./src/base/engine/viewer.js"
+                "./src/books/settings.js",
+
+                "./src/books/system-part/common/key-mapping.js",
+                
+                "./src/books/system-part/custom/custom-css.js",
+
+                "./src/books/system-part/pre-common/other.js"
             ],
             "run_at": "document_start"
         },
@@ -107,26 +121,11 @@
                 "*://image.novelpia.com/*"
             ],
             "js": [
+                "./src/key-binding.js",
                 "./src/options-setup.js"
                 
             ],
-            "css": [
-                "./src/css/setup-content.css",
-                "./src/css/system-content.css",
-                "./src/css/mobile-content.css"
-            ],
             "run_at": "document_start"
-        },
-
-
-
-
-
-        {
-            "tag": "기본 웹소설 페이지에서 기본 검색 페이지",
-            "matches": ["*://novelpia.com/search/*"],
-            "js": ["./src/base/part/dynamic-search.js"],
-            "run_at": "document_end"
         }
     ],
     "background": {

@@ -1,6 +1,8 @@
-function keyMappingBase(callback) {
-    return function(r, quick_mapping_menu = false) {
-        if (quick_mapping_menu) {
+function keyMappingBase(callback, predicate = () => { return true; }) {
+    return function(r, settings = { quick_mapping_menu: false }) {
+        if (settings.quick_mapping_menu) {
+            if (!predicate()) return;
+
             const result = tryChecker(() => {
                 callback(r);
             }, `<keyMappingBase - quick-mapping-menu> ${this.key}`, false);
@@ -11,8 +13,10 @@ function keyMappingBase(callback) {
                 });
             return;
         }
-        
-        document.addEventListener('keydown', e => {
+
+        const keydownEvent = (e) => {
+            if (!predicate()) return;
+
             const active = document.activeElement;
 
             if (
@@ -38,6 +42,12 @@ function keyMappingBase(callback) {
                     msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
                     type: 'error'
                 });
+        }
+        
+        document.addEventListener('keydown', keydownEvent);
+
+        removeEventForEngine(() => {
+            document.removeEventListener('keydown', keydownEvent);
         });
     }
 }
@@ -146,7 +156,7 @@ npup.options.mapping.options['quick-mapping-menu'].system = async function(r) {
     let click_el_data = undefined;
     let click_el_cancel_data = undefined;
 
-    document.addEventListener('click', e => {
+    const menuControl = (e) => {
         if (comic_viewer) { 
             const base = document.getElementsByClassName(`${qmm}-base`)[0];
 
@@ -193,19 +203,19 @@ npup.options.mapping.options['quick-mapping-menu'].system = async function(r) {
             return menu_base.classList.remove(`focus`);
 
         menu_base.classList.add(`focus`);
-    });
+    }
 
     // 이벤트 실행
-    document.addEventListener('click', e => {
+    const executeEvent = (e) => {
         const menu_touches = document.getElementsByClassName(`${qmm}-touch`);
         for (let i = 0; i < menu_touches.length; i++) {
             if (menu_touches[i].contains(e.target)) 
-                return searchSystem(menu_touches[i].getAttribute('value'), 'common').system(r, true);
+                return searchSystem(menu_touches[i].getAttribute('value'), 'common').system(r, { quick_mapping_menu: true });
         }
-    });
+    }
 
     // 닫음
-    document.addEventListener('keydown', (e) => {
+    const menuEsc = (e) => {
         if (e.key == 'Escape') {
             if (!comic_viewer) menu_base.classList.remove(`focus`);
             else document.getElementsByClassName(`${qmm}-base`)[0].classList.remove('focus');
@@ -214,23 +224,21 @@ npup.options.mapping.options['quick-mapping-menu'].system = async function(r) {
                 r.parentElement.classList.remove(`${npup.project.prefix.css}selector-active`);
             });
         }
-    });
-
-
-    // 세팅 셀렉터 스크립트
+    }
+    
     // 세팅 셀럭터 창 열림
-    document.addEventListener('click', (event) => {
+    const openSelector = (e) => {
         document.querySelectorAll(`.${npup.project.prefix.css}selector-value`).forEach(r => {
-            let is_click = r.contains(event.target);
+            let is_click = r.contains(e.target);
 
             if (!is_click) return r.parentElement.classList.remove(`${npup.project.prefix.css}selector-active`);
 
             r.parentElement.classList.toggle(`${npup.project.prefix.css}selector-active`);
         });
-    });
+    }
 
     // 세팅 셀럭터 크롬 스토리지 상호작용
-    document.addEventListener('click', e => {
+    const interactionSelector = (e) => {
         document.querySelectorAll(`.${npup.project.prefix.css}selector-option`).forEach(r => {
             if (!r.contains(e.target)) return;
 
@@ -252,20 +260,45 @@ npup.options.mapping.options['quick-mapping-menu'].system = async function(r) {
                 menu_base.querySelector(`.${npup.project.prefix.css}value-name`).innerHTML = value_name;
             });
         });
+    }
+
+    const clickEvent = (e) => {
+        menuControl(e);
+        executeEvent(e);
+        openSelector(e);
+        interactionSelector(e);
+    }
+
+    document.addEventListener('click', clickEvent);
+    document.addEventListener('keydown', menuEsc);
+
+    removeEventForEngine(() => {
+        menu_base.remove();
+        document.removeEventListener('click', clickEvent);
+        document.removeEventListener('keydown', menuEsc);
     });
 }
 
 
 npup.options.mapping.options['after-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-next-item')[0].click();
+},
+() => {
+    return engineChecker('뷰어');
 });
 
 npup.options.mapping.options['before-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-bottom-item')[0].click();
+},
+() => {
+    return engineChecker('뷰어');
 });
 
 npup.options.mapping.options['ep-home'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-top-home')[0].click();
+},
+() => {
+    return engineChecker('뷰어');
 });
 
 npup.options.mapping.options['ep-comment'].system = keyMappingBase(r => {
@@ -283,38 +316,60 @@ npup.options.mapping.options['ep-comment'].system = keyMappingBase(r => {
 /* 
     if (comment_display)
         setTimeout(() => document.getElementById('novel_drawing').click(), 100); */
+},
+() => {
+    return engineChecker('뷰어');
 });
 
 npup.options.mapping.options['move-mb'].system = keyMappingBase(async r => {
     let where_href;
 
     await storage.get(['nav-mybook']).then(r1 => {
-        where_href = searchSystem('nav-mybook').system(r1, true).href || '/';
+        where_href = npup.options.nav.options['nav-mybook'].system(r1, true)?.href || '/';
     });
 
-    location.href ='https://novelpia.com/mybook' + where_href;
+    location.href ='/mybook' + where_href;
 });
 
 npup.options.mapping.options['page-dark'].system = keyMappingBase(r => {
     const result = toggleCookie('DARKMODE_S');
 
-    if (engineChecker('페이지')) 
+    if (!navigator.onLine)
+        toastAlert({ title: '네트워크', msg: '인터넷에 연결되어 있지 않아 새로고침되지 않습니다.', type: 'warn' });
+    else if (navigator.connection?.type == 'cellular')
+        toastAlert({ title: '모바일 데이터', msg: '모바일 데이터를 사용 중이므로 새로고침되지 않습니다.' });
+    else if (engineChecker('페이지')) {
         location.reload();
-    else 
-        toastAlert({ title: '다크모드', msg: `다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
+        return;
+    }
+
+    toastAlert({ title: '다크모드', msg: `다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });
 
 npup.options.mapping.options['viewer-dark'].system = keyMappingBase(r => {
     const result = toggleCookie('DARKMODE');
 
-    if (engineChecker('뷰어') || pathChecker(['/comic_viewer/', '/viewer_collect/'])) 
+    if (!navigator.onLine)
+        toastAlert({ title: '네트워크', msg: '인터넷에 연결되어 있지 않아 새로고침되지 않습니다.', type: 'warn' });
+    else if (navigator.connection?.type == 'cellular')
+        toastAlert({ title: '모바일 데이터', msg: '모바일 데이터를 사용 중이므로 새로고침되지 않습니다.' });
+    else if ((engineChecker('뷰어') || pathChecker(['/comic_viewer/', '/viewer_collect/']))) {
         location.reload();
-    else 
-        toastAlert({ title: '뷰어 다크모드', msg: `뷰어 다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
+        return;
+    }
+
+    toastAlert({ title: '뷰어 다크모드', msg: `뷰어 다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });
 
 npup.options.mapping.options['secret'].system = keyMappingBase(r => {
     const result = toggleCookie('secret_mode');
-    location.reload();
-    if (result) localStorage.secret_alert = true;
+
+    if (!navigator.onLine) {
+        toastAlert({ title: '시크릿 모드', msg: `시크릿 모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
+        toastAlert({ title: '네트워크', msg: '인터넷에 연결되어 있지 않아 새로고침되지 않습니다.', type: 'warn' });
+    }
+    else {
+        if (result) localStorage.secret_alert = true;
+        location.reload();
+    }
 }); 

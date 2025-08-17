@@ -5,7 +5,7 @@ const npup = {
 
     project: {
         name: 'NPup',
-        version: '3',
+        version: '4 β',
         get prefix() {
             return {
                 css: this.name.toLowerCase() + '-',
@@ -88,6 +88,9 @@ const npup = {
     
 }
 
+npup.event = {
+    router: `${npup.project.name}RouterEnd`
+}
 
 
 
@@ -97,21 +100,21 @@ const npup = {
 
 
 
-let path = window.location.pathname + window.location.search;
+
+let path = window.location.pathname;
 
 if (!path.endsWith('/')) path += '/';
 
 const html = document.getElementsByTagName('html')[0];
 
-new MutationObserver(() => {
-    let current_path = window.location.pathname + window.location.search;
+window.addEventListener(npup.event.router, () => {
+    let current_path = window.location.pathname;
+    if (!current_path.endsWith('/')) current_path += '/';
 
-    if (path == current_path) return;
+    if (path == current_path);
     else path = current_path;
+});
 
-    if (!path.endsWith('/')) path += '/';
-
-}).observe(html, { ...npup.settings.observer_setup, attributes: true, characterData: true }); 
 
 
 
@@ -123,18 +126,17 @@ new MutationObserver(() => {
 
 
 // Base Functions
-npup.func.pathChecker = (paths) => {
+npup.func.pathChecker = (paths, target = path) => {
     if (typeof paths == 'string')
-        return path.startsWith(paths);
-    else if (Array.isArray(paths)) {
+        return target.startsWith(paths);
+    else if (Array.isArray(paths) && paths.length) {
         var path_check = false;
 
         for (var i = 0; i < paths.length && !path_check; i++) {
-            path_check = path.startsWith(paths[i]);
+            path_check = target.startsWith(paths[i]);
         }
         return path_check;
     } else {
-        npup.warn('경로 형식을 알 수 없습니다.')
         return false;
     }
 }
@@ -142,14 +144,15 @@ npup.func.pathChecker = (paths) => {
 
 npup.func.domainChecker = (domain) => {
     const domain_type = {
-        novel: 'novelpia.com',
+        base: 'novelpia.com',
         books: 'book.novelpia.com',
-        webtoon: 'toptoon.novelpia.com'
+        webtoon: 'toptoon.novelpia.com',
+        global: 'global.novelpia.com'
     };
 
     const current_domain = window.location.hostname;
 
-    return current_domain == domain_type[domain] || domain;
+    return current_domain == (domain_type[domain] || domain);
 }
 
 

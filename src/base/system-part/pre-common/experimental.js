@@ -5,7 +5,7 @@ npup.options.experimental.options['frosted-glass'].system = function (r) {
 
     let style = document.createElement('style');
     style.id = `${npup.project.prefix.css}frosted-glass-css`;
-    style.insertAdjacentHTML('afterbegin', `
+    style.textContent = `
 header,
 #bottom-nav-bar,
 #header_bar, #footer_bar,
@@ -50,9 +50,10 @@ header {
         backdrop-filter: blur(${blur_intensity}px);
     }
 }
-`);
+`;
 
     let home_style = undefined;
+    let dark_style = undefined;
 
     if (window.location.pathname == "/") {
         const box_shadow = `header { box-shadow: rgba(${box_shadow_color_page}) 0px 1px 4px 0px; }`;
@@ -62,24 +63,22 @@ header {
         home_style.id = `${npup.project.prefix.css}frosted-glass-css-home`;
         home_style.insertAdjacentHTML('afterbegin', box_shadow_lock);
 
-        document.addEventListener('scroll', () => {
+        const scrollBoxShadow = () => {
             if (window.scrollY > 10 && home_style.textContent != box_shadow) {
                 home_style.textContent = box_shadow;
             }
             else if (window.scrollY <= 10  && home_style.textContent != box_shadow_lock){
                 home_style.textContent = box_shadow_lock;
             }
-        });
+        }
+
+        document.addEventListener('scroll', scrollBoxShadow);
     }
 
-    let dark_style = undefined;
-
     if (engineChecker('페이지') && getCookie('DARKMODE_S')) {
-
-
         dark_style = document.createElement('style');
         dark_style.id = `${npup.project.prefix.css}frosted-glass-css-page-dark`;
-        dark_style.insertAdjacentHTML('afterbegin', `
+        dark_style.textContent = `
 header,
 #bottom-nav-bar,
 .menu_alarm_m,
@@ -106,18 +105,18 @@ header,
 .last-ep-alarm {
     box-shadow: 0 0 20px rgba(175, 175, 175, 0.5) !important;
 }
-`);
+`;
     }
     else if (engineChecker('뷰어') && getCookie('DARKMODE')) {
         dark_style = document.createElement('style');
         dark_style.id = `${npup.project.prefix.css}frosted-glass-css-viewer-dark`;
-        dark_style.insertAdjacentHTML('afterbegin', `
+        dark_style.textContent = `
 #header_bar, #footer_bar
 {
     box-shadow: rgba(255, 255, 255, 0.32) 0px 1px 4px 0px !important;
     background-color: rgba(0, 0, 0, 0.35) !important;
 }
-`);
+`;
     }
 
     tryChecker(() => {

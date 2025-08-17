@@ -2,13 +2,13 @@ let storage = chrome.storage.sync;
 const local = chrome.storage.local;
 let storage_type = 'sync';
 
-local.get([npup.keys.sync]).then(r => {
+local.get([npup.keys.sync]).then(async r => {
     if (!r[npup.keys.sync] && typeof r[npup.keys.sync] != 'boolean')
         local.set({ [npup.keys.sync]: true });
     else if (!r[npup.keys.sync]) {
         storage = local, storage_type = 'local', storage_changed = true;
-    } 
-    ready(r);
+    }
+    ready();
 });
 
 local.get(['debug-mode']).then(r => {
@@ -35,6 +35,8 @@ const ENGINE_TYPE = {
     SELECTOR: 'selector',
     SYSTEM: 'system',
 };
+
+let current_attribute = [`${npup.project.prefix.css}engine`];
 
 class EngineStructure {
     /**
@@ -89,12 +91,14 @@ class EngineStructure {
     /**
      * Engine start
      */
-    on() {
-        const engine_data = html.getAttribute(`${npup.project.prefix.css}engine`);
-        html.setAttribute(
-            `${npup.project.prefix.css}engine`,
-            (engine_data ? engine_data + ' ': '') + this.name.replace(/ /g, '-')
-        );
+    on(settings = { router: false }) {
+        if (!settings.router) {
+            const engine_data = html.getAttribute(`${npup.project.prefix.css}engine`);
+            html.setAttribute(
+                `${npup.project.prefix.css}engine`,
+                (engine_data ? engine_data + ' ': '') + this.name.replace(/ /g, '-')
+            );
+        }
 
         return storage.get(this.#getAllKeys()).then(r => {
             this.#debugStorage(r);
@@ -102,37 +106,45 @@ class EngineStructure {
             switch (this.type) {
                 case ENGINE_TYPE.SYSTEM:
                     if (this.system_tryChecker)
-                        tryChecker(() => this.#engine.SYSTEM(r), this.name);
+                        tryChecker(() => this.#engine.SYSTEM(r, settings), this.name);
                     else 
-                        this.#engine.SYSTEM(r)
+                        this.#engine.SYSTEM(r, settings)
                     break;
 
                 case ENGINE_TYPE.SWITCH:
-                    this.#engine.SWITCH(r);
+                    this.#engine.SWITCH(r, settings);
                     break;
 
                 case ENGINE_TYPE.SELECTOR:
-                    this.#engine.SELECTOR(r);
+                    this.#engine.SELECTOR(r, settings);
                     break;
             }
 
-            return this.#execution(r, this);
+            return this.#execution(r, this, settings);
         });
     }
 
     #engine = {
-        SWITCH: (r) => {
+        SWITCH: (r, settings) => {
+            if (settings.router) return;
+
             this.#getKeys().forEach(async key =>{
                 const system_structure = this.getSystemStructure(key);
 
                 const system_check = (storage_type == 'sync' && system_structure.settings?.local);
 
-                if (r[key] && !system_check)
-                    html.setAttribute(npup.project.prefix.css + key, '');
+                const att_key = npup.project.prefix.css + key;
+
+                if (r[key] && !system_check) {
+                    html.setAttribute(att_key, '');
+                    current_attribute.push(att_key);
+                }
                 else if (system_check) {
                     const key_data = await local.get([key]);
-                    if (key_data[key])
-                        html.setAttribute(npup.project.prefix.css + key, '');
+                    if (key_data[key]) {
+                        html.setAttribute(att_key + key, '');
+                        current_attribute.push(att_key);
+                    }
                 } else 
                     return;
 
@@ -140,15 +152,19 @@ class EngineStructure {
 
                 if (addons)
                     addons.forEach(addon => {
-                        if (r[addon]) html.setAttribute(npup.project.prefix.css + key, '');
+                        if (r[addon]) html.setAttribute(att_key + key, ''), current_attribute.push(att_key);
                     });
             });
         },
-        SELECTOR: (r) => {
+        SELECTOR: (r, settings) => {
+            if (settings.router) return;
+
             this.#getKeys().forEach(async key => {
                 const system_structure = this.getSystemStructure(key);
 
                 const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+
+                const att_key = npup.project.prefix.css + key;
 
                 if (!r[key] || system_check) {
                     if (system_check) {
@@ -160,14 +176,19 @@ class EngineStructure {
 
                 if (r[key] == system_structure.options[0]) return;
 
-                html.setAttribute(npup.project.prefix.css + key, r[key]);
+                html.setAttribute(att_key, r[key]);
+                current_attribute.push(att_key);
             });
         },
-        SYSTEM: (r) => {
+        SYSTEM: (r, settings) => {
             this.#getKeys().forEach(async key => {
                 this.#debugKey(key);
 
                 const system_structure = this.getSystemStructure(key);
+
+                if (settings.router)
+                    if (!system_structure.structure.router)
+                        return;
 
                 const system_check = (storage_type == 'sync' && system_structure.settings?.local);
 
@@ -191,6 +212,10 @@ class EngineStructure {
             });
         }
     };
+
+    reset() {
+        return this.#systems_structures.delete();
+    }
 
     #debugStorage(r, local) {
         if (npup.debug?.storage)
@@ -311,7 +336,19 @@ class SystemStructure {
         this.system = () => { return /* npup.dev(`The system for "${this.key}" could not find`) */; };
         this.options = [];
 
+        this.structure = {
+            router: false
+        }
+
         this.settings = settings;
+    }
+
+    /**
+     * use router
+     */
+    useRouter() {
+        this.structure.router = true;
+        return this;
     }
 
     /**
@@ -399,12 +436,45 @@ class SystemStructure {
 function scriptInjection(path) {
     if (!path) return;
 
+    const id = `${npup.project.prefix.css}${path.split('/').pop()}`;
+
     const script = document.createElement('script');
     script.src = chrome.runtime.getURL(path);
+    script.id = id;
+
+    if (document.getElementById(id))
+        document.getElementById(id).remove();
+
     document.head.appendChild(script);
+
+    return script;
 }
 
-let basic_use_system = {};
+/**
+ * 헤드에 스타일 태그를 삽입합니다.
+ * @param {string} id 스타일 태그르 정의할 아이디
+ * @param {string} content css 입력
+ * @returns 
+ */
+function styleInjection(id, content) {
+    if (!id) return;
+
+    const style = document.createElement('style');
+    style.id = id;
+    if (content) style.textContent = content;
+
+    if (document.getElementById(id))
+        document.getElementById(id).remove();
+
+    document.head.appendChild(style);
+
+    return style;
+}
+
+let basic_use_system = {
+    base: {},
+    router: {}
+}
 
 /**
  * basically use system about key
@@ -412,9 +482,11 @@ let basic_use_system = {};
  * @param {*} r 
  */
 function basicUseSystem(key, r, ...settings) {
-    if (!r[key] && !basic_use_system[key]) {
-        basic_use_system[key] = true;
-        searchSystem(key).system(r, ...settings);
+    if (!r[key] && !basic_use_system.base[key] && !basic_use_system.router[key]) {
+        const system = searchSystem(key);
+        if (system.router) basic_use_system.router[key] = true;
+        else basic_use_system.base[key] = true;
+        system.system(r, ...settings);
     }
 }
 

@@ -66,15 +66,22 @@ npup.options.nav.options.nav.system = function(r) {
     const delay = npup.etc.laze_check_time;
     let timer = null;
 
-    window.addEventListener('resize', function () {
+    function resizeEvent() {
         clearTimeout(timer);
         timer = setTimeout(function () {
             if (window.innerWidth > 891 && !header_position)
                 headerLocation(r['nav-align'], nav), header_position = true;
-
+    
             else if (window.innerWidth <= 891 && header_position)
                 navLocation(nav), header_position = false;
         }, delay);
+    }
+
+    window.addEventListener('resize', resizeEvent);
+
+    removeEventForEngine(() => {
+        clearTimeout(timer);
+        window.removeEventListener('resize', resizeEvent);
     });
 }
 

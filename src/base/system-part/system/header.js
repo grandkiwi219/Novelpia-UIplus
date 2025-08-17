@@ -54,71 +54,84 @@ let delete_all = document.createElement('div');
 delete_all.innerHTML = '잔체삭제';
 
 
-npup.options.header.options['search-result'].system = function(r) {
-    if (path == '/comic_search') return;
+npup.options.header.options['search-result'].system = function(r, generate) {
+    if (pathChecker('/comic_search/')) return;
+
+    if (routing && !generate) { // 뒤로가기시 바로 업데이트가 되지 않는 문제
+        return tryChecker(() => {
+            // 혹시 모를 중복 생성으로 인한 검색 결과 미반영 해결책
+            let search_result = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}-wrap`);
+
+            if (!search_result[0] && !document.getElementsByClassName(`${npup.project.prefix.css}${this.key}`)[0]) {
+                /* l.nav, 다른 것들도 반영하는 것은 각 시스템별로 바디 부분에 npup- 를 삽입함으로써 이미 존재함을 증명시키게 할 것 */
+                /* 그렇다해도 searchResultSystem 내부에 resultBoxContent가 삽입되어 있으니 이 부분은 삭제하지 말 것 */
+                this.system(r, true);
+            }
+            else
+                search_result[search_result.length - 1].innerHTML = resultBoxContent();
+        }, '동적 검색 결과', '파츠'/* , mus */);
+    }
     
     sr = this.key
     presr += this.key;
     delete_all.id = `${presr}-delete-all`;
 
-    if (!pathChecker('/comic_search/')) {
-        let result_box = document.createElement('div');
-        result_box.classList.add(`${presr}`);
+    let result_box = document.createElement('div');
+    result_box.classList.add(`${presr}`);
 
-        let result_box_wrap = document.createElement('div');
-        result_box_wrap.classList.add(`${presr}-wrap`);
+    let result_box_wrap = document.createElement('div');
+    result_box_wrap.classList.add(`${presr}-wrap`);
 
-        result_box_wrap.innerHTML = resultBoxContent();
+    result_box_wrap.innerHTML = resultBoxContent();
 
-        result_box.appendChild(result_box_wrap);
+    result_box.appendChild(result_box_wrap);
 
-        // 검색바 최소화 선택이 '안'되어 있을 시
-        if (!r['nav'] && !r['search']) {
-            let searcher = document.querySelector('div.header-top-wrapper > div.header-top > div:has(div.header-search)');
-            // css 로 위치 변경
-            //searcher.style = 'position: relative; width: 420px; height: 50px;';
+    // 검색바 최소화 선택이 '안'되어 있을 시
+    if (!r['nav'] && !r['search']) {
+        let searcher = document.querySelector('div.header-top-wrapper > div.header-top > div:has(div.header-search)');
+        // css 로 위치 변경
+        //searcher.style = 'position: relative; width: 420px; height: 50px;';
 
-            searcher.appendChild(result_box);   
+        searcher.appendChild(result_box);
 
-            document.addEventListener('click', (e) => {
-                let is_click = false;
-            
-                const header_search = document.getElementsByClassName('header-search');
-                for (let i = 0; i < header_search.length; i++)
-                    if (header_search[i].contains(e.target)) is_click = true;
+        document.addEventListener('click', (e) => {
+            let is_click = false;
 
-                const search_result = document.getElementsByClassName(`${presr}`);
-                for (let i = 0; i < search_result.length; i++)
-                    if (search_result[i].contains(e.target)) is_click = true;
-            
-                if (!is_click) return document.getElementsByClassName(`${presr}`)[0].classList.remove(`${presr}-active`);
-            
-                document.getElementsByClassName(`${presr}`)[0].classList.add(`${presr}-active`);
-            });
-            
-            document.addEventListener('keydown', (e) => {
-                if (e.key == 'Escape') document.getElementsByClassName(`${presr}`)[0].classList.remove(`${presr}-active`);
-            });
-        
+            const header_search = document.getElementsByClassName('header-search');
+            for (let i = 0; i < header_search.length; i++)
+                if (header_search[i].contains(e.target)) is_click = true;
+
+            const search_result = document.getElementsByClassName(`${presr}`);
+            for (let i = 0; i < search_result.length; i++)
+                if (search_result[i].contains(e.target)) is_click = true;
+
+            if (!is_click) return document.getElementsByClassName(`${presr}`)[0].classList.remove(`${presr}-active`);
+
+            document.getElementsByClassName(`${presr}`)[0].classList.add(`${presr}-active`);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key == 'Escape') document.getElementsByClassName(`${presr}`)[0].classList.remove(`${presr}-active`);
+        });
+
         // 검색바 최소화 선택이 되어 있을 시
-        } else if (r['nav'] || r['search']) {
-            new MutationObserver((mus, ob) => {
-                let searcher = document.getElementById(`${npup.project.prefix.css}search-form`);
+    } else if (r['nav'] || r['search']) {
+        new MutationObserver((mus, ob) => {
+            let searcher = document.getElementById(`${npup.project.prefix.css}search-form`);
 
-                if (!searcher) return;
+            if (!searcher) return;
 
-                ob.disconnect();
+            ob.disconnect();
 
-                searcher.classList.add(`${presr}-form`);
+            searcher.classList.add(`${presr}-form`);
 
-                result_box.classList.add(`${presr}-newtype`);
-                searcher.appendChild(result_box); 
-            }).observe(document.body, observer_setup);
-        }
-
-        resultRedirect();
-        resultRemove();
+            result_box.classList.add(`${presr}-newtype`);
+            searcher.appendChild(result_box);
+        }).observe(document.body, observer_setup);
     }
+
+    resultRedirect();
+    resultRemove();
 }
 
 

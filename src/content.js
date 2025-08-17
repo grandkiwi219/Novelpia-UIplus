@@ -3,41 +3,45 @@ npup.log('노벨피아를 감지했습니다.');
 
 
 // ready start
-function ready(r) {
-    STRUCTURE.SWITCH.ENGINE.on();
+function ready(settings = { router: false }) {
+    npup.log('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ');
 
-    STRUCTURE.SELECTOR.ENGINE.on();
+    STRUCTURE.SWITCH.ENGINE.on(settings);
 
-    STRUCTURE.CUSTOM.ENGINE.on();
+    STRUCTURE.SELECTOR.ENGINE.on(settings);
+
+    STRUCTURE.CUSTOM.ENGINE.on(settings);
 
     // --- Head Common Engine ---
-    STRUCTURE.PRE_COMMON.ENGINE.on();
+    STRUCTURE.PRE_COMMON.ENGINE.on(settings);
 
     // --- body checker ---
     if (document.body) {
-        start();
+        start(settings);
     } else {
         new MutationObserver((mus, ob) => {
             for (const mu of mus) for (const node of mu.addedNodes)
                 if (node.localName === 'body') {
-                    start();
+                    start(settings);
 
                     return ob.disconnect();
                 }
         }).observe(html, { childList: true });
     }
 
+    if (routing) return;
+
     // --- initial-setup injection ---
     scriptInjection('src/npup.js');
 }
 
-function start() {
+function start(settings) {
     // --- Body Common Engine ---
-    STRUCTURE.COMMON.ENGINE.on();
+    STRUCTURE.COMMON.ENGINE.on(settings);
 
     // --- System Engine ---
-    if (!STRUCTURE.SYSTEM.ENGINE.name) npup.log('개별 엔진이 존재하지 않는 페이지입니다.');
-    else STRUCTURE.SYSTEM.ENGINE.on();
+    if (!STRUCTURE.SYSTEM.ENGINE.name) npup.dev('개별 엔진이 존재하지 않는 페이지입니다. 본 페이지에서는 노벨피아 UI+를 이용할 수 없습니다.');
+    else STRUCTURE.SYSTEM.ENGINE.on(settings);
 
     additionalExecution();
 }

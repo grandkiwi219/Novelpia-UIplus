@@ -4,7 +4,7 @@ npup.options.novel.options['novel-page'].system = function(r) {
     new MutationObserver((mus, ob) => {
         if (!document.getElementById('episode_table')) return;
 
-        ob.disconnect();;
+        ob.disconnect();
 
         novelPageItem(r);
         dynamicNovelPageItem(r);
@@ -26,12 +26,18 @@ function novelPageItem(r) {
     target.insertAdjacentElement('beforebegin', page_items);
     target.insertAdjacentElement('beforebegin', page_selector);
 
-    document.addEventListener('keydown', (e) => {
+    function novelPageItemEsc(e) {
         if (e.key == 'Escape') {
             const target = document.getElementsByClassName(`select_episode_box`);
             for (let i = 0; i < target.length; i++)
                 target[i].style.display = 'none';
         }
+    }
+
+    document.addEventListener('keydown', novelPageItemEsc);
+
+    removeEvent(() => {
+        document.removeEventListener('keydown', novelPageItemEsc);
     });
 }
     
@@ -49,4 +55,8 @@ function dynamicNovelPageItem(r) {
     });
 
     obs.observe(target, observer_setup);
+
+    removeEvent(() => {
+        obs.disconnect();
+    });
 }

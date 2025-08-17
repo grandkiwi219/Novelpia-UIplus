@@ -1,6 +1,12 @@
-Object.values(npup.options).forEach(ca => {
-    Object.values(ca.options).forEach(op => optionBinding(ca, op));
-});
+changeEngine({ path });
+
+optionsSetup();
+
+function optionsSetup() {
+    Object.values(npup.options).forEach(ca => {
+        Object.values(ca.options).forEach(op => optionBinding(ca, op));
+    });
+};
 
 function optionBinding(ca, op) {
     let engine = [];
@@ -46,6 +52,11 @@ function optionBinding(ca, op) {
     if (op.system)
         opbi.setSystem(op.system);
 
+    if (op.structure) {
+        if (op.structure.router)
+            opbi.useRouter();
+    }
+
     opbi.setup();
 
     if (op.options) {
@@ -55,4 +66,9 @@ function optionBinding(ca, op) {
     }
 
     delete opbi;
+}
+
+function optionsReset() {
+    Object.values(STRUCTURE).forEach(s => s.ENGINE.reset());
+    optionsSetup();
 }

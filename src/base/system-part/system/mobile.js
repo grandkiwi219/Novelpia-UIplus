@@ -246,16 +246,22 @@ function epWidth(ep_width) {
  * @param {HTMLStyleElement} style 미리 생성해놓은 style 노드
  */
 function widthObserver(continue_ep, style) {
-    new MutationObserver((mus, ob) => {
+    const widthOb = new MutationObserver((mus, ob) => {
         if (window.innerWidth > 891) return;
 
         ob.disconnect();
 
         setWidth(continue_ep, style)
-    }).observe(document.body, { ...observer_setup, attributes: true });
+    });
+    widthOb.observe(document.body, { ...observer_setup, attributes: true });
+
+    removeEvent(() => {
+        widthOb.disconnect();
+    });
 }
 
 let width_comic_observer = undefined;
+let width_comic_remove_observer = undefined;
 
 /**
  * 대형화면에서 시작해서 이어보기 크기가 display: none; 상태에서 width가 0이 되어 불편하게 보이는 것을 방지
@@ -266,6 +272,8 @@ function widthComicObserver(continue_ep, style) {
     if (width_comic_observer) {
         window.removeEventListener('resize', width_comic_observer);
         width_comic_observer = undefined;
+        window.removeEventListener(npup.event.router, width_comic_remove_observer);
+        width_comic_remove_observer = undefined;
     }
 
     if (window.innerWidth > 891) {
@@ -278,6 +286,13 @@ function widthComicObserver(continue_ep, style) {
         }
 
         window.addEventListener('resize', width_comic_observer);
+
+        width_comic_remove_observer = function routerResizeRemove() {
+            window.removeEventListener('resize', width_comic_observer);
+            window.removeEventListener(npup.event.router, width_comic_remove_observer);
+        }
+
+        window.addEventListener(npup.event.router, width_comic_remove_observer);
     }
     else
         setWidth(continue_ep, style);
@@ -298,7 +313,7 @@ function setWidth(continue_ep, style) {
 
 
 npup.options.mobile.options['top-ep'].system = function(r) {
-    if (!pathChecker('/novel')) return;
+    if (!pathChecker('/novel/')) return;
 
     new MutationObserver(tryFunc((mus, ob) => {
         const continue_ep_mobile = document.getElementsByClassName('btn-view-run')[0];

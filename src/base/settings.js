@@ -42,7 +42,10 @@ npup.options = { ...npup.options,
                 type: {
                     option: 'switch',     
                     structure: ['system']
-                }
+                },
+                structure: {
+                    router: true,
+                },
             },
 
             alarm: {
@@ -121,6 +124,9 @@ npup.options = { ...npup.options,
                     option: 'switch',
                     structure: ['system']
                 },
+                structure: {
+                    router: true,
+                },
             },
         }
     },
@@ -136,12 +142,18 @@ npup.options = { ...npup.options,
                     option: 'switch',
                     structure: ['switch', 'system']
                 },
+                structure: {
+                    router: true,
+                },
             },
             'click-alert': {
                 desc: '우클릭 알림 삭제',
                 type: {
                     option: 'switch',
                     structure: ['system']
+                },
+                structure: {
+                    router: true,
                 },
             },
         }
@@ -157,7 +169,10 @@ npup.options = { ...npup.options,
                 type: {
                     option: 'switch',
                     structure: ['system']
-                }
+                },
+                structure: {
+                    router: true,
+                },
             },
             'bottom-heart-alarm': {
                 desc: '선호작, 구독알람 아이콘 하단 추가',
@@ -167,7 +182,10 @@ npup.options = { ...npup.options,
                 },
                 addons: [
                     { type: 'system', keys: ['bottom-nav'] }
-                ]
+                ],
+                structure: {
+                    router: true,
+                },
             },
             'origin-header': {
                 desc: '기존 헤더로 변경 (기본적으로 아이콘 하단 추가)',
@@ -209,6 +227,9 @@ npup.options = { ...npup.options,
                     option: 'switch',
                     structure: ['system']
                 },
+                structure: {
+                    router: true,
+                },
             },
 
             'web-title': {
@@ -227,7 +248,10 @@ npup.options = { ...npup.options,
                 ],
                 settings: {
                     type: 'long'
-                }
+                },
+                structure: {
+                    router: true,
+                },
             },
 
             'last-ep': {
@@ -269,7 +293,7 @@ npup.options = { ...npup.options,
                             { name: '24시간', value: 1440 },
                         ]
                     },
-                }
+                },
             },
         },
         /* setups: {                                         // 옵션 카테고리 UI '특수' 설정
@@ -425,7 +449,6 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 type: {
                     option: 'mapping'
                 },
-                engine: '뷰어',
             },
             'before-ep': {
                 tag: {
@@ -435,7 +458,6 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 type: {
                     option: 'mapping'
                 },
-                engine: '뷰어',
             },
             'ep-home': {
                 tag: {
@@ -445,7 +467,6 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 type: {
                     option: 'mapping'
                 },
-                engine: '뷰어',
             },
             'ep-comment': {
                 tag: {
@@ -455,7 +476,6 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 type: {
                     option: 'mapping'
                 },
-                engine: '뷰어',
             },
             'page-dark': {
                 tag: {
@@ -499,7 +519,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
         }
     },
 
-    experimental: {
+    experimental: { // 스크립트 인젝션처럼 스타일 인젝션 만들기
         icon: '🧬',
         name: '실험 기능',
         engine: 'all',
@@ -531,32 +551,3 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
         }
     },
 }
-
-
-
-
-function keyBinding() {
-    for (const categoryKey in npup.options) {
-        const category = npup.options[categoryKey];
-
-        if (!category.options) continue;
-
-        for (const optionKey in category.options) {
-            const option = category.options[optionKey];
-
-            if (typeof option === 'object' && option !== null) {
-                option.key = optionKey;
-
-                if (option.options) {
-                    for (const subKey in option.options) {
-                        const subOption = option.options[subKey];
-                        if (typeof subOption === 'object' && subOption !== null) {
-                            subOption.key = subKey;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-keyBinding();
