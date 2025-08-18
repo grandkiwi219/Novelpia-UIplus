@@ -1,3 +1,5 @@
+const keyMappingCa = npup.options.mapping.options;
+
 function keyMappingBase(callback, predicate = () => { return true; }) {
     return function(r, settings = { quick_mapping_menu: false }) {
         if (settings.quick_mapping_menu) {
@@ -53,7 +55,7 @@ function keyMappingBase(callback, predicate = () => { return true; }) {
 }
 
 
-npup.options.mapping.options['quick-mapping-menu'].system = async function(r) {
+keyMappingCa['quick-mapping-menu'].system = async function(r) {
     const qmm = `${npup.project.prefix.css}qmm`;
 
     const menu_base = document.createElement('div');
@@ -92,7 +94,7 @@ npup.options.mapping.options['quick-mapping-menu'].system = async function(r) {
             + '<path d="M5 5 L25 25 M5 25 L25 5" />'
         + '</svg>';
 
-    Object.values(npup.options.mapping.options).forEach(async op => {
+    Object.values(keyMappingCa).forEach(async op => {
         if (!op.tag?.quick_mapping_menu) return;
 
         /* if (op.key == 'move-mb' && engineChecker('페이지')) {
@@ -116,7 +118,7 @@ npup.options.mapping.options['quick-mapping-menu'].system = async function(r) {
     menu_menu.innerHTML = '' +
 `<div class="npup-selector">
     <div class="npup-selector-value">
-        <div class="npup-value-name">${npup.options.mapping.options[this.key].values.find(v => v.value == r[this.key])?.name}</div>
+        <div class="npup-value-name">${keyMappingCa[this.key].values.find(v => v.value == r[this.key])?.name}</div>
         <div>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -2 14 14">
                 <path d="M0 3 4 7.2 8 3 0 3" fill="black" stroke="rgb(145, 145, 145)" stroke-width=".5px" />
@@ -125,7 +127,7 @@ npup.options.mapping.options['quick-mapping-menu'].system = async function(r) {
     </div>
     <div class="npup-selector-list-wrap">
         <div class="npup-selector-list">
-            ${npup.options.mapping.options[this.key].values.map(v => {
+            ${keyMappingCa[this.key].values.map(v => {
                 return `<div class="npup-selector-option" value="${v.value}">${v.name}</div>`;
             }).join('')}
         </div>
@@ -280,28 +282,28 @@ npup.options.mapping.options['quick-mapping-menu'].system = async function(r) {
 }
 
 
-npup.options.mapping.options['after-ep'].system = keyMappingBase(r => {
+keyMappingCa['after-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-next-item')[0].click();
 },
 () => {
     return engineChecker('뷰어');
 });
 
-npup.options.mapping.options['before-ep'].system = keyMappingBase(r => {
+keyMappingCa['before-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-bottom-item')[0].click();
 },
 () => {
     return engineChecker('뷰어');
 });
 
-npup.options.mapping.options['ep-home'].system = keyMappingBase(r => {
+keyMappingCa['ep-home'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-top-home')[0].click();
 },
 () => {
     return engineChecker('뷰어');
 });
 
-npup.options.mapping.options['ep-comment'].system = keyMappingBase(r => {
+keyMappingCa['ep-comment'].system = keyMappingBase(r => {
 /*     if (document.getElementById('header_bar').style.display != 'block')
         document.getElementById('novel_drawing').click();
 
@@ -321,7 +323,7 @@ npup.options.mapping.options['ep-comment'].system = keyMappingBase(r => {
     return engineChecker('뷰어');
 });
 
-npup.options.mapping.options['move-mb'].system = keyMappingBase(async r => {
+keyMappingCa['move-mb'].system = keyMappingBase(async r => {
     let where_href;
 
     await storage.get(['nav-mybook']).then(r1 => {
@@ -331,7 +333,7 @@ npup.options.mapping.options['move-mb'].system = keyMappingBase(async r => {
     location.href ='/mybook' + where_href;
 });
 
-npup.options.mapping.options['page-dark'].system = keyMappingBase(r => {
+keyMappingCa['page-dark'].system = keyMappingBase(r => {
     const result = toggleCookie('DARKMODE_S');
 
     if (!navigator.onLine)
@@ -346,7 +348,7 @@ npup.options.mapping.options['page-dark'].system = keyMappingBase(r => {
     toastAlert({ title: '다크모드', msg: `다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });
 
-npup.options.mapping.options['viewer-dark'].system = keyMappingBase(r => {
+keyMappingCa['viewer-dark'].system = keyMappingBase(r => {
     const result = toggleCookie('DARKMODE');
 
     if (!navigator.onLine)
@@ -361,7 +363,7 @@ npup.options.mapping.options['viewer-dark'].system = keyMappingBase(r => {
     toastAlert({ title: '뷰어 다크모드', msg: `뷰어 다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });
 
-npup.options.mapping.options['secret'].system = keyMappingBase(r => {
+keyMappingCa['secret'].system = keyMappingBase(r => {
     const result = toggleCookie('secret_mode');
 
     if (!navigator.onLine) {

@@ -1,3 +1,5 @@
+const keyMappingCa = npup.options.mapping.options;
+
 function keyMappingBase(callback, predicate = () => { return true; }) {
     return function(r, settings = { quick_mapping_menu: false }) {
         if (settings.quick_mapping_menu) {
@@ -53,7 +55,7 @@ function keyMappingBase(callback, predicate = () => { return true; }) {
 }
 
 
-npup.options.mapping.options['books-quick-mapping-menu'].system = async function(r) {
+keyMappingCa['books-quick-mapping-menu'].system = async function(r) {
     const qmm = `${npup.project.prefix.css}qmm`;
 
     const menu_base = document.createElement('div');
@@ -92,7 +94,7 @@ npup.options.mapping.options['books-quick-mapping-menu'].system = async function
             + '<path d="M5 5 L25 25 M5 25 L25 5" />'
         + '</svg>';
 
-    Object.values(npup.options.mapping.options).forEach(async op => {
+    Object.values(keyMappingCa).forEach(async op => {
         if (!op.tag?.quick_mapping_menu) return;
 
         /* if (op.key == 'move-mb' && engineChecker('페이지')) {
@@ -116,7 +118,7 @@ npup.options.mapping.options['books-quick-mapping-menu'].system = async function
     menu_menu.innerHTML = '' +
 `<div class="npup-selector">
     <div class="npup-selector-value">
-        <div class="npup-value-name">${npup.options.mapping.options[this.key].values.find(v => v.value == r[this.key])?.name}</div>
+        <div class="npup-value-name">${keyMappingCa[this.key].values.find(v => v.value == r[this.key])?.name}</div>
         <div>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -2 14 14">
                 <path d="M0 3 4 7.2 8 3 0 3" fill="black" stroke="rgb(145, 145, 145)" stroke-width=".5px" />
@@ -125,7 +127,7 @@ npup.options.mapping.options['books-quick-mapping-menu'].system = async function
     </div>
     <div class="npup-selector-list-wrap">
         <div class="npup-selector-list">
-            ${npup.options.mapping.options[this.key].values.map(v => {
+            ${keyMappingCa[this.key].values.map(v => {
                 return `<div class="npup-selector-option" value="${v.value}">${v.name}</div>`;
             }).join('')}
         </div>
@@ -281,37 +283,37 @@ npup.options.mapping.options['books-quick-mapping-menu'].system = async function
 }
 
 
-npup.options.mapping.options['books-after-ep'].system = keyMappingBase(r => {
+keyMappingCa['books-after-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-next')[0].click();
 },
 () => {
     return engineChecker('뷰어');
 });
 
-npup.options.mapping.options['books-before-ep'].system = keyMappingBase(r => {
+keyMappingCa['books-before-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-prev')[0].click();
 },
 () => {
     return engineChecker('뷰어');
 });
 
-npup.options.mapping.options['books-ep-home'].system = keyMappingBase(r => {
+keyMappingCa['books-ep-home'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-back')[0].click();
 },
 () => {
     return engineChecker('뷰어');
 });
 
-npup.options.mapping.options['books-move-mb'].system = keyMappingBase(async r => {
+keyMappingCa['books-move-mb'].system = keyMappingBase(async r => {
     location.href ='/mybook';
 });
 
-/* npup.options.mapping.options['books-page-dark'].system = keyMappingBase(r => {
+/* keyMappingCa['books-page-dark'].system = keyMappingBase(r => {
     const result = darkPage();
     toastAlert({ title: '다크모드', msg: `다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });
 
-npup.options.mapping.options['books-viewer-dark'].system = keyMappingBase(r => {
+keyMappingCa['books-viewer-dark'].system = keyMappingBase(r => {
     const result = darkViewer();
     toastAlert({ title: '뷰어 다크모드', msg: `뷰어 다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 }); */

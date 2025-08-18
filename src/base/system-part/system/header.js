@@ -1,4 +1,6 @@
-npup.options.header.options.adult.system = async function(r) {
+const headerCa = npup.options.header.options;
+
+headerCa.adult.system = async function(r) {
 
     new MutationObserver((mus, ob) => {
         let switch_adult = document.querySelector('.switch-adult');
@@ -20,7 +22,7 @@ npup.options.header.options.adult.system = async function(r) {
     
 
 
-npup.options.header.options.search.system = function(r) {
+headerCa.search.system = function(r) {
     
     document.getElementsByClassName('header-search')[0]?.remove();
 
@@ -54,7 +56,7 @@ let delete_all = document.createElement('div');
 delete_all.innerHTML = '잔체삭제';
 
 
-npup.options.header.options['search-result'].system = function(r, generate) {
+headerCa['search-result'].system = function(r, generate) {
     if (pathChecker('/comic_search/')) return;
 
     if (routing && !generate) { // 뒤로가기시 바로 업데이트가 되지 않는 문제
@@ -213,7 +215,7 @@ function resultBoxContent() {
 
 
 
-npup.options.header.options.alarm.system = function(r) {
+headerCa.alarm.system = function(r) {
 
     let where_href = '/';
 

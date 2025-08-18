@@ -117,7 +117,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                     option: 'mapping'
                 },
             },
-            'books-books-before-ep': {
+            'books-before-ep': {
                 tag: {
                     quick_mapping_menu: false
                 },

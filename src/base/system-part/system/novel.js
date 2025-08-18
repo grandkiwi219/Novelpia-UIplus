@@ -1,4 +1,6 @@
-npup.options.novel.options['novel-page'].system = function(r) {
+const novelCa = npup.options.novel.options;
+
+novelCa['novel-page'].system = function(r) {
     if (!pathChecker('/novel/')) return;
 
     new MutationObserver((mus, ob) => {

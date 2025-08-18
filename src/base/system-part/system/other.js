@@ -1,5 +1,6 @@
-/** system: other */
-npup.options.other.options['notice'].system = function(r) {
+const otherCa = npup.options.other.options;
+
+otherCa['notice'].system = function(r) {
     if (window.location.pathname != "/") return;
 
     if (routing) {
@@ -50,7 +51,7 @@ npup.options.other.options['notice'].system = function(r) {
 
 
 
-npup.options.other.options['last-ep'].system = async function(r) {
+otherCa['last-ep'].system = async function(r) {
     let cooltime = null;
     let freeze = false;
     let data = undefined;

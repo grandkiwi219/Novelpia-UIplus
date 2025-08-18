@@ -1,11 +1,13 @@
-npup.options.mobile.options['bottom-nav'].system = function (r) {
+const mobileCa = npup.options.mobile.options;
+
+mobileCa['bottom-nav'].system = function (r) {
     basicUseSystem('origin-header', r);
 }
 
 
 
 
-npup.options.mobile.options['origin-header'].options['scroll-hidden-header'].system = function(r) {
+mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
     if (!r['origin-header'] && !r['bottom-nav']) return;
 
     const header = document.querySelector('header.mobile_hidden');
@@ -70,7 +72,7 @@ function getHeaderHeight(el) {
 
 
 
-npup.options.mobile.options['origin-header'].system = function(r) {
+mobileCa['origin-header'].system = function(r) {
     basicUseSystem('bottom-heart-alarm', r);
 
     if (!r['search']) {
@@ -137,7 +139,7 @@ npup.options.mobile.options['origin-header'].system = function(r) {
 
 
 
-npup.options.mobile.options['bottom-heart-alarm'].system = function(r) {
+mobileCa['bottom-heart-alarm'].system = function(r) {
     if (pathChecker('/novel/'))
         new MutationObserver((mus, ob) => {
             const continue_ep = document.querySelector('.btn-view-episode');
@@ -312,7 +314,7 @@ function setWidth(continue_ep, style) {
 
 
 
-npup.options.mobile.options['top-ep'].system = function(r) {
+mobileCa['top-ep'].system = function(r) {
     if (!pathChecker('/novel/')) return;
 
     new MutationObserver(tryFunc((mus, ob) => {

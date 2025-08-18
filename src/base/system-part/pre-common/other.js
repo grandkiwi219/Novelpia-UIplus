@@ -1,4 +1,4 @@
-npup.options.other.options['web-title'].system = function (r) {
+otherCa['web-title'].system = function (r) {
 
     //노벨피아 - 웹소설로 꿈꾸는 세상! - PAGE
     let tc = document.title.split('-').map(t => t.trim());
