@@ -60,6 +60,7 @@ keyMappingCa['books-quick-mapping-menu'].system = async function(r) {
 
     const menu_base = document.createElement('div');
     menu_base.classList.add(`${qmm}-base`);
+    menu_base.style.fontSize = '14px';
 
     const menu_wrap = document.createElement('div');
     menu_wrap.classList.add(`${qmm}-wrap`);
