@@ -230,12 +230,6 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined }) => {
     if (!alert_container) {
         alert_container = document.createElement('div');
         alert_container.id = `${npup.project.prefix.css}alert-container`;
-        if (!type)
-            if (npup.func.engineChecker('페이지'))
-                alert_container.className = 's_inv';
-            else
-                if (getCookie('DARKMODE'))
-                    alert_container.style.filter = 'invert(1)';
         html.appendChild(alert_container);
     }
 
@@ -244,6 +238,25 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined }) => {
 
     if (type) {
         alert_box.classList.add(type);
+    }
+    else {
+        if (npup.func.domainChecker('base')) {
+            if (npup.func.engineChecker('페이지'))
+                alert_box.classList.add('s_inv');
+            else
+                if (getCookie('DARKMODE'))
+                    alert_box.style.filter = 'invert(1)';
+        }
+        else if (npup.func.domainChecker('books')) {
+            0
+        }
+        else if (npup.func.domainChecker('global')){
+            if (document.body?.classList.contains('dark'))
+                Object.assign(alert_box.style, {
+                    color: 'white',
+                    backgroundColor: 'rgb(23, 23, 23)'
+                });
+        }
     }
 
     const alert_countdown = document.createElement('div');
