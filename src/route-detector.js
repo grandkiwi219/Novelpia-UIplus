@@ -1,30 +1,45 @@
 let routing = false;
 
-window.addEventListener('DOMContentLoaded', () => {
-    let c_path = window.location.pathname;
-    if (!c_path.endsWith('/')) c_path += '/';
-    const routerObserver = new MutationObserver(() => {
-        routing = true;
+(() => {
+    let is_possible = undefined;
 
-        let current_path = window.location.pathname;
-        if (!current_path.endsWith('/')) current_path += '/';
-
-        if (c_path == current_path) return;
-        else {
-            c_path = current_path;
-            router({ path: c_path });
+    for (let i = 0; i < options_category.length; i++) {
+        if (domainChecker(options_category[i].type)) {
+            is_possible = options_category[i];
+            break;
         }
+    }
 
-        routerObserver.disconnect();
+    if (!is_possible) return;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        let c_path = window.location.pathname;
+        if (!c_path.endsWith('/')) c_path += '/';
+        const routerObserver = new MutationObserver(() => {
+            routing = true;
+    
+            let current_path = window.location.pathname;
+            if (!current_path.endsWith('/')) current_path += '/';
+
+            if (!pathChecker(is_possible.matches, current_path) || pathChecker(is_possible.excludes, current_path)) { 0 }
+            else if (c_path == current_path) { 0 }
+            else {
+                performance_standard = performance.now();
+                c_path = current_path;
+                routeDetector({ path: c_path });
+            }
+    
+            routerObserver.disconnect();
+            routerObserver.observe(document.body, observer_setup);
+        });
+    
         routerObserver.observe(document.body, observer_setup);
     });
-
-    routerObserver.observe(document.body, observer_setup);
-});
+})();
 
 // -----------------------------------------------------------------------------
 
-function router(settings = { path: undefined }) {
+function routeDetector(settings = { path: undefined }) {
     const result = changeEngine(settings);
 
     const data = {

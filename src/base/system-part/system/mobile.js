@@ -86,9 +86,9 @@ mobileCa['origin-header'].system = function(r) {
 
             if (!main) return;
 
-            ob.disconnect();
-
             main.insertAdjacentHTML("afterbegin", m_search_icon);
+            
+            ob.disconnect();
         }).observe(document.body, observer_setup);
     }
 
@@ -157,7 +157,7 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
             if (!continue_ep) return;
 
             ob.disconnect();
-
+            
             setBottomHeartAlarm(continue_ep, true);
 
             let is_changed = false;
@@ -317,14 +317,10 @@ function setWidth(continue_ep, style) {
 mobileCa['top-ep'].system = function(r) {
     if (!pathChecker('/novel/')) return;
 
-    new MutationObserver(tryFunc((mus, ob) => {
-        const continue_ep_mobile = document.getElementsByClassName('btn-view-run')[0];
+    targetHandler(() => document.getElementsByClassName('btn-view-run')[0], setTopEp);
 
-        if (!continue_ep_mobile) return;
-
-        ob.disconnect();
-
-        let top_ep = continue_ep_mobile.parentElement.cloneNode(true);
+    function setTopEp() {
+        let top_ep = document.getElementsByClassName('btn-view-run')[0].parentElement.cloneNode(true);
         top_ep.style = 'justify-content: center;';
         top_ep.firstElementChild.style = 'max-width: 585px; width: 100%; margin-top: 20px;';
         if (top_ep.children.length > 1) top_ep.lastElementChild.style.display = 'none';
@@ -332,5 +328,5 @@ mobileCa['top-ep'].system = function(r) {
         const target = document.querySelector('.epnew-mobile-btn-area-relative');
 
         target.insertAdjacentElement('beforebegin', top_ep);
-    })).observe(document.body, observer_setup);
+    }
 }

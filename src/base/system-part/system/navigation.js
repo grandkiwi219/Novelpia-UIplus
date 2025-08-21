@@ -36,6 +36,7 @@ navigationCa['nav-mybook'].system = function(r, get_data) {
     // mobile area
     new MutationObserver((mus, ob) => {
         if (!document.getElementsByClassName('bt-nv-menu')[0]) return;
+        
         ob.disconnect();
 
         let m_menu = document.getElementsByClassName('bt-nv-menu');
@@ -56,7 +57,7 @@ navigationCa['nav-mybook'].system = function(r, get_data) {
 
 
 
-navigationCa.nav.system = function(r) {
+navigationCa['nav'].system = function(r) {
     basicUseSystem('search', r);    // '기본적으로' 검색바 최소화 '사용하기'
 
     const nav = document.getElementsByClassName('top_nav')[0];

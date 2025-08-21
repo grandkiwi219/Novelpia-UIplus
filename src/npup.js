@@ -16,7 +16,9 @@ const npup = {
     },
 
     keys: {
-        sync: 'extension-sync'
+        sync: 'extension-sync',
+        log: 'extension-log',
+        debug: 'debug-mode'
     },
 
     settings: {
@@ -105,7 +107,7 @@ let path = window.location.pathname;
 
 if (!path.endsWith('/')) path += '/';
 
-const html = document.getElementsByTagName('html')[0];
+const html = document.documentElement;
 
 window.addEventListener(npup.event.router, () => {
     let current_path = window.location.pathname;
@@ -156,7 +158,7 @@ npup.func.domainChecker = (domain) => {
 }
 
 
-npup.func.tryChecker = (func, type, not_engine, ...comment) => {
+npup.func.tryChecker = async (func, type, not_engine, ...comment) => {
     if (typeof func == 'function') {
         let no_console = not_engine === false ? false : true;
         let system_type = '엔진';
@@ -171,13 +173,13 @@ npup.func.tryChecker = (func, type, not_engine, ...comment) => {
         }
 
         try {
-            func();
-            let log = (type ? type + space + `${system_type}(이)가 ` : '') + '실행 중입니다.';
+            await func();
+            let log = `${type ? type + space + `${system_type}(이)가 ` : ''}실행 중입니다.${npup.debug?.performance ? ` [${performance.now() - performance_standard} ms]` : ''}`;
             if (!no_console) '';
             else if (!comment) npup.log(log);
             else npup.log(log, ...comment);
 
-            return { status: 2, error: undefined };
+            return { status: 2, error: '알 수 없음.' };
         } catch (err) {
             npup.error((type ? type + space + `${system_type} `: '') + `오류 발생.\n원인: ${err.stack}`);
             if (npup.debug?.alert) npup.func.toastAlert({
@@ -234,7 +236,7 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined }) => {
             else
                 if (getCookie('DARKMODE'))
                     alert_container.style.filter = 'invert(1)';
-        document.body.appendChild(alert_container);
+        html.appendChild(alert_container);
     }
 
     const alert_box = document.createElement('div');

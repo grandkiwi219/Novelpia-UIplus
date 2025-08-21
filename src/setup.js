@@ -11,16 +11,27 @@ local.get([npup.keys.sync]).then(async r => {
     ready();
 });
 
-local.get(['debug-mode']).then(r => {
-    npup.debug = r['debug-mode'];
+local.get([npup.keys.debug, npup.keys.log]).then(r => {
+    npup.debug = r[npup.keys.debug];
     /* 
     {
-        alert: true,
-        storage: true,
-        key: true
+        alert: true,   
+        key: true,
+        performance: true
     }
     */
+
+    if (r[npup.keys.log]) { 
+        npup.log = function() { return; }
+        npup.dev = function() { return; }
+    }
 });
+
+
+
+/* let options = {
+    r: {}
+} */
 
 
 
@@ -50,9 +61,9 @@ class EngineStructure {
      * engine structure
      * @param {string} name This engine's name
      * @param {string} type This engine's type, Must be one of STRUCTURE.TYPES
-     * @param {boolean} [system_tryChecker=true] Whether this engine uses the system engine tryChecker
+     * @param {boolean} [system_tryChecker] Whether this engine uses the system engine tryChecker
      */
-    constructor(name, type, system_tryChecker = true) {
+    constructor(name, type, system_tryChecker = false) {
         if (!Object.values(ENGINE_TYPE).includes(type))
             throw new TypeError(`This ${name} class cannot be used without specifying a type.`);
 
@@ -99,130 +110,30 @@ class EngineStructure {
                 (engine_data ? engine_data + ' ': '') + this.name.replace(/ /g, '-')
             );
         }
+        let r = {}
 
-        return storage.get(this.#getAllKeys()).then(r => {
-            this.#debugStorage(r);
+       storage.get(this.getAllKeys()).then(r => {
+            if (this.system_tryChecker)
+                tryChecker(() => this.engine(r, settings), this.name);
+            else
+                this.engine(r, settings);
 
-            switch (this.type) {
-                case ENGINE_TYPE.SYSTEM:
-                    if (this.system_tryChecker)
-                        tryChecker(() => this.#engine.SYSTEM(r, settings), this.name);
-                    else 
-                        this.#engine.SYSTEM(r, settings)
-                    break;
+            //Object.assign(options.r, r);
 
-                case ENGINE_TYPE.SWITCH:
-                    this.#engine.SWITCH(r, settings);
-                    break;
-
-                case ENGINE_TYPE.SELECTOR:
-                    this.#engine.SELECTOR(r, settings);
-                    break;
-            }
-
-            return this.#execution(r, this, settings);
+            this.#execution(this, settings);
         });
+
     }
 
-    #engine = {
-        SWITCH: (r, settings) => {
-            if (settings.router) return;
-
-            this.#getKeys().forEach(async key =>{
-                const system_structure = this.getSystemStructure(key);
-
-                const system_check = (storage_type == 'sync' && system_structure.settings?.local);
-
-                const att_key = npup.project.prefix.css + key;
-
-                if (r[key] && !system_check) {
-                    html.setAttribute(att_key, '');
-                    current_attribute.push(att_key);
-                }
-                else if (system_check) {
-                    const key_data = await local.get([key]);
-                    if (key_data[key]) {
-                        html.setAttribute(att_key + key, '');
-                        current_attribute.push(att_key);
-                    }
-                } else 
-                    return;
-
-                const addons = this.#getAddons(key);
-
-                if (addons)
-                    addons.forEach(addon => {
-                        if (r[addon]) html.setAttribute(att_key + key, ''), current_attribute.push(att_key);
-                    });
-            });
-        },
-        SELECTOR: (r, settings) => {
-            if (settings.router) return;
-
-            this.#getKeys().forEach(async key => {
-                const system_structure = this.getSystemStructure(key);
-
-                const system_check = (storage_type == 'sync' && system_structure.settings?.local);
-
-                const att_key = npup.project.prefix.css + key;
-
-                if (!r[key] || system_check) {
-                    if (system_check) {
-                        r = await local.get([key]);
-
-                        if (!r[key]) return;
-                    } else return;
-                }
-
-                if (r[key] == system_structure.options[0]) return;
-
-                html.setAttribute(att_key, r[key]);
-                current_attribute.push(att_key);
-            });
-        },
-        SYSTEM: (r, settings) => {
-            this.#getKeys().forEach(async key => {
-                this.#debugKey(key);
-
-                const system_structure = this.getSystemStructure(key);
-
-                if (settings.router)
-                    if (!system_structure.structure.router)
-                        return;
-
-                const system_check = (storage_type == 'sync' && system_structure.settings?.local);
-
-                if (!r[key] || system_check) {
-                    if (system_check) { 
-                        const key_data = await local.get([key]);
-                        r[key] = key_data[key];
-
-                        this.#debugStorage(r, true);
-
-                        if (!r[key]) return;
-                    } else return;
-                }
-
-                if (system_structure.options.length && r[key] == system_structure.options[0]) return;
-
-                tryChecker(() => {
-                    system_structure
-                        .system(r);
-                }, key, false);
-            });
-        }
-    };
+    engine() {
+        return console.warn('\'engine\' method not found.');
+    }
 
     reset() {
         return this.#systems_structures.delete();
     }
 
-    #debugStorage(r, local) {
-        if (npup.debug?.storage)
-            npup.dev(`${this.name} ${storage_type} storage value${local ? ' (local) ' : ' '}------------\n`, r);
-    }
-
-    #debugKey(key) {
+    debugKey(key) {
         if (npup.debug?.key)
             npup.dev(key, this.getSystemStructure(key));
     }
@@ -231,7 +142,7 @@ class EngineStructure {
      * Function to retrieve key values ​​from extension storage
      * @returns {EngineStructure} this
      */ 
-    #getAllKeys() {
+    getAllKeys() {
         const values = [...this.#systems_structures.values()];
 
         let keys = values.map(system => system.key);
@@ -249,12 +160,12 @@ class EngineStructure {
      * Key values ​​to apply by default
      * @returns Key values ​​to apply by default
      */
-    #getKeys() {
+    getKeys() {
         return [...this.#systems_structures.values()]
             .map(system => system.key);
     }
 
-    #getAddons(key) {
+    getAddons(key) {
         const addons = [...new Set(
             this.getSystemStructure(key).addons
                 .filter(r => r.type == ENGINE_TYPE.ALL || r.type == this.type)
@@ -279,16 +190,126 @@ class EngineStructure {
     }
 }
 
+class SwitchEngine extends EngineStructure {
+    constructor(name, type, system_tryChecker = false) {
+        super(name, type, system_tryChecker);
+    }
+
+    engine(r, settings) {
+        if (settings.router) return;
+
+        this.getKeys().forEach(async key => {
+            const system_structure = this.getSystemStructure(key);
+
+            const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+
+            const att_key = npup.project.prefix.css + key;
+
+            if (r[key] && !system_check) {
+                html.setAttribute(att_key, '');
+                current_attribute.push(att_key);
+            }
+            else if (system_check) {
+                const key_data = await local.get([key]);
+                if (key_data[key]) {
+                    html.setAttribute(att_key + key, '');
+                    current_attribute.push(att_key);
+                }
+                //Object.assign(options.r, key_data);
+            } else
+                return;
+
+            const addons = this.getAddons(key);
+
+            if (addons)
+                addons.forEach(addon => {
+                    if (r[addon]) html.setAttribute(att_key + key, ''), current_attribute.push(att_key);
+                });
+        });
+    }
+}
+
+class SelectorEngine extends EngineStructure {
+    constructor(name, type, system_tryChecker = false) {
+        super(name, type, system_tryChecker);
+    }
+    
+    engine(r, settings) {
+        if (settings.router) return;
+
+        this.getKeys().forEach(async key => {
+            const system_structure = this.getSystemStructure(key);
+
+            const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+
+            const att_key = npup.project.prefix.css + key;
+
+            if (!r[key] || system_check) {
+                if (system_check) {
+                    r = await local.get([key]);
+
+                    //Object.assign(options.r, r);
+
+                    if (!r[key]) return;
+                } else return;
+            }
+
+            if (r[key] == system_structure.options[0]) return;
+
+            html.setAttribute(att_key, r[key]);
+            current_attribute.push(att_key);
+        });
+    }
+}
+
+class SystemEngine extends EngineStructure {
+    constructor(name, type, system_tryChecker = false) {
+        super(name, type, system_tryChecker);
+    }
+
+    engine(r, settings) {
+        this.getKeys().forEach(async key => {
+            this.debugKey(key);
+
+            const system_structure = this.getSystemStructure(key);
+
+            if (settings.router)
+                if (!system_structure.structure.router)
+                    return;
+
+            const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+
+            if (!r[key] || system_check) {
+                if (system_check) {
+                    const key_data = await local.get([key]);
+                    r[key] = key_data[key];
+
+                    //Object.assign(options.r, key_data);
+
+                    if (!r[key]) return;
+                } else return;
+            }
+
+            if (system_structure.options.length && r[key] == system_structure.options[0]) return;
+
+            tryChecker(() => {
+                system_structure
+                    .system(r);
+            }, key, false);
+        });
+    }
+}
+
 
 
 
 const STRUCTURE = {
-    SWITCH:      { TYPE: 'switch',     ENGINE: new EngineStructure('스위치', ENGINE_TYPE.SWITCH)},
-    SELECTOR:    { TYPE: 'selector',   ENGINE: new EngineStructure('선택자', ENGINE_TYPE.SELECTOR)},
-    CUSTOM:      { TYPE: 'custom',     ENGINE: new EngineStructure('커스텀', ENGINE_TYPE.SYSTEM, false)},
-    PRE_COMMON:  { TYPE: 'pre-common',  ENGINE: new EngineStructure('헤드 공통', ENGINE_TYPE.SYSTEM)},
-    COMMON:      { TYPE: 'common',     ENGINE: new EngineStructure('바디 공통', ENGINE_TYPE.SYSTEM)},
-    SYSTEM:      { TYPE: 'system',     ENGINE: new EngineStructure('', ENGINE_TYPE.SYSTEM)},
+    SWITCH:      { TYPE: 'switch',     ENGINE: new SwitchEngine('스위치', ENGINE_TYPE.SWITCH)},
+    SELECTOR:    { TYPE: 'selector',   ENGINE: new SelectorEngine('선택자', ENGINE_TYPE.SELECTOR)},
+    CUSTOM:      { TYPE: 'custom',     ENGINE: new SystemEngine('커스텀', ENGINE_TYPE.SYSTEM)},
+    PRE_COMMON:  { TYPE: 'pre-common',  ENGINE: new SystemEngine('헤드 공통', ENGINE_TYPE.SYSTEM, true)},
+    COMMON:      { TYPE: 'common',     ENGINE: new SystemEngine('바디 공통', ENGINE_TYPE.SYSTEM, true)},
+    SYSTEM:      { TYPE: 'system',     ENGINE: new SystemEngine('', ENGINE_TYPE.SYSTEM, true)},
 };
 
 class Addons {
@@ -430,6 +451,23 @@ class SystemStructure {
 
 // Base Functions
 /**
+ * 불러올 요소가 없을 수도 있을 떄 불러오는 걸 감지해서 핸들을 실행시켜주는 함수
+ * @param {function} target 감지할 요소
+ * @param {function} handler 실행할 함수
+ */
+function targetHandler(target, handler) {
+    if (target()) {
+        tryChecker(handler, 'targetHandler -> handler', false);
+    } else {
+        new MutationObserver((mus, ob) => {
+            if (!target()) return; 
+            tryChecker(handler, 'targetHandler -> handler', false);
+            ob.disconnect();
+        }).observe(html, { childList: true });
+    }
+}
+
+/**
  * 입력한 파일 위치를 사이트 페이지에 삽입합니다
  * @param {string} path 파일 위치
  */
@@ -479,7 +517,7 @@ let basic_use_system = {
 /**
  * basically use system about key
  * @param {string} key system key
- * @param {*} r 
+ * @param {string} r 
  */
 function basicUseSystem(key, r, ...settings) {
     if (!r[key] && !basic_use_system.base[key] && !basic_use_system.router[key]) {
@@ -493,7 +531,7 @@ function basicUseSystem(key, r, ...settings) {
 /**
  * search system about key
  * @param {string} key system key
- * @param {*} r 
+ * @param {string} engine engine
  */
 function searchSystem(key, engine = 'system') {
     if (!key || typeof key != 'string') {

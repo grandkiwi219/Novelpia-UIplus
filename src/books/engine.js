@@ -21,7 +21,7 @@ engine = [
         name: '뷰어',
         matches: ['/viewer/'],
         execution: (r, _this, settings) => {
-            /* if (!router)
+            /* if (!routing)
                 window.addEventListener("DOMContentLoaded", checkLastEp);
             else
                 checkLastEp();

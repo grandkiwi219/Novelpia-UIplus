@@ -19,7 +19,7 @@ header,
 
 header {
     border: none !important;
-    ${window.location.pathname == "/" ? '' : `box-shadow: rgba(${box_shadow_color_page}) 0px 1px 4px 0px;`}
+    ${window.location.pathname == "/" ? `` : `box-shadow: rgba(${box_shadow_color_page}) 0px 1px 4px 0px;`}
 }
 
 #search_input {

@@ -548,6 +548,15 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                     local: true
                 }
             },
+            'extension-log': {
+                desc: '이 장치에서 본 확장프로그램의 로그를 사용하지 않음.',
+                type: {
+                    option: 'switch'
+                },
+                settings: {
+                    local: true
+                }
+            }
         }
     },
 }

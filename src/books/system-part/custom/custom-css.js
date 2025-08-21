@@ -1,5 +1,14 @@
 npup.options.custom_css.options['books-custom-css'].system = function (r) {
+    const id = `${npup.project.prefix.css}${this.key}`;
+
+    const style = document.createElement('style');
+    style.id = id;
+    style.textContent = r[this.key];
+
+    if (document.getElementById(id))
+        document.getElementById(id).remove();
+    
     tryChecker(() => {
-        styleInjection(`${npup.project.prefix.css}${this.key}`, r[this.key]);
-    }, '커스텀', 'css', `Id: ${npup.project.prefix.css}${this.key}`);
+        document.head.appendChild(style);
+    }, '커스텀', 'css', style);
 }

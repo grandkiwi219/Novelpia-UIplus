@@ -1,3 +1,5 @@
+let performance_standard = performance.now();
+
 npup.log('노벨피아를 감지했습니다.');
 
 
@@ -20,13 +22,10 @@ function ready(settings = { router: false }) {
         start(settings);
     } else {
         new MutationObserver((mus, ob) => {
-            for (const mu of mus) for (const node of mu.addedNodes)
-                if (node.localName === 'body') {
-                    start(settings);
-
-                    return ob.disconnect();
-                }
-        }).observe(html, { childList: true });
+            if (!document.body) return; 
+            start(settings);
+            ob.disconnect();
+        }).observe(document.documentElement, { childList: true });
     }
 
     if (routing) return;

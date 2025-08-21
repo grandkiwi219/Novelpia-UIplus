@@ -64,7 +64,7 @@ function toolsStructure(...node) {
 function toolsBinding(item, op, sub = false) {
     let tools_item;
 
-    switch (op.type.option) {
+    switch (op.type?.option) {
         case 'switch': 
             tools_item = settingSwitch(op.desc, op.key, op.settings, sub);
             break;

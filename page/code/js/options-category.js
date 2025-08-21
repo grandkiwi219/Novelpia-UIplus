@@ -1,28 +1,5 @@
 const base_path = '/page';
 
-const options_category = [
-    {
-        type: 'base',
-        name: '웹소설',
-        path: 'options'
-    },
-    {
-        type: 'books',
-        name: '북스',
-        path: 'options-books'
-    },
-/*     {
-        type: 'webtoon',
-        name: '웹툰',
-        path: 'options-webtoon'
-    },
-    {
-        type: 'global',
-        name: 'Global',
-        path: 'options-global'
-    }, */
-];
-
 (() => {
     if (!options_category || !options_category?.length) return;
 

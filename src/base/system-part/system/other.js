@@ -2,13 +2,8 @@ const otherCa = npup.options.other.options;
 
 otherCa['notice'].system = function(r) {
     if (window.location.pathname != "/") return;
-
-    if (routing) {
-        setNotice();
-        return;
-    }
-
-    window.addEventListener("DOMContentLoaded", setNotice);
+    
+    targetHandler(() => document.getElementById('copyright_bar'), setNotice);
 
     function setNotice() {
         let notice_bar = document.getElementById('copyright_bar').cloneNode(true);

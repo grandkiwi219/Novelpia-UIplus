@@ -8,13 +8,13 @@ novelCa['novel-page'].system = function(r) {
 
         ob.disconnect();
 
-        novelPageItem(r);
-        dynamicNovelPageItem(r);
+        novelPageItem();
+        dynamicNovelPageItem();
     }).observe(document.body, observer_setup);
 }
 
 
-function novelPageItem(r) {
+function novelPageItem() {
     const page_items_tmp = document.querySelectorAll('div.s_inv.d-flex.align-items-center.justify-content-center');
     const page_items = page_items_tmp[page_items_tmp.length - 1].cloneNode(true);
     page_items.style = 'border-top: 1px solid #EFEFEF; height: 80px'
@@ -43,7 +43,7 @@ function novelPageItem(r) {
     });
 }
     
-function dynamicNovelPageItem(r) {
+function dynamicNovelPageItem() {
     const target = document.getElementById('episode_list');
 
     const obs = new MutationObserver((mus, ob) => {
@@ -51,7 +51,7 @@ function dynamicNovelPageItem(r) {
 
         ob.disconnect();
 
-        novelPageItem(r);
+        novelPageItem();
 
         obs.observe(target, observer_setup);
     });

@@ -1,20 +1,20 @@
 const headerCa = npup.options.header.options;
 
-headerCa.adult.system = async function(r) {
+headerCa['adult'].system = async function(r) {
 
     new MutationObserver((mus, ob) => {
         let switch_adult = document.querySelector('.switch-adult');
 
         if (!switch_adult) return;
 
-        ob.disconnect();
-
         document.querySelectorAll('.s-logo').forEach(re => {
             let adult_button = switch_adult.cloneNode(true);
             adult_button.style = 'cursor: pointer;';
-
+            
             re.insertAdjacentElement('afterend', adult_button);
         });
+
+        ob.disconnect();
     }).observe(document.body, observer_setup);
 }
 
@@ -22,7 +22,7 @@ headerCa.adult.system = async function(r) {
     
 
 
-headerCa.search.system = function(r) {
+headerCa['search'].system = function(r) {
     
     document.getElementsByClassName('header-search')[0]?.remove();
 
@@ -41,16 +41,16 @@ headerCa.search.system = function(r) {
 
         if (!main) return;
 
-        ob.disconnect();
-
         main.insertAdjacentHTML("beforebegin", search_icon); 
+        
+        ob.disconnect();
     }).observe(document.body, observer_setup);
 }
 
 
 
 let sr;
-let presr = npup.project.prefix.css;
+let presr;
 
 let delete_all = document.createElement('div');
 delete_all.innerHTML = '잔체삭제';
@@ -70,12 +70,12 @@ headerCa['search-result'].system = function(r, generate) {
                 this.system(r, true);
             }
             else
-                search_result[search_result.length - 1].innerHTML = resultBoxContent();
+                search_result[search_result.length - 1].innerHTML = searchResultBoxContent();
         }, '동적 검색 결과', '파츠'/* , mus */);
     }
     
-    sr = this.key
-    presr += this.key;
+    sr = this.key;
+    presr = npup.project.prefix.css + this.key;
     delete_all.id = `${presr}-delete-all`;
 
     let result_box = document.createElement('div');
@@ -84,7 +84,7 @@ headerCa['search-result'].system = function(r, generate) {
     let result_box_wrap = document.createElement('div');
     result_box_wrap.classList.add(`${presr}-wrap`);
 
-    result_box_wrap.innerHTML = resultBoxContent();
+    result_box_wrap.innerHTML = searchResultBoxContent();
 
     result_box.appendChild(result_box_wrap);
 
@@ -123,35 +123,28 @@ headerCa['search-result'].system = function(r, generate) {
 
             if (!searcher) return;
 
-            ob.disconnect();
-
             searcher.classList.add(`${presr}-form`);
-
+            
             result_box.classList.add(`${presr}-newtype`);
             searcher.appendChild(result_box);
+            
+            ob.disconnect();
         }).observe(document.body, observer_setup);
     }
 
-    resultRedirect();
-    resultRemove();
+    searchResultRedirect();
+    searchResultRemove();
 }
 
 
 
-/**
- * 검색 결과 창에서 검색 결과 제거
- */
-function resultRemove() {
-    window.addEventListener("DOMContentLoaded", () => {
-        scriptInjection(`src/base/file/${sr}-remove.js`);
-    });
-}
+
 
 /**
  * 검색 결과 클릭 시 리다이렉트 함수
  * 동적 처리
  */
-function resultRedirect() {
+function searchResultRedirect() {
     document.addEventListener('click', (e) => {
         const target = e.target.closest(`.${presr}-word-wrap`);
         if (!target) return;
@@ -170,7 +163,7 @@ function resultRedirect() {
  * result box wrap에 넣을 내용 값
  * @returns {string} result box wrap에 넣을 내용 값
  */
-function resultBoxContent() {
+function searchResultBoxContent() {
     let words = JSON.parse(localStorage.search_novel_word || `[]`);
 
     let items = '';
@@ -212,10 +205,67 @@ function resultBoxContent() {
         + (words[0] ? items_wrap : nothing);
 }
 
+/**
+ * 검색 결과 창에서 검색 결과 제거
+ */
+function searchResultRemove() {
+    const nothing = document.createElement('div');
+    nothing.style = 'padding: 20px 0; width: 100%; text-align: center;';
+    nothing.textContent = '최근 검색어가 없습니다.';
+
+    const deleteBtn = (e) => {
+        let target;
+
+        document.querySelectorAll(`.${presr}-delete`).forEach(r => {
+            if (r.contains(e.target))
+                target = r;
+        });
+
+        if (!target) return;
+
+        localStorage.search_novel_word = JSON.stringify(JSON.parse(localStorage.search_novel_word)
+            .filter(k => k != target.parentElement.firstChild.textContent));
+
+        if (!JSON.parse(localStorage.search_novel_word)[0]) {
+            const items = target.parentElement.parentElement;
+            const wrap = items.parentElement;
+
+            wrap.appendChild(nothing);
+            wrap.firstChild.children[1].remove();
+            items.remove();
+            return;
+        }
+
+        target.parentElement.remove();
+    }
+
+    const deleteAllBtn = (e) => {
+        let target = document.getElementById(`${presr}-delete-all`);
+
+        if (!target || !target.contains(e.target)) return;
+
+        localStorage.search_novel_word = JSON.stringify([]);
+
+        const wrap = target.parentElement.parentElement;
+
+        wrap.appendChild(nothing);
+        wrap.children[1].remove();
+        target.remove();
+    }
+
+    document.addEventListener('click', deleteBtn);
+    document.addEventListener('click', deleteAllBtn);
+
+    removeEventForEngine(() => {
+        document.removeEventListener('click', deleteBtn);
+        document.removeEventListener('click', deleteAllBtn);
+    });
+}
 
 
 
-headerCa.alarm.system = function(r) {
+
+headerCa['alarm'].system = function(r) {
 
     let where_href = '/';
 
@@ -241,9 +291,9 @@ headerCa.alarm.system = function(r) {
 
         if (!header_alert) return;
 
-        ob.disconnect();
-
         header_alert.href += where_href;
+        
+        ob.disconnect();
     }).observe(document.body, observer_setup);
 
 
@@ -251,10 +301,10 @@ headerCa.alarm.system = function(r) {
     new MutationObserver((mus, ob) => {
         if (!document.getElementById('btn_m_alram')) return;
 
-        ob.disconnect();
-
         let m_alarm = document.querySelector('.bt-nv-menu:has(#btn_m_alram)');
-            
+        
         m_alarm.outerHTML = m_alarm.outerHTML.replace(/div/g, 'a').replace('a', `a href="/alarm${where_href}" style="color: black;"`);
+        
+        ob.disconnect();
     }).observe(document.body, observer_setup);
 } 

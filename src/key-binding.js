@@ -1,26 +1,15 @@
-keyBinding();
+keyBinding(npup.options);
 
-function keyBinding() {
-    for (const categoryKey in npup.options) {
-        const category = npup.options[categoryKey];
+function keyBinding(npup_options) {
+    Object.keys(npup_options).forEach(option_key => {
+        const option = npup_options[option_key];
 
-        if (!category.options) continue;
+        if (typeof option !== 'object' || !option) return;
 
-        for (const optionKey in category.options) {
-            const option = category.options[optionKey];
+        option.key = option_key;
 
-            if (typeof option === 'object' && option !== null) {
-                option.key = optionKey;
+        if (!option.options) return;
 
-                if (option.options) {
-                    for (const subKey in option.options) {
-                        const subOption = option.options[subKey];
-                        if (typeof subOption === 'object' && subOption !== null) {
-                            subOption.key = subKey;
-                        }
-                    }
-                }
-            }
-        }
-    }
+        keyBinding(option.options, true);
+    });
 }

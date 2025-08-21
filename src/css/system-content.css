@@ -661,6 +661,8 @@ toast alert
     right: 0;
     z-index: 1020;
     user-select: none;
+    font-family: Noto Sans KR;
+    font-size: 14px;
 }
 
 .npup-alert-box {

@@ -1,14 +1,17 @@
 const keyMappingCa = npup.options.mapping.options;
 
 function keyMappingBase(callback, predicate = () => { return true; }) {
-    return function(r, settings = { quick_mapping_menu: false }) {
+    return async function(r, settings = { quick_mapping_menu: false }) {
         if (settings.quick_mapping_menu) {
             if (!predicate()) return;
 
-            const result = tryChecker(() => {
-                callback(r);
-            }, `<keyMappingBase - quick-mapping-menu> ${this.key}`, false);
-            if (result.status != 2) toastAlert({
+            const result = await Promise.all([
+                tryChecker(() => {
+                    callback(r);
+                }, `<keyMappingBase - quick-mapping-menu> ${this.key}`, false)
+            ]);
+
+            if (result[0].status != 2) toastAlert({
                     title: `오류 발생 | ${this.key}`,
                     msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
                     type: 'error'
@@ -16,7 +19,7 @@ function keyMappingBase(callback, predicate = () => { return true; }) {
             return;
         }
 
-        const keydownEvent = (e) => {
+        const keydownEvent = async (e) => {
             if (!predicate()) return;
 
             const active = document.activeElement;
@@ -35,11 +38,13 @@ function keyMappingBase(callback, predicate = () => { return true; }) {
 
             e.preventDefault();
 
-            const result = tryChecker(() => {
-                callback(r);
-            }, `<keyMappingBase> ${this.key}`, false);
+            const result = await Promise.all([
+                tryChecker(() => {
+                    callback(r);
+                }, `<keyMappingBase> ${this.key}`, false)
+            ]);
 
-            if (result.status != 2) toastAlert({
+            if (result[0].status != 2) toastAlert({
                     title: `오류 발생 | ${this.key}`,
                     msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
                     type: 'error'
