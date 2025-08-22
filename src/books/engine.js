@@ -40,3 +40,50 @@ engine = [
         }
     }
 ];
+
+STRUCTURE.PRE_COMMON.ENGINE.setAdditionalExecution(() => {
+    let books_dark_result;
+
+    if (engineChecker('페이지')) {
+        try {
+            books_dark_result = JSON.parse(localStorage.getItem('npup_books_page_dark'));
+        } catch (error) {
+            books_dark_result = false;
+        }
+    }
+    else if (engineChecker('뷰어')) {
+        try {
+            books_dark_result = JSON.parse(localStorage.getItem('npup_books_viewer_dark'));
+        } catch (error) {
+            books_dark_result = false;
+        }   
+    }
+    
+    if (books_dark_result) booksDarkInjection();
+
+    removeEventForEngine(() => {
+        const find_dark_style = document.getElementById(books_dark.id);
+        let books_dark_result;
+
+        if (engineChecker('뷰어')) {
+            try {
+                books_dark_result = JSON.parse(localStorage.getItem('npup_books_viewer_dark'));
+            } catch (error) {
+                books_dark_result = false;
+            }
+        }
+        else if (engineChecker('페이지')) {
+            try {
+                books_dark_result = JSON.parse(localStorage.getItem('npup_books_page_dark'));
+            } catch (error) {
+                books_dark_result = false;
+            }
+        }
+
+        npup.dev(books_dark_result)
+
+        if (books_dark_result) return;
+        
+        if (find_dark_style) find_dark_style.remove();
+    });
+});

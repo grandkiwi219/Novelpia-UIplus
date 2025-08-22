@@ -48,7 +48,7 @@ function routeDetector(settings = { path: undefined }) {
         engine_is_changed: result
     }
     
-    window.dispatchEvent(new CustomEvent(npup.event.router, { detail: data }));
+    window.dispatchEvent(new CustomEvent(npup.event.router, { detail: data })); // 페이지 -> 뷰어 이동 시 엔진 체크 한다면 뷰어로 뜬다는 점 유의할 것
     
     const path_content = `| 위치: ${settings.path} ${domainChecker('base') ? '' : `| 도메인: ${location.hostname}`}`;
 

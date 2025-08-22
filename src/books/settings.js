@@ -135,7 +135,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                     option: 'mapping'
                 },
             },
-            /* 'books-page-dark': {
+            'books-page-dark': {
                 tag: {
                     quick_mapping_menu: true
                 },
@@ -152,7 +152,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                 type: {
                     option: 'mapping'
                 },
-            }, */
+            },
             'books-move-mb': {
                 tag: {
                     quick_mapping_menu: true

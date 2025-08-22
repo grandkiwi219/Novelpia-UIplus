@@ -1,6 +1,6 @@
 const keyMappingCa = npup.options.mapping.options;
 
-function keyMappingBase(callback, condition = () => { return true; }) {
+function keyMappingBase(callback, { condition = () => { return true; }, execution = () => {} } = {}) {
     return async function(r, settings = { quick_mapping_menu: false }) {
         if (settings.quick_mapping_menu) {
             if (!condition()) return;
@@ -56,6 +56,8 @@ function keyMappingBase(callback, condition = () => { return true; }) {
         removeEventForEngine(() => {
             document.removeEventListener('keydown', keydownEvent);
         });
+
+        execution();
     }
 }
 
@@ -290,22 +292,22 @@ keyMappingCa['quick-mapping-menu'].system = async function(r) {
 keyMappingCa['after-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-next-item')[0].click();
 },
-() => {
-    return engineChecker('뷰어');
+{
+    condition: () => { return engineChecker('뷰어'); }
 });
 
 keyMappingCa['before-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-bottom-item')[0].click();
 },
-() => {
-    return engineChecker('뷰어');
+{
+    condition: () => { return engineChecker('뷰어'); }
 });
 
 keyMappingCa['ep-home'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-top-home')[0].click();
 },
-() => {
-    return engineChecker('뷰어');
+{
+    condition: () => { return engineChecker('뷰어'); }
 });
 
 keyMappingCa['ep-comment'].system = keyMappingBase(r => {
@@ -324,8 +326,8 @@ keyMappingCa['ep-comment'].system = keyMappingBase(r => {
     if (comment_display)
         setTimeout(() => document.getElementById('novel_drawing').click(), 100); */
 },
-() => {
-    return engineChecker('뷰어');
+{
+    condition: () => { return engineChecker('뷰어'); }
 });
 
 keyMappingCa['move-mb'].system = keyMappingBase(async r => {

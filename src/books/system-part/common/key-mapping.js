@@ -1,14 +1,17 @@
 const keyMappingCa = npup.options.mapping.options;
 
-function keyMappingBase(callback, predicate = () => { return true; }) {
-    return function(r, settings = { quick_mapping_menu: false }) {
+function keyMappingBase(callback, { condition = () => { return true; }, execution = () => {} } = {}) {
+    return async function(r, settings = { quick_mapping_menu: false }) {
         if (settings.quick_mapping_menu) {
-            if (!predicate()) return;
+            if (!condition()) return;
 
-            const result = tryChecker(() => {
-                callback(r);
-            }, `<keyMappingBase - books-quick-mapping-menu> ${this.key}`, false);
-            if (result.status != 2) toastAlert({
+            const result = await Promise.all([
+                tryChecker(() => {
+                    callback(r);
+                }, `<keyMappingBase - quick-mapping-menu> ${this.key}`, false)
+            ]);
+
+            if (result[0].status != 2) toastAlert({
                     title: `오류 발생 | ${this.key}`,
                     msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
                     type: 'error'
@@ -16,8 +19,8 @@ function keyMappingBase(callback, predicate = () => { return true; }) {
             return;
         }
 
-        const keydownEvent = (e) => {
-            if (!predicate()) return;
+        const keydownEvent = async (e) => {
+            if (!condition()) return;
 
             const active = document.activeElement;
 
@@ -35,11 +38,13 @@ function keyMappingBase(callback, predicate = () => { return true; }) {
 
             e.preventDefault();
 
-            const result = tryChecker(() => {
-                callback(r);
-            }, `<keyMappingBase> ${this.key}`, false);
+            const result = await Promise.all([
+                tryChecker(() => {
+                    callback(r);
+                }, `<keyMappingBase> ${this.key}`, false)
+            ]);
 
-            if (result.status != 2) toastAlert({
+            if (result[0].status != 2) toastAlert({
                     title: `오류 발생 | ${this.key}`,
                     msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
                     type: 'error'
@@ -51,6 +56,8 @@ function keyMappingBase(callback, predicate = () => { return true; }) {
         removeEventForEngine(() => {
             document.removeEventListener('keydown', keydownEvent);
         });
+
+        execution();
     }
 }
 
@@ -287,34 +294,77 @@ keyMappingCa['books-quick-mapping-menu'].system = async function(r) {
 keyMappingCa['books-after-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-next')[0].click();
 },
-() => {
-    return engineChecker('뷰어');
+{
+    condition: () => { return engineChecker('뷰어'); }
 });
 
 keyMappingCa['books-before-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-prev')[0].click();
 },
-() => {
-    return engineChecker('뷰어');
+{
+    condition: () => { return engineChecker('뷰어'); }
 });
 
 keyMappingCa['books-ep-home'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-back')[0].click();
 },
-() => {
-    return engineChecker('뷰어');
+{
+    condition: () => { return engineChecker('뷰어'); }
 });
 
 keyMappingCa['books-move-mb'].system = keyMappingBase(async r => {
     location.href ='/mybook';
 });
 
-/* keyMappingCa['books-page-dark'].system = keyMappingBase(r => {
-    const result = darkPage();
+
+let books_dark = {
+    id: `${npup.project.prefix.css}books-dark`
+}
+
+keyMappingCa['books-page-dark'].system = keyMappingBase(r => {
+    const result = setBooksDark('페이지', 'npup_books_page_dark');
     toastAlert({ title: '다크모드', msg: `다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });
 
 keyMappingCa['books-viewer-dark'].system = keyMappingBase(r => {
-    const result = darkViewer();
+    const result = setBooksDark('뷰어', 'npup_books_viewer_dark');
     toastAlert({ title: '뷰어 다크모드', msg: `뷰어 다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
-}); */
+});
+
+
+function setBooksDark(engine_name, local_key) {
+    let result;
+
+    try {
+        result = JSON.parse(localStorage.getItem(local_key));
+    } catch (e) {
+        result = false;
+    }
+
+    if (result) {
+        if (engineChecker(engine_name)) {
+            const find_dark_style = document.getElementById(books_dark.id);
+            if (find_dark_style) find_dark_style.remove();
+        }
+        localStorage.removeItem(local_key);
+    }
+    else {
+        if (engineChecker(engine_name)) booksDarkInjection();
+        localStorage.setItem(local_key, JSON.stringify(!result));
+    }
+
+    return !result;
+}
+
+function booksDarkInjection() {
+    return styleInjection(books_dark.id,
+`html,
+.main-mark-box-wrp,
+img:where([src*=prime], [src*=imagebox], [src*=emoticon], [src*=ebook], [src*="/img/new/icon/"], [src*="19.svg"], [src*=main_no_data]):not([src*=comment]),
+img[alt=profile],
+footer,
+.w-screen.flex.justify-center:not(.event), .w-screen.flex.justify-center:not(.event) > *, /* 프로모션 페이지 */
+.relative.w-full.flex.justify-center /* 프로모션 페이지 2 */
+{ filter: invert(1); }
+`);
+}
