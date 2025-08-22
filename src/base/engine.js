@@ -2,7 +2,7 @@ engine = [
     {
         name: '페이지',
         matches: ['/'],
-        excludes: ['/viewer/', '/viewer_collect/', '/comic_viewer/', '/page/block/'],
+        excludes: ['/viewer/', '/viewer_collect/', '/comic_viewer/', '/page/block/', '/proc/payment_complete/'],
         execution: async (r, _this, settings) => {
             // For Search System
             scriptInjection('src/base/file/pc-search.js');

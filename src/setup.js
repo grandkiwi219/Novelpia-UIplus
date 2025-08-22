@@ -191,10 +191,6 @@ class EngineStructure {
 }
 
 class SwitchEngine extends EngineStructure {
-    constructor(name, type, system_tryChecker = false) {
-        super(name, type, system_tryChecker);
-    }
-
     engine(r, settings) {
         if (settings.router) return;
 
@@ -230,10 +226,6 @@ class SwitchEngine extends EngineStructure {
 }
 
 class SelectorEngine extends EngineStructure {
-    constructor(name, type, system_tryChecker = false) {
-        super(name, type, system_tryChecker);
-    }
-    
     engine(r, settings) {
         if (settings.router) return;
 
@@ -263,10 +255,6 @@ class SelectorEngine extends EngineStructure {
 }
 
 class SystemEngine extends EngineStructure {
-    constructor(name, type, system_tryChecker = false) {
-        super(name, type, system_tryChecker);
-    }
-
     engine(r, settings) {
         this.getKeys().forEach(async key => {
             this.debugKey(key);
