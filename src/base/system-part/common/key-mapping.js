@@ -1,9 +1,9 @@
 const keyMappingCa = npup.options.mapping.options;
 
-function keyMappingBase(callback, predicate = () => { return true; }) {
+function keyMappingBase(callback, condition = () => { return true; }) {
     return async function(r, settings = { quick_mapping_menu: false }) {
         if (settings.quick_mapping_menu) {
-            if (!predicate()) return;
+            if (!condition()) return;
 
             const result = await Promise.all([
                 tryChecker(() => {
@@ -20,7 +20,7 @@ function keyMappingBase(callback, predicate = () => { return true; }) {
         }
 
         const keydownEvent = async (e) => {
-            if (!predicate()) return;
+            if (!condition()) return;
 
             const active = document.activeElement;
 
@@ -341,42 +341,40 @@ keyMappingCa['move-mb'].system = keyMappingBase(async r => {
 keyMappingCa['page-dark'].system = keyMappingBase(r => {
     const result = toggleCookie('DARKMODE_S');
 
-    if (!navigator.onLine)
-        toastAlert({ title: '네트워크', msg: '인터넷에 연결되어 있지 않아 새로고침되지 않습니다.', type: 'warn' });
-    else if (navigator.connection?.type == 'cellular')
-        toastAlert({ title: '모바일 데이터', msg: '모바일 데이터를 사용 중이므로 새로고침되지 않습니다.' });
-    else if (engineChecker('페이지')) {
-        location.reload();
-        return;
-    }
-
-    toastAlert({ title: '다크모드', msg: `다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
+    useMode('다크모드', result, {
+        condition: engineChecker('페이지')
+    });
 });
 
 keyMappingCa['viewer-dark'].system = keyMappingBase(r => {
     const result = toggleCookie('DARKMODE');
 
-    if (!navigator.onLine)
-        toastAlert({ title: '네트워크', msg: '인터넷에 연결되어 있지 않아 새로고침되지 않습니다.', type: 'warn' });
-    else if (navigator.connection?.type == 'cellular')
-        toastAlert({ title: '모바일 데이터', msg: '모바일 데이터를 사용 중이므로 새로고침되지 않습니다.' });
-    else if ((engineChecker('뷰어') || pathChecker(['/comic_viewer/', '/viewer_collect/']))) {
-        location.reload();
-        return;
-    }
-
-    toastAlert({ title: '뷰어 다크모드', msg: `뷰어 다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
+    useMode('뷰어 다크모드', result, {
+        condition: engineChecker('뷰어') || pathChecker(['/comic_viewer/', '/viewer_collect/'])
+    });
 });
 
 keyMappingCa['secret'].system = keyMappingBase(r => {
     const result = toggleCookie('secret_mode');
 
-    if (!navigator.onLine) {
-        toastAlert({ title: '시크릿 모드', msg: `시크릿 모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
-        toastAlert({ title: '네트워크', msg: '인터넷에 연결되어 있지 않아 새로고침되지 않습니다.', type: 'warn' });
+    useMode('시크릿 모드', result, {
+        handler: () => { if (result) localStorage.secret_alert = true; }
+    });
+});
+
+
+function useMode(name, result, { condition = true, handler = () => {} }) {
+    if (condition) {
+        if (!navigator.onLine)
+            toastAlert({ title: '네트워크', msg: '인터넷에 연결되어 있지 않아 새로고침되지 않습니다.', type: 'warn' });
+        else if (navigator.connection?.type == 'cellular')
+            toastAlert({ title: '모바일 데이터', msg: '모바일 데이터를 사용 중이므로 새로고침되지 않습니다.' });
+        else {
+            handler();
+            location.reload();
+            return;
+        }
     }
-    else {
-        if (result) localStorage.secret_alert = true;
-        location.reload();
-    }
-}); 
+
+    toastAlert({ title: name, msg: `${name}가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
+}
