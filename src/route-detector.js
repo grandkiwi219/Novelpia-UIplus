@@ -1,5 +1,3 @@
-let routing = false;
-
 (() => {
     let is_possible = undefined;
 

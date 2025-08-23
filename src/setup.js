@@ -2,13 +2,20 @@ let storage = chrome.storage.sync;
 const local = chrome.storage.local;
 let storage_type = 'sync';
 
+let extension_load = false;
+let performance_standard = performance.now();
+
+let routing = false;
+
 local.get([npup.keys.sync]).then(async r => {
     if (!r[npup.keys.sync] && typeof r[npup.keys.sync] != 'boolean')
         local.set({ [npup.keys.sync]: true });
     else if (!r[npup.keys.sync]) {
-        storage = local, storage_type = 'local', storage_changed = true;
+        storage = local, storage_type = 'local';
+        /* ready(); */
     }
-    ready();
+
+    extension_load = true, window.dispatchEvent(new CustomEvent(npup.event.load));
 });
 
 local.get([npup.keys.debug, npup.keys.log]).then(r => {
@@ -70,6 +77,8 @@ class EngineStructure {
         this.name = name ? name : undefined;
         this.type = type;
         this.system_tryChecker = system_tryChecker;
+        
+        this.use_route = true;
     }
 
     /**
@@ -102,7 +111,9 @@ class EngineStructure {
     /**
      * Engine start
      */
-    on(settings = { router: false }) {
+    async on(settings = { router: false }) {
+        if (!this.use_route && settings.router) return;
+
         if (!settings.router) {
             const engine_data = html.getAttribute(`${npup.project.prefix.css}engine`);
             html.setAttribute(
@@ -110,19 +121,26 @@ class EngineStructure {
                 (engine_data ? engine_data + ' ': '') + this.name.replace(/ /g, '-')
             );
         }
-        let r = {}
 
-       storage.get(this.getAllKeys()).then(r => {
-            if (this.system_tryChecker)
-                tryChecker(() => this.engine(r, settings), this.name);
-            else
-                this.engine(r, settings);
+        const loadSuccessOn = () => {
+            storage.get(this.getAllKeys()).then(r => {
+                if (this.system_tryChecker)
+                    tryChecker(() => this.engine(r, settings), this.name);
 
-            //Object.assign(options.r, r);
+                else
+                    this.engine(r, settings);
 
-            this.#execution(this, settings);
-        });
+                //Object.assign(options.r, r);
+                this.#execution(this, settings);
+            });
+        }
 
+        if (extension_load) {
+            loadSuccessOn();
+        }
+        else {
+            window.addEventListener(npup.event.load, loadSuccessOn, { once: true });
+        }
     }
 
     engine() {
@@ -191,9 +209,9 @@ class EngineStructure {
 }
 
 class SwitchEngine extends EngineStructure {
-    engine(r, settings) {
-        if (settings.router) return;
+    use_route = false;
 
+    engine(r, settings) {
         this.getKeys().forEach(async key => {
             const system_structure = this.getSystemStructure(key);
 
@@ -226,9 +244,9 @@ class SwitchEngine extends EngineStructure {
 }
 
 class SelectorEngine extends EngineStructure {
-    engine(r, settings) {
-        if (settings.router) return;
+    use_route = false;
 
+    engine(r, settings) {
         this.getKeys().forEach(async key => {
             const system_structure = this.getSystemStructure(key);
 

@@ -40,3 +40,11 @@ engine = [
         }
     }
 ];
+
+STRUCTURE.PRE_COMMON.ENGINE.setAdditionalExecution(() => {
+    try {
+        if (JSON.parse(localStorage.secret_alert))
+            toastAlert({ title: '시크릿 모드', msg: '시크릿 모드가 켜졌습니다.' });
+        delete localStorage.secret_alert;
+    } catch (e) {}
+});

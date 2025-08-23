@@ -343,28 +343,14 @@ function setBooksDark(engine_name, local_key) {
 
     if (result) {
         if (engineChecker(engine_name)) {
-            const find_dark_style = document.getElementById(books_dark.id);
-            if (find_dark_style) find_dark_style.remove();
+            html.classList.remove(books_dark.id);
         }
         localStorage.removeItem(local_key);
     }
     else {
-        if (engineChecker(engine_name)) booksDarkInjection();
+        if (engineChecker(engine_name)) html.classList.add(books_dark.id);
         localStorage.setItem(local_key, JSON.stringify(!result));
     }
 
     return !result;
-}
-
-function booksDarkInjection() {
-    return styleInjection(books_dark.id,
-`html,
-.main-mark-box-wrp,
-img:where([src*=prime], [src*=imagebox], [src*=emoticon], [src*=ebook], [src*="/img/new/icon/"], [src*="19.svg"], [src*=main_no_data]):not([src*=comment]),
-img[alt=profile],
-footer,
-.w-screen.flex.justify-center:not(.event), .w-screen.flex.justify-center:not(.event) > *, /* 프로모션 페이지 */
-.relative.w-full.flex.justify-center /* 프로모션 페이지 2 */
-{ filter: invert(1); }
-`);
 }

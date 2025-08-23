@@ -91,7 +91,8 @@ const npup = {
 }
 
 npup.event = {
-    router: `${npup.project.name}RouterEnd`
+    load: `${npup.project.name}LoadSuccess`,
+    router: `${npup.project.name}RouterEnd`,
 }
 
 

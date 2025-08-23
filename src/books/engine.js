@@ -59,10 +59,9 @@ STRUCTURE.PRE_COMMON.ENGINE.setAdditionalExecution(() => {
         }   
     }
     
-    if (books_dark_result) booksDarkInjection();
+    if (books_dark_result) html.classList.add(books_dark.id);
 
     removeEventForEngine(() => {
-        const find_dark_style = document.getElementById(books_dark.id);
         let books_dark_result;
 
         if (engineChecker('뷰어')) {
@@ -80,10 +79,8 @@ STRUCTURE.PRE_COMMON.ENGINE.setAdditionalExecution(() => {
             }
         }
 
-        npup.dev(books_dark_result)
-
         if (books_dark_result) return;
         
-        if (find_dark_style) find_dark_style.remove();
+        html.classList.remove(books_dark.id);
     });
 });
