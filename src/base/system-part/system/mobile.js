@@ -16,7 +16,12 @@ mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
 
     let scrollY = window.scrollY;
 
-    window.addEventListener('DOMContentLoaded', () => {    
+    window.addEventListener('DOMContentLoaded', () => {  
+        let menu_tap = undefined;
+        let menu_top_important = false;
+
+        decideMenuTap();
+        
         window.addEventListener('scroll', () => {
             if (window.innerWidth >= 892) {
                 header.style.top = '0px';
@@ -40,20 +45,36 @@ mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
                 header_top = header_calc > 0 ? 0 : header_calc;
             }
 
-            if (pathChecker('/novel/')) {
-                const menu_tap = document.getElementsByClassName('menu_alarm_m')[0];
+            if (menu_tap) {
                 const menu_tap_calc = header.getBoundingClientRect().height - 1 + header_top;
-                menu_tap.style.setProperty('top', `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`, 'important');
-            }
-            else if (pathChecker('/comic_main/')) {
-                const menu_tap = document.getElementsByClassName('comic-new-header-wp')[0];
-                const menu_tap_calc = header.getBoundingClientRect().height - 1 + header_top;
-                menu_tap.style.top = `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`;
+                if (menu_top_important) menu_tap.style.setProperty('top', `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`, 'important');
+                else menu_tap.style.top = `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`;
             }
 
             header.style.top = `${header_top}px`;
         });
         scrollY = window.scrollY;
+
+        window.addEventListener(npup.event.router, route_event => decideMenuTap(route_event.detail.pCheck));
+
+
+        function decideMenuTap(pCheck = pathChecker) {
+            if (pCheck('/novel/')) {
+                menu_tap = document.getElementsByClassName('menu_alarm_m')[0];
+                menu_top_important = true;
+            }
+            else if (document.getElementsByClassName('tap-box')[0]) {
+                menu_tap = document.querySelector('*:has(> div > .tap-box)');
+                menu_top_important = false;
+            }
+            else if (pCheck('/comic_main/')) {
+                menu_tap = document.getElementsByClassName('comic-new-header-wp')[0];
+                menu_top_important = false;
+            }
+            else {
+                menu_tap = undefined;
+            }
+        }
     });
 }
 

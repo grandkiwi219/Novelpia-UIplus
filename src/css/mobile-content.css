@@ -124,7 +124,7 @@ html[npup-origin-header], html[npup-bottom-nav] {
 
         /* 콘테스트 혹은 일부 이벤트 페이지 sticky 에 대한 높이 조절 */
         /* .mc-tap-wr, */ /* 2025 밀리언 클래스 (이벤트 탭) */
-        body > div > div:has(.tap-box), /* 2025 밀리언 클래스 (이벤트 탭) 포함, TRPG 완결 기념 이벤트 탭 */
+        *:has(> * > .tap-box), /* 2025 밀리언 클래스 (이벤트 탭) 포함, TRPG 완결 기념 이벤트 탭, 밀리언 클래스 선호작 이벤트 */
         .contest_menu, /* 2025 천지창조 (공모전 탭 => 이벤트 탭) */
         .contest-tab /* 2024, 2023 우주최강 (이벤트 탭) */
 
