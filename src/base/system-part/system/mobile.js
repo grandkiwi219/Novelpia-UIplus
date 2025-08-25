@@ -25,6 +25,7 @@ mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
         window.addEventListener('scroll', () => {
             if (window.innerWidth >= 892) {
                 header.style.top = '0px';
+                if (menu_tap) menu_tap.style.top = '';
                 scrollY = window.scrollY;
                 return;
             }
