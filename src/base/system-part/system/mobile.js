@@ -10,18 +10,19 @@ mobileCa['bottom-nav'].system = function (r) {
 mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
     if (!r['origin-header'] && !r['bottom-nav']) return;
 
-    const header = document.querySelector('header.mobile_hidden');
+    targetHandler(() => document.querySelector('header.mobile_hidden'), scrollHiddenHeader);
 
-    header.style.top = 0;
+    function scrollHiddenHeader() {
+        const header = document.querySelector('header.mobile_hidden');
+        header.style.top = 0;
 
-    let scrollY = window.scrollY;
+        let scrollY = window.scrollY;
 
-    window.addEventListener('DOMContentLoaded', () => {  
         let menu_tap = undefined;
         let menu_top_important = false;
 
         decideMenuTap();
-        
+
         window.addEventListener('scroll', () => {
             if (window.innerWidth >= 892) {
                 header.style.top = '0px';
@@ -76,7 +77,7 @@ mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
                 menu_tap = undefined;
             }
         }
-    });
+    }
 }
 
 function getHeaderHeight(el) {
