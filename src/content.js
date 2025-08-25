@@ -5,7 +5,13 @@ ready();
 
 
 // ready start
-function ready(settings = { router: false }) {
+function ready(settings_param) {
+    let settings = {
+        router: false
+    }
+
+    Object.assign(settings, settings_param);
+
     npup.log('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ');
 
     STRUCTURE.SWITCH.ENGINE.on(settings);

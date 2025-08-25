@@ -110,8 +110,10 @@ class EngineStructure {
 
     /**
      * Engine start
+     * @param {Object} settings 오브젝트 형식의 추가 설정 
      */
-    async on(settings = { router: false }) {
+    async on(settings) {    // ready 함수에서 settings 제어
+
         if (!this.use_route && settings.router) return;
 
         if (!settings.router) {

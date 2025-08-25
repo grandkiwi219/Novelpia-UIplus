@@ -37,18 +37,18 @@
 
 // -----------------------------------------------------------------------------
 
-function routeDetector(settings = { path: undefined }) {
-    const result = changeEngine(settings);
+function routeDetector({ path = path } = {}) {
+    const result = changeEngine({ path });
 
     const data = {
-        path: settings.path,
-        pathChecker: (paths) => { return pathChecker(paths, settings.path) },
+        path: path,
+        pathChecker: (paths) => { return pathChecker(paths, path) },
         engine_is_changed: result
     }
     
     window.dispatchEvent(new CustomEvent(npup.event.router, { detail: data })); // 페이지 -> 뷰어 이동 시 엔진 체크 한다면 뷰어로 뜬다는 점 유의할 것
     
-    const path_content = `| 위치: ${settings.path} ${domainChecker('base') ? '' : `| 도메인: ${location.hostname}`}`;
+    const path_content = `| 위치: ${path} ${domainChecker('base') ? '' : `| 도메인: ${location.hostname}`}`;
 
     if (result == 0) {
         npup.dev(`엔진에 변화가 없습니다. ${path_content}`);

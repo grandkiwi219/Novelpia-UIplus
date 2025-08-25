@@ -14,7 +14,13 @@ Object.values(npup.options).forEach(ca => {
     document.getElementById('waiting').insertAdjacentElement('beforebegin', tool_box);
 });
 
-function toolBox(name, { icon, icon_svg }, settings = {}, setups = { length: 1 }, ...node) {
+function toolBox(name, { icon = '🥝', icon_svg = undefined } = {}, settings = {}, setups_param, ...node) {
+    let setups = {
+        length: 1
+    }
+
+    Object.assign(setups, setups_param);
+
     const tool_box = document.createElement('div');
     tool_box.classList.add('tools');
 

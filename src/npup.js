@@ -225,7 +225,7 @@ npup.func.engineChecker = (name) => {
 }
 
 
-npup.func.toastAlert = ({ title = undefined, msg, type = undefined }) => {
+npup.func.toastAlert = ({ title = undefined, msg, type = undefined } = {}) => {
     let alert_container = document.getElementById(`${npup.project.prefix.css}alert-container`);
 
     if (!alert_container) {
