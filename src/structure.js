@@ -1,0 +1,404 @@
+const ENGINE_TYPE = {
+    ALL: 'all', // for Addon class
+    SWITCH: 'switch',
+    SELECTOR: 'selector',
+    SYSTEM: 'system',
+};
+
+let current_attribute = [`${npup.project.prefix.css}engine`];
+
+class EngineStructure {
+    /**
+     * @type {Map<string, SystemStructure>}
+     */
+    #systems_structures = new Map();
+
+    #execution = () => { return; };
+
+    /**
+     * engine structure
+     * @param {string} name This engine's name
+     * @param {string} type This engine's type, Must be one of STRUCTURE.TYPES
+     * @param {boolean} [system_tryChecker] Whether this engine uses the system engine tryChecker
+     */
+    constructor(name, type, system_tryChecker = false) {
+        if (!Object.values(ENGINE_TYPE).includes(type))
+            throw new TypeError(`This ${name} class cannot be used without specifying a type.`);
+
+        this.name = name ? name : undefined;
+        this.type = type;
+        this.system_tryChecker = system_tryChecker;
+        
+        this.use_route = true;
+    }
+
+    /**
+     * Add system this engine
+     * @param {SystemStructure} system add system this engine
+     * @returns {EngineStructure} this
+     */
+    addSystemStructure(system) {
+        if (!(system instanceof SystemStructure))
+            throw new TypeError(`Expected an instance of ${this.type} SystemStructure.`);
+
+        this.#systems_structures.set(system.key, system);
+        return this;
+    }
+
+    /**
+     * Set additional execution
+     * @param {function} execution additional execution
+     * @returns {EngineStructure} this
+     */
+    setAdditionalExecution(execution) {
+        if (typeof execution != 'function')
+            this.#execution = () => { return execution };
+        else
+            this.#execution = execution;
+
+        return this;
+    }
+
+    /**
+     * Engine start
+     * @param {Object} settings 오브젝트 형식의 추가 설정 
+     */
+    async on(settings) {    // ready 함수에서 settings 제어
+
+        if (!this.use_route && settings.router) return;
+
+        if (!settings.router) {
+            const engine_data = html.getAttribute(`${npup.project.prefix.css}engine`);
+            html.setAttribute(
+                `${npup.project.prefix.css}engine`,
+                (engine_data ? engine_data + ' ': '') + this.name.replace(/ /g, '-')
+            );
+        }
+
+        const loadSuccessOn = () => {
+            storage.get(this.getAllKeys()).then(r => {
+                if (this.system_tryChecker)
+                    tryChecker(() => this.engine(r, settings), this.name);
+
+                else
+                    this.engine(r, settings);
+
+                //Object.assign(options.r, r);
+                this.#execution(this, settings);
+            });
+        }
+
+        if (extension_load) {
+            loadSuccessOn();
+        }
+        else {
+            window.addEventListener(npup.event.load, loadSuccessOn, { once: true });
+        }
+    }
+
+    engine() {
+        return console.warn('\'engine\' method not found.');
+    }
+
+    reset() {
+        return this.#systems_structures.delete();
+    }
+
+    debugKey(key) {
+        if (npup.debug?.key)
+            npup.dev(key, this.getSystemStructure(key));
+    }
+
+    /**
+     * Function to retrieve key values ​​from extension storage
+     * @returns {EngineStructure} this
+     */ 
+    getAllKeys() {
+        const values = [...this.#systems_structures.values()];
+
+        let keys = values.map(system => system.key);
+
+        values.forEach(system => {
+            system.addons.forEach(addons => {
+                addons.addons.forEach(addon => keys.push(addon));
+            });
+        });
+
+        return [...new Set(keys)];
+    }
+
+    /**
+     * Key values ​​to apply by default
+     * @returns Key values ​​to apply by default
+     */
+    getKeys() {
+        return [...this.#systems_structures.values()]
+            .map(system => system.key);
+    }
+
+    getAddons(key) {
+        const addons = [...new Set(
+            this.getSystemStructure(key).addons
+                .filter(r => r.type == ENGINE_TYPE.ALL || r.type == this.type)
+                .flatMap(r => r.addons)
+        )];
+
+        return addons.length > 0 ? addons : undefined;
+    }
+
+    /**
+     * get system
+     * @param {string} key 
+     * @returns {SystemStructure} key's SystemStructure
+     */
+    getSystemStructure(key) {
+        if (!this.#systems_structures.has(key)) {
+            console.warn(`System ${key} does not exist in ${this.name} engine.`);
+            return new SystemStructure('', this.type);
+        }
+        else 
+            return this.#systems_structures.get(key);
+    }
+}
+
+class SwitchEngine extends EngineStructure {
+    use_route = false;
+
+    engine(r, settings) {
+        this.getKeys().forEach(async key => {
+            const system_structure = this.getSystemStructure(key);
+
+            const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+
+            const att_key = npup.project.prefix.css + key;
+
+            if (r[key] && !system_check) {
+                html.setAttribute(att_key, '');
+                current_attribute.push(att_key);
+            }
+            else if (system_check) {
+                const key_data = await local.get([key]);
+                if (key_data[key]) {
+                    html.setAttribute(att_key + key, '');
+                    current_attribute.push(att_key);
+                }
+                //Object.assign(options.r, key_data);
+            } else
+                return;
+
+            const addons = this.getAddons(key);
+
+            if (addons)
+                addons.forEach(addon => {
+                    if (r[addon]) html.setAttribute(att_key + key, ''), current_attribute.push(att_key);
+                });
+        });
+    }
+}
+
+class SelectorEngine extends EngineStructure {
+    use_route = false;
+
+    engine(r, settings) {
+        this.getKeys().forEach(async key => {
+            const system_structure = this.getSystemStructure(key);
+
+            const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+
+            const att_key = npup.project.prefix.css + key;
+
+            if (!r[key] || system_check) {
+                if (system_check) {
+                    r = await local.get([key]);
+
+                    //Object.assign(options.r, r);
+
+                    if (!r[key]) return;
+                } else return;
+            }
+
+            if (r[key] == system_structure.options[0]) return;
+
+            html.setAttribute(att_key, r[key]);
+            current_attribute.push(att_key);
+        });
+    }
+}
+
+class SystemEngine extends EngineStructure {
+    engine(r, settings) {
+        this.getKeys().forEach(async key => {
+            this.debugKey(key);
+
+            const system_structure = this.getSystemStructure(key);
+
+            if (settings.router)
+                if (!system_structure.structure.router)
+                    return;
+
+            const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+
+            if (!r[key] || system_check) {
+                if (system_check) {
+                    const key_data = await local.get([key]);
+                    r[key] = key_data[key];
+
+                    //Object.assign(options.r, key_data);
+
+                    if (!r[key]) return;
+                } else return;
+            }
+
+            if (system_structure.options.length && r[key] == system_structure.options[0]) return;
+
+            tryChecker(() => {
+                system_structure
+                    .system(r);
+            }, key, false);
+        });
+    }
+}
+
+
+
+
+const STRUCTURE = {
+    SWITCH:      { TYPE: 'switch',     ENGINE: new SwitchEngine('스위치', ENGINE_TYPE.SWITCH)},
+    SELECTOR:    { TYPE: 'selector',   ENGINE: new SelectorEngine('선택자', ENGINE_TYPE.SELECTOR)},
+    CUSTOM:      { TYPE: 'custom',     ENGINE: new SystemEngine('커스텀', ENGINE_TYPE.SYSTEM)},
+    PRE_COMMON:  { TYPE: 'pre-common',  ENGINE: new SystemEngine('헤드 공통', ENGINE_TYPE.SYSTEM, true)},
+    COMMON:      { TYPE: 'common',     ENGINE: new SystemEngine('바디 공통', ENGINE_TYPE.SYSTEM, true)},
+    SYSTEM:      { TYPE: 'system',     ENGINE: new SystemEngine('', ENGINE_TYPE.SYSTEM, true)},
+};
+
+class Addons {
+    /**
+     * addon structure
+     * @param {string} engine_type engine type
+     * @param  {...string} addons addon key names
+     */
+    constructor(engine_type, ...addons) {
+        if (!Object.values(ENGINE_TYPE).includes(engine_type))
+            throw new TypeError(`To add an add-on, it must be of a type that exists in the engine type.`);
+
+        if (!addons.every(addon => typeof addon == 'string' && addon.trim()))
+            throw new TypeError(`The addon to be added must be a string`);
+
+        this.type = engine_type;
+        this.addons = addons.map(k => k.trim());
+    }
+}
+
+/**
+ * 사용법:
+ * 
+ * 엔진 타입이 switch라면 키 값과 타입을,
+ * 엔진 타입이 selector라면 키 값과 타입, 옵션들을,
+ * 엔진 타입이 system이라면 키 값과 타입, 시스템을 설정해주어야만 한다.
+ * 
+ * 추가할 키 값에 추가적인 키 값이 요구된다면 애드온으로 추가시키면 된다.
+ * 단, 애드온을 추가하기 위해선 Addons 클래스를 이용해서 추가하여야 한다.
+ */
+class SystemStructure {
+    /**
+     * system structure
+     * @param {string} key data key name
+     * @param {string} types  (STRUCTURE.TYPES) switch | selector | system
+     */
+    constructor(key, types, settings) {
+        this.key = typeof key == 'string' && key ? key.trim() : undefined;
+        /**
+         * @type {Addons[]} 
+         */
+        this.addons = [];
+        this.description = undefined;
+        this.types = types;
+        this.system = () => { return /* npup.dev(`The system for "${this.key}" could not find`) */; };
+        this.options = [];
+
+        this.structure = {
+            router: false
+        }
+
+        this.settings = settings;
+    }
+
+    /**
+     * use router
+     */
+    useRouter() {
+        this.structure.router = true;
+        return this;
+    }
+
+    /**
+     * Add dependent keys
+     * @param  {...Addons} addons dependent keys { type: string, addons: string[] }
+     * @returns {SystemStructure} this
+     */
+    setAddons(...addons) {
+        if (!addons.every(addon => addon instanceof Addons))
+            throw new TypeError(`Addons to be added to ${this.key} SystemStructure must use the Addons class.`);
+
+        this.addons = addons;
+        return this;
+    }
+
+    /**
+     * Set system description
+     * @param {string} content description of key
+     * @returns {SystemStructure} this
+     */
+    setDescription(content) {
+        this.description = content;
+        return this;
+    }
+
+    /**
+     * Set system function
+     * @param {function} system system function
+     * @returns {SystemStructure} this
+     */
+    setSystem(system) {
+        if (typeof system !== 'function') 
+            throw new TypeError(`The system in ${this.key} structure is not a function. The system must be a function.`);
+        else if (
+            !this.types.some(type =>
+                Object.values(STRUCTURE)
+                    .filter(s => s.ENGINE.type === ENGINE_TYPE.SYSTEM)
+                    .map(s => s.TYPE)
+                    .includes(type)
+            )
+        ) 
+            console.warn(`The type in ${this.key} structure does not include the system, so it may not be used.`);
+
+        this.system = system;
+        return this;
+    }
+
+    /**
+     * Set selector options
+     * @param {boolean} first_option Are the options you are entering in the same order as written in options.html?
+     * @param  {...string} options selector options
+     * @returns {SystemStructure} this
+     */
+    setOptions(first_option, ...options) {
+        if (!first_option) 
+            console.warn(`You answered that it is not in order. The first option in the selector type of ${this.key} system is not applied.`)
+        //else if (!this.types.includes(STRUCTURE.SELECTOR.TYPE))
+        //    console.warn(`The type in ${this.key} structure does not include the options, so it may not be used.`);
+
+        this.options = options;
+        return this;
+    }
+
+    /**
+     * Auto sort method
+     */
+    setup() {
+        Object.values(STRUCTURE).forEach(r => {
+            if (this.types.includes(r.TYPE))
+                r.ENGINE.addSystemStructure(this);
+        });
+    }
+}
