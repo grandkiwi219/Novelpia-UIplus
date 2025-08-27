@@ -32,8 +32,10 @@ html[npup-nav] .row.top-menu-margin {
 }
 
 /* html[npup-nav] .logo-novelpia, html[npup-adult] .logo-novelpia */
-html:where([npup-nav], [npup-adult]) .logo-novelpia {
-    margin-right: 20px;
+@media screen and (min-width: 892px) {
+    html:where([npup-nav], [npup-adult]) .logo-novelpia {
+        margin-right: 20px;
+    }
 }
 
 html[npup-adult] .s-logo {
