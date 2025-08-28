@@ -17,6 +17,12 @@ header,
     backdrop-filter: blur(${blur_intensity}px);
 }
 
+#viewer-modal {
+    top: inherit;
+    bottom: 0;
+    height: 100vh;
+}
+
 header {
     border: none !important;
     ${window.location.pathname == "/" ? `` : `box-shadow: rgba(${box_shadow_color_page}) 0px 1px 4px 0px;`}
