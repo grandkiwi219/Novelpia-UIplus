@@ -318,7 +318,7 @@ keyMappingCa['ep-comment'].system = keyMappingBase(r => {
     if (document.getElementById('comment_box').style.display != 'none')
         comment_display = true; */
 
-    if (r['old-icon']) 
+    if (typeof html.getAttribute(`${npup.project.prefix.css}old-icon`) == 'string')
         document.getElementsByClassName('comment-ep')[0].click();
     else 
         document.getElementsByClassName('menu-bottom-item')[3].click();
