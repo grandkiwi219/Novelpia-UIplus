@@ -5,7 +5,7 @@ const ENGINE_TYPE = {
     SYSTEM: 'system',
 };
 
-let current_attribute = [`${npup.project.prefix.css}engine`];
+let current_attribute = [];
 
 class EngineStructure {
     /**
@@ -68,10 +68,13 @@ class EngineStructure {
         if (!this.use_route && settings.router) return;
 
         if (!settings.router) {
-            const engine_data = html.getAttribute(`${npup.project.prefix.css}engine`);
-            html.setAttribute(
-                `${npup.project.prefix.css}engine`,
-                (engine_data ? engine_data + ' ': '') + this.name.replace(/ /g, '-')
+            let engine_el = document.getElementsByTagName(npup.project.engine)[0];
+
+            const engine_data = engine_el.getAttribute('type');
+            const engine_name = this.name.replace(/ /g, '-');
+            engine_el.setAttribute(
+                'type',
+                (engine_data ? engine_data.replace(engine_name, '') + ' ': '') + engine_name
             );
         }
 

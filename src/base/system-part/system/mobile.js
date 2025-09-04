@@ -10,7 +10,7 @@ mobileCa['bottom-nav'].system = function (r) {
 mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
     if (!r['origin-header'] && !r['bottom-nav']) return;
 
-    targetHandler(() => document.querySelector('header.mobile_hidden'), scrollHiddenHeader);
+    targetHandler(() => document.querySelector('header.mobile_hidden'), () => scrollHiddenHeader());
 
     function scrollHiddenHeader() {
         const header = document.querySelector('header.mobile_hidden');
@@ -340,7 +340,7 @@ function setWidth(continue_ep, style) {
 mobileCa['top-ep'].system = function(r) {
     if (!pathChecker('/novel/')) return;
 
-    targetHandler(() => document.getElementsByClassName('btn-view-run')[0], setTopEp);
+    targetHandler(() => document.getElementsByClassName('btn-view-run')[0], () => setTopEp());
 
     function setTopEp() {
         let top_ep = document.getElementsByClassName('btn-view-run')[0].parentElement.cloneNode(true);

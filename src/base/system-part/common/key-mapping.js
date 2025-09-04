@@ -1,66 +1,5 @@
 const keyMappingCa = npup.options.mapping.options;
 
-function keyMappingBase(callback, { condition = () => { return true; }, execution = () => {} } = {}) {
-    return async function(r, settings = { quick_mapping_menu: false }) {
-        if (settings.quick_mapping_menu) {
-            if (!condition()) return;
-
-            const result = await Promise.all([
-                tryChecker(() => {
-                    callback(r);
-                }, `<keyMappingBase - quick-mapping-menu> ${this.key}`, false)
-            ]);
-
-            if (result[0].status != 2) toastAlert({
-                    title: `오류 발생 | ${this.key}`,
-                    msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
-                    type: 'error'
-                });
-            return;
-        }
-
-        const keydownEvent = async (e) => {
-            if (!condition()) return;
-
-            const active = document.activeElement;
-
-            if (
-                active.tagName === 'INPUT' ||
-                active.tagName === 'TEXTAREA' ||
-                active.isContentEditable
-            ) return;
-
-            const key_match = e.code != r[this.key].code && e.key != r[this.key].key;
-            if (
-                (key_match) ||
-                (!key_match && (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey))
-            ) return
-
-            e.preventDefault();
-
-            const result = await Promise.all([
-                tryChecker(() => {
-                    callback(r);
-                }, `<keyMappingBase> ${this.key}`, false)
-            ]);
-
-            if (result[0].status != 2) toastAlert({
-                    title: `오류 발생 | ${this.key}`,
-                    msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
-                    type: 'error'
-                });
-        }
-        
-        document.addEventListener('keydown', keydownEvent);
-
-        removeEventForEngine(() => {
-            document.removeEventListener('keydown', keydownEvent);
-        });
-
-        execution();
-    }
-}
-
 
 keyMappingCa['quick-mapping-menu'].system = async function(r) {
     const qmm = `${npup.project.prefix.css}qmm`;
@@ -310,21 +249,44 @@ keyMappingCa['ep-home'].system = keyMappingBase(r => {
     condition: () => { return engineChecker('뷰어'); }
 });
 
+function clickDisplay() {
+    document.getElementById('novel_drawing').click();
+}
+
+function clickVote() {
+    document.getElementById('recommend_tap').children[0].click();
+}
+
 keyMappingCa['ep-comment'].system = keyMappingBase(r => {
-/*     if (document.getElementById('header_bar').style.display != 'block')
-        document.getElementById('novel_drawing').click();
+    if (document.getElementById('header_bar').style.display != 'block')
+        clickDisplay();
 
     let comment_display = false;
     if (document.getElementById('comment_box').style.display != 'none')
-        comment_display = true; */
+        comment_display = true;
 
     if (typeof html.getAttribute(`${npup.project.prefix.css}old-icon`) == 'string')
         document.getElementsByClassName('comment-ep')[0].click();
     else 
         document.getElementsByClassName('menu-bottom-item')[3].click();
-/* 
-    if (comment_display)
-        setTimeout(() => document.getElementById('novel_drawing').click(), 100); */
+},
+{
+    condition: () => { return engineChecker('뷰어'); }
+});
+
+keyMappingCa['ep-vote'].system = keyMappingBase(r => {
+    const vote = document.getElementById('btn_episode_vote').src.includes('recommend_on');
+
+    if (!vote) clickVote(), toastAlert({ msg: '추천을 완료하였습니다.' });
+    else {
+        if (document.getElementById('viewer-modal')) {
+            document.getElementById('viewer-modal').getElementsByClassName('close-x')[0].click();
+        } else if (document.getElementById('header_bar').style.display != 'block') {
+            clickVote(), document.getElementById('novel_drawing').click();
+        } else {
+            clickVote();
+        }
+    }
 },
 {
     condition: () => { return engineChecker('뷰어'); }

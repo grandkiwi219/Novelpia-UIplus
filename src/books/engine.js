@@ -38,7 +38,7 @@ engine = [
                     scriptInjection('src/base/file/remove-last-episode.js'); // remove last episode history
             } */
         }
-    }
+    },
 ];
 
 STRUCTURE.PRE_COMMON.ENGINE.setAdditionalExecution(() => {

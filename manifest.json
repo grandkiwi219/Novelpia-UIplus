@@ -3,7 +3,7 @@
     "name": "노벨피아 UI+",
     "description": "더 나은 노벨피아 UI를 경험해보세요!",
     "author": "grand-kiwi",
-    "version": "3.4.3.1",
+    "version": "3.5.0.0",
     "browser_specific_settings": {
         "gecko": {
             "id": "",
@@ -32,6 +32,7 @@
             "js": [
                 "./src/npup.js",
                 "./src/setup.js",
+                "./src/assets.js",
                 "./src/structure.js",
                 "./src/content.js",
                 "./src/options-category.js",

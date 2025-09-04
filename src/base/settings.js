@@ -128,6 +128,17 @@ npup.options = { ...npup.options,
                     router: true,
                 },
             },
+
+            'novel-notice-close': {
+                desc: '공지 접기 추가',
+                type: {
+                    option: 'switch',
+                    structure: ['system']
+                },
+                structure: {
+                    router: true,
+                },   
+            }
         }
     },
 
@@ -477,6 +488,15 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                     option: 'mapping'
                 },
             },
+            'ep-vote': {
+                tag: {
+                    quick_mapping_menu: false
+                },
+                desc: '추천 누르기 (뷰어)',
+                type: {
+                    option: 'mapping'
+                },
+            },
             'page-dark': {
                 tag: {
                     quick_mapping_menu: true
@@ -530,6 +550,24 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                     option: 'switch',
                     structure: ['pre-common']
                 }
+            },
+
+            'quick-mybook': {
+                desc: '빠른 내서재 (확장프로그램 아이콘 클릭 시)',
+                type: {
+                    option: 'switch'
+                },
+                options: {
+                    'quick-mybook-thumb': {
+                        desc: '표지를 표시하지 않음',
+                        type: {
+                            option: 'switch'
+                        }
+                    },
+                },
+                setups: {
+                    invisible: true,
+                },
             },
         }
     },

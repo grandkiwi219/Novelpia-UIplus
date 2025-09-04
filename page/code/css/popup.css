@@ -1,0 +1,390 @@
+:root {
+    --p-margin: 12px;
+    --p-container-margin-bottom: 5px;
+
+    --p-body-width: 370px;
+    --p-body-height: 550px;
+
+    --p-header-gap: 10px;
+
+    --p-header-btn-size: 20px;
+}
+
+html, body {
+    min-width: var(--p-body-width);
+    min-height: var(--p-body-height);
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    user-select: none;
+}
+
+header.p-container {
+    box-sizing: border-box;
+    width: 100%;
+    height: fit-content;
+    padding: var(--p-margin);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--p-header-gap);
+    transition: all var(--theme-transition-speed);
+
+    #novel-logo {
+        width: var(--p-header-btn-size);
+        height: var(--p-header-btn-size);
+    }
+}
+
+.p-cleaner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--p-header-gap);
+}
+
+button#options > svg {
+    width: var(--p-header-btn-size);
+    height: var(--p-header-btn-size);
+}
+
+#box {
+    box-sizing: border-box;
+    height: fit-content;
+    padding: 0 var(--p-margin) var(--p-margin) var(--p-margin);
+    scrollbar-width: none;
+}
+
+.normal-button {
+
+    &.continue, &.next {
+        border-radius: 3px;
+        color: white;
+        font-size: 12px;
+        line-height: 22px;
+
+        @media (hover: hover) and (pointer: fine) {
+            &:hover:not(.disabled) {
+                filter: opacity(80%);
+            }
+        }
+    }
+
+    &.continue {
+        background-color: var(--purple-fade);
+    }
+
+    &.next {
+        width: 60px;
+        background-color: var(--purple);
+    }
+
+    &.next.disabled {
+        font-size: 9.8px;
+        color: gray;
+        background-color: rgb(241, 241, 241);
+        cursor: no-drop;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover:not(.continue, .next) {
+            background-color: var(--header-button-hover);
+        }
+    }
+
+    &:active:not(.continue, .next) {
+        background-color: var(--header-button-active);
+        transition: border 0s;
+    }
+}
+
+#p-mybook {
+    width: 100%;
+    height: fit-content;
+    
+    * {
+        font-weight: 400;
+    }
+}
+
+#p-mybook-tab-wrap {
+    width: 100%;
+    height: fit-content;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+:root {
+    --mybook-tab-border: rgb(88, 88, 88);
+}
+
+html[dark=false] {
+    --mybook-tab-border: rgb(206, 206, 206);
+}
+
+.p-mybook-tab {
+    padding: 10px 0;
+    border: 1px solid var(--mybook-tab-border);
+    border-bottom: 1px solid var(--font-color);
+    text-align: center;
+    letter-spacing: -1px;
+    transition: all var(--theme-transition-speed);
+
+    &.active {
+        border: 1px solid var(--font-color);
+        border-bottom: 0px;
+        font-weight: bold !important;
+    }
+
+    &.disabled {
+        opacity: 0.3;
+        cursor: no-drop;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover:not(.disabled) {
+            filter: opacity(0.75);
+        }
+    }
+}
+
+#p-mybook-category-wrap {
+    box-sizing: border-box;
+    width: 100%;
+    height: fit-content;
+    padding: 7px 3px;
+    border-bottom: 2px solid var(--font-color);
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 5px;
+    overflow: hidden;
+    overflow-x: auto;
+}
+
+:root {
+    --mybook-category-bgc: rgba(255, 255, 255, 0.212);
+    --mybook-category-bgc-active: rgba(255, 255, 255);
+    --mybook-category-color-active: rgba(0, 0, 0);
+}
+
+html[dark=false] {
+    --mybook-category-bgc: rgba(0, 0, 0, 0.075);
+    --mybook-category-bgc-active: rgba(0, 0, 0);
+    --mybook-category-color-active: rgba(255, 255, 255);
+}
+
+.p-mybook-category {
+    width: fit-content;
+    height: fit-content;
+    padding: 5px 9px;
+    border-radius: 50px;
+    background-color: var(--mybook-category-bgc);
+    font-size: 13px;
+    font-weight: 500 !important;
+    white-space: nowrap;
+    transition: all var(--theme-transition-speed);
+
+    &.active {
+        background-color: var(--mybook-category-bgc-active);
+        color: var(--mybook-category-color-active);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            filter: opacity(0.75);
+        }
+    }
+}
+
+#p-mybook-novel-wrap {
+    width: 100%;
+    height: fit-content;
+    display: grid;
+    grid-template-columns: 100%;
+
+    &.waiting, &.failed, &.empty, &.error, &.logout {
+        height: 180px;
+        line-height: 180px;
+        text-align: center;
+        opacity: 0.5;
+    }
+
+    &.waiting:after {
+        content: '데이터를 불러오는 중입니다...';
+    }
+
+    &.failed:after {
+        content: '데이터를 불러오지 못했습니다.';
+    }
+
+    &.empty:after {
+        content: '등록된 데이터가 존재하지 않습니다.';
+    }
+
+    &.error:after {
+        content: '데이터 변환 도중 오류가 발생했습니다.';
+    }
+
+    &.logout:after {
+        content: '로그인이 필요해 보입니다.';
+    }
+}
+
+:root {
+    --novel-thumb-width: calc((var(--novel-height) / 3) * 2);
+    --novel-height: 80px;
+
+}
+
+.p-novel-adult-mark {
+    width: fit-content;
+    height: fit-content;
+
+    &:before {
+        content: '19';
+        width: fit-content;
+        height: fit-content;
+        padding: 1px 3px;
+        border-radius: 50px;
+        color: white;
+        font-size: 11px;
+        background-color: rgb(255, 97, 97);
+        display: flex;
+        align-items: center;
+    }
+}
+
+.p-novel-item-wrap {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 7px;
+    border-bottom: 1px solid var(--mybook-tab-border);
+    display: flex;
+    flex-flow: column wrap;
+
+    * {
+        transition: all var(--theme-transition-speed);
+    }
+
+    .p-novel-item {
+        width: 100%;
+        display: flex;
+        flex-flow: row wrap;
+
+        .p-novel-thumb {
+            width: var(--novel-thumb-width);
+            height: var(--novel-height);
+            position: relative;
+
+            .p-novel-adult-mark {
+                position: absolute;
+                top: 2px;
+                right: 2px;
+            }
+
+            img {
+                width: var(--novel-thumb-width);
+                height: var(--novel-height);
+                border-radius: 5px;
+            }
+
+            @media (hover: hover) and (pointer: fine) {
+                &:hover {
+                    filter: opacity(0.75);
+                }
+            }
+        }
+
+        .p-novel-info {
+            box-sizing: border-box;
+            width: calc(100% - var(--novel-thumb-width));
+            height: var(--novel-height);
+            padding: 0 10px;
+            display: flex;
+            flex-flow: column wrap;
+            gap: 5px;
+
+            .p-novel-title {
+                box-sizing: border-box;
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-weight: bold !important;
+                font-size: 16px;
+
+                @media (hover: hover) and (pointer: fine) {
+                    &:hover {
+                        filter: opacity(0.75);
+                    }
+                }
+            }
+
+            .p-novel-author {
+                box-sizing: border-box;
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                @media (hover: hover) and (pointer: fine) {
+                    &:hover:not(.disabled) {
+                        filter: opacity(0.75);
+                    }
+                }
+
+                &.disabled {
+                    cursor: default;
+                }
+            }
+        }
+    }
+
+    .p-novel-btns {
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        gap: 10px;
+        
+        * {
+            font-weight: 500 !important;
+        }
+    }
+}
+
+.p-mybook-page-items {
+    width: 100%;
+    padding: 10px 0 7px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+
+    .p-mybook-page-item {
+        box-sizing: border-box;
+        width: 25px;
+        height: 33px;
+        background-color: var(--mybook-category-bgc);
+        line-height: 30px;
+        text-align: center;
+        transition: all var(--theme-transition-speed);
+
+        &.active {
+            background-color: var(--mybook-category-bgc-active);
+            color: var(--mybook-category-color-active);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            &:hover {
+                filter: opacity(0.75);
+            }
+        }
+    }
+}
+
+#p-pi-top:has(.p-mybook-page-item) {
+    border-bottom: 1px solid var(--mybook-tab-border);
+}

@@ -12,7 +12,10 @@ const npup = {
                 console: this.name.toUpperCase() + `-v${this.version} |`
             }
         },
-        color: '#7632ff'
+        get engine() {
+            return `${this.name.toLowerCase()}-engine`
+        },
+        color: '#7632ff',
     },
 
     keys: {
@@ -215,7 +218,19 @@ npup.func.engineChecker = (name) => {
     try {
         return STRUCTURE.SYSTEM.ENGINE.name == name ? true: false;
     } catch (e) {
-        const engine_data = html.getAttribute(`${npup.project.prefix.css}engine`).split(' ');
+        const engine_el = document.getElementsByTagName(npup.project.engine)[0];
+
+        if (!engine_el) {
+            npup.func.toastAlert({ title: '경고', msg: `필수 요소, ${npup.project.engine} 요소가 감지되지 않음`, type: 'error' });
+            npup.error(`engineChecker 함수가 ${npup.project.engine} 태그를 지닌 요소를 찾지 못했습니다. 이 경우, 일부 기능이 작동하지 않을 수 있습니다.`);
+            return;
+        } else if (!engine_el.getAttribute('type')) {
+            npup.func.toastAlert({ title: '경고', msg: `필수 요소, ${npup.project.engine} 요소에서 type 속성이 감지되지 않음.`, type: 'error' });
+            npup.error(`engineChecker 함수가 ${npup.project.engine} 태그에서 type 속성을 찾지 못했습니다. 이 경우, 일부 기능이 작동하지 않을 수 있습니다.`);
+            return;
+        }
+
+        const engine_data = engine_el.getAttribute('type').split(' ').filter(r => r);
 
         if (engine_data?.length)
             return engine_data.includes(name) ? true : false;
@@ -241,22 +256,27 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined } = {}) => {
         alert_box.classList.add(type);
     }
     else {
-        if (npup.func.domainChecker('base')) {
-            if (npup.func.engineChecker('페이지'))
-                alert_box.classList.add('s_inv');
-            else
-                if (getCookie('DARKMODE'))
-                    alert_box.style.filter = 'invert(1)';
+        try {
+            if (npup.func.domainChecker('base')) {
+                if (npup.func.engineChecker('페이지'))
+                    alert_box.classList.add('s_inv');
+                else
+                    if (getCookie('DARKMODE'))
+                        alert_box.style.filter = 'invert(1)';
+            }
+            else if (npup.func.domainChecker('books')) {
+                0
+            }
+            else if (npup.func.domainChecker('global')){
+                if (document.body?.classList.contains('dark'))
+                    Object.assign(alert_box.style, {
+                        color: 'white',
+                        backgroundColor: 'rgb(23, 23, 23)'
+                    });
+            }
         }
-        else if (npup.func.domainChecker('books')) {
-            0
-        }
-        else if (npup.func.domainChecker('global')){
-            if (document.body?.classList.contains('dark'))
-                Object.assign(alert_box.style, {
-                    color: 'white',
-                    backgroundColor: 'rgb(23, 23, 23)'
-                });
+        catch (e) {
+            npup.error('toastAlert 함수의 다크모드 적용이 불가능합니다.');
         }
     }
 

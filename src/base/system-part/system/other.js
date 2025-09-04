@@ -3,7 +3,7 @@ const otherCa = npup.options.other.options;
 otherCa['notice'].system = function(r) {
     if (window.location.pathname != "/") return;
     
-    targetHandler(() => document.getElementById('copyright_bar'), setNotice);
+    targetHandler(() => document.getElementById('copyright_bar'), () => setNotice());
 
     function setNotice() {
         let notice_bar = document.getElementById('copyright_bar').cloneNode(true);

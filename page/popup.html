@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko" dark="true">
+    <head>
+        <!-- 기본 키 값 -->
+        <script src="./code/js/keys.js"></script>
+
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+        <title>노벨피아 UI+</title>
+        
+        <!-- 기본 UI 설정 -->
+        <script src="./code/js/pre-setup.js"></script>
+        
+        <!-- 옵션 -->
+        <script src="./code/js/popup/mybook.js"></script>
+        <script src="./code/js/popup/popup-worker.js"></script>
+        <!-- 빠른 내서재 옵션 여부 확인 -->
+        <script src="./code/js/popup/popup.js" defer></script>
+
+        <!-- UI -->
+        <link rel="stylesheet" href="./code/css/options.css">
+        
+        <link rel="stylesheet" href="./code/css/popup.css">
+
+        <link rel="stylesheet" href="./code/css/mybook.css">
+
+        <!-- 크롬 전용 UI -->
+        <link rel="stylesheet" href="./code/css/options-chrome.css">
+    </head>
+
+    <body>
+        <header class="p-container">
+            <a class="normal-button icon" title="내서재" href="https://novelpia.com/mybook/" target="_blank">
+                <img id="novel-logo"
+                src="https://images.novelpia.com/img/favicon/2025-android-icon-192x192.png"
+                alt="🪽">
+            </a>
+            <div class="p-cleaner">
+                <button id="npup-load-mybook-data"> 새로고침</button>
+                <button id="options" class="normal-button icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-12 -12 24 24" fill="currentColor">
+                        <path d="M6.9282 4A6.91 6.91 30 00-6.9282-4 .5.5 30 006.9282 4ZM-2 3.4641A3.5 3.5 30 112-3.4641 1 1 30 01-2 3.4641ZM2-7 2-10A1 1 0 001-11L-1-11A1 1 0 00-2-10L-2-7M3.4641 2 9.5263 5.5M-3.4641-2-5.7091-5.6056-7.6602-6.7321A1 1 30 00-9.0263-6.366L-10.0263-4.634A1 1 30 00-9.6603-3.268L-7.4623-1.9989M5.0621 5.2321 7.6602 6.7321A1 1 30 009.0263 6.366L10.0263 4.634A1 1 30 009.6603 3.268L7.0622 1.7679M-7.0622 1.7679-9.6603 3.2679A1 1-30 00-10.0263 4.634L-9.0263 6.366A1 1-30 00-7.6603 6.7321L-5.0622 5.2321M7.0622-1.7679 9.6603-3.2679A1 1-30 0010.0263-4.634L9.0263-6.366A1 1-30 007.6603-6.7321L5.0622-5.2321M-2 7-2 10A1 1 0 00-1 11L1 11A1 1 0 002 10L2 7"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <div id="box" class="cleaner">
+
+            <div id="p-mybook" tab="last_view" category="0" page="1" order="date">
+                
+                <div id="p-mybook-tab-wrap">
+                    <button id="like" class="p-mybook-tab" mybook-data="like">선호작</button>
+                    <button id="alarm" class="p-mybook-tab" mybook-data="alarm">구독 알림</button>
+                    <button id="collect" class="p-mybook-tab" mybook-data="collect">소장함</button>
+                    <button id="last_view" class="p-mybook-tab" mybook-data="last_view,0">최근 본 작품</button>
+                </div>
+
+                <div id="p-mybook-category-wrap"></div>
+
+                <div id="p-pi-top" class="p-mybook-page-items"></div>
+
+                <div id="p-mybook-novel-wrap" class="waiting"></div>
+
+                <div id="p-pi-bottom" class="p-mybook-page-items"></div>
+
+            </div> 
+
+        </div>
+    </body>
+</html>

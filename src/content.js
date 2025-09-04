@@ -12,6 +12,9 @@ function ready(settings_param) {
 
     Object.assign(settings, settings_param);
 
+    if (!document.getElementsByTagName(npup.project.engine)[0])
+        html.appendChild(document.createElement(npup.project.engine));
+
     npup.log('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ');
 
     STRUCTURE.SWITCH.ENGINE.on(settings);

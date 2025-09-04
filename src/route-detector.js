@@ -10,6 +10,8 @@
 
     if (!is_possible) return;
 
+    if (!pathChecker(is_possible.matches) || pathChecker(is_possible.excludes)) return;
+
     window.addEventListener('DOMContentLoaded', () => {
         let c_path = window.location.pathname;
         if (!c_path.endsWith('/')) c_path += '/';
@@ -19,8 +21,7 @@
             let current_path = window.location.pathname;
             if (!current_path.endsWith('/')) current_path += '/';
 
-            if (!pathChecker(is_possible.matches, current_path) || pathChecker(is_possible.excludes, current_path)) { 0 }
-            else if (c_path == current_path) { 0 }
+            if (c_path == current_path) { 0 }
             else {
                 performance_standard = performance.now();
                 c_path = current_path;
@@ -39,6 +40,8 @@
 
 function routeDetector({ path = path } = {}) {
     const result = changeEngine({ path });
+
+    npup.dev(result)
 
     const data = {
         path: path,
@@ -65,10 +68,12 @@ function routeDetector({ path = path } = {}) {
 }
 
 function resetAttribute() {
+    document.getElementsByTagName(npup.project.engine)[0].removeAttribute('type');
+
     current_attribute.forEach(r => {
         html.removeAttribute(r);
     });
-    current_attribute = [current_attribute[0]];
+    current_attribute = [];
 
     basic_use_system.base = {};
     basic_use_system.router = {};
@@ -82,17 +87,31 @@ function changeEngine(settings) {
 
     let current_engine = STRUCTURE.SYSTEM.ENGINE.name;
 
-    engine.forEach(e => {
-        if (pathChecker(e?.matches, settings.path) && !pathChecker(e?.excludes, settings.path)) {
-            STRUCTURE.SYSTEM.ENGINE.name = e?.name ?? '';
+    let engine_exist = false;
 
-            if (e?.execution)
-                STRUCTURE.SYSTEM.ENGINE.setAdditionalExecution(e.execution);
+    for (let i = 0; i < engine.length; i++) {
+        if (pathChecker(engine[i]?.matches, settings.path) && !pathChecker(engine[i]?.excludes, settings.path)) {
+            STRUCTURE.SYSTEM.ENGINE.name = engine[i]?.name || '';
+
+            engine_exist = true;
+
+            if (engine[i]?.execution)
+                STRUCTURE.SYSTEM.ENGINE.setAdditionalExecution(engine[i].execution);
+
+            break;
         }
-    });
+    }
 
-    if (current_engine == STRUCTURE.SYSTEM.ENGINE.name || !current_engine)
+    if (!engine_exist) {
+        STRUCTURE.SYSTEM.ENGINE.name = '';
+        STRUCTURE.SYSTEM.ENGINE.setAdditionalExecution(() => 0);
+    }
+
+    if (current_engine == STRUCTURE.SYSTEM.ENGINE.name)
         return 0; // not changed
+    else if (!engine_exist) {
+        return -2; // null
+    }
     else 
         return 1; // changed
 }

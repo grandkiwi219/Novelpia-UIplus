@@ -45,6 +45,7 @@ function toolBox(name, { icon = '🥝', icon_svg = undefined } = {}, settings = 
     tool_warp.classList.add('tools-wrap');
 
     node.forEach(r => {
+        if (!r) return;
         tool_warp.appendChild(r);
     });
 
@@ -55,6 +56,8 @@ function toolBox(name, { icon = '🥝', icon_svg = undefined } = {}, settings = 
 }
 
 function toolsStructure(...node) {
+    if (!node[0]) return null;
+
     if (node[0].type == 'textarea') return node[0].node;
 
     const tools_child = document.createElement('div');
@@ -69,6 +72,8 @@ function toolsStructure(...node) {
 
 function toolsBinding(item, op, sub = false) {
     let tools_item;
+
+    if (op.setups?.invisible) return;
 
     switch (op.type?.option) {
         case 'switch': 
