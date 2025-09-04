@@ -247,6 +247,7 @@ async function resolveMybookData({ thumb_off = false } = {}) {
         novel.setAttribute('cont-id', r.continue.id);
         novel.setAttribute('next-status', r.next.status);
         novel.setAttribute('next-parameter', r.next.parameter);
+        novel.setAttribute('open', r.open);
         novel.setAttribute('type', r.type);
 
         mybook_wrap.appendChild(novel);
@@ -364,6 +365,7 @@ class NovelItem extends HTMLElement {
                 status: this.getAttribute('next-status'), 
                 parameter: this.getAttribute('next-parameter')
             },
+            open: this.getAttribute('open'),
             type: this.getAttribute('type'),
         }
 
@@ -420,6 +422,15 @@ class NovelItem extends HTMLElement {
 
         info.appendChild(title);
         info.appendChild(author);
+
+        if (data.open != 'undefined') {
+            const open_time = document.createElement('div');
+            open_time.classList.add('p-novel-open');
+            open_time.textContent = data.open;
+
+            info.appendChild(open_time);
+        }
+
         item.appendChild(info);
 
 

@@ -2,12 +2,14 @@
     --p-margin: 12px;
     --p-container-margin-bottom: 5px;
 
-    --p-body-width: 370px;
-    --p-body-height: 550px;
+    --p-body-width: 380px;
+    --p-body-height: 600px;
 
     --p-header-gap: 10px;
 
     --p-header-btn-size: 20px;
+    
+    --red: rgb(255, 97, 97);
 }
 
 html, body {
@@ -233,7 +235,6 @@ html[dark=false] {
 :root {
     --novel-thumb-width: calc((var(--novel-height) / 3) * 2);
     --novel-height: 80px;
-
 }
 
 .p-novel-adult-mark {
@@ -248,7 +249,7 @@ html[dark=false] {
         border-radius: 50px;
         color: white;
         font-size: 11px;
-        background-color: rgb(255, 97, 97);
+        background-color: var(--red);
         display: flex;
         align-items: center;
     }
@@ -304,12 +305,15 @@ html[dark=false] {
             flex-flow: column wrap;
             gap: 5px;
 
-            .p-novel-title {
+            * {
                 box-sizing: border-box;
                 width: 100%;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+            }
+
+            .p-novel-title {
                 font-weight: bold !important;
                 font-size: 16px;
 
@@ -321,11 +325,6 @@ html[dark=false] {
             }
 
             .p-novel-author {
-                box-sizing: border-box;
-                width: 100%;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
 
                 @media (hover: hover) and (pointer: fine) {
                     &:hover:not(.disabled) {
@@ -336,6 +335,10 @@ html[dark=false] {
                 &.disabled {
                     cursor: default;
                 }
+            }
+
+            .p-novel-open {
+                color: var(--red);
             }
         }
     }

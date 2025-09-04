@@ -196,6 +196,7 @@ function mybookJson(data) {
                 status: data.children[i].getElementsByClassName('novel-btn-nothing')[0] ? false : true,
                 parameter: ''
             },
+            open: data.children[i].getElementsByClassName('novel-open-time')[0]?.textContent,
             type: 'normal'
         }
 
@@ -233,6 +234,7 @@ function mybookCollectJson(data) {
                 status: undefined,
                 parameter: ''
             },
+            open: undefined,
             type: 'collect'
         }
 
