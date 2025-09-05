@@ -2,7 +2,7 @@ html.npup-books-dark {
     &,
     .main-mark-box-wrp, .bnr-show-number,
     img:where([src*=prime], [src*=imagebox], [src*=emoticon], [src*=ebook], [src*="/img/new/icon/"], [src*=main_no_data]):not([src*=comment]),
-    img[alt=profile],
+    img[onerror*=none_user],
     footer,
     .w-screen.flex.justify-center:not(.event), .w-screen.flex.justify-center:not(.event) > *, /* 프로모션 페이지 */
     .relative.w-full.flex.justify-center, /* 프로모션 페이지 2 */

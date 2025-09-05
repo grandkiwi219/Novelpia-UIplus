@@ -276,7 +276,7 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined } = {}) => {
             }
         }
         catch (e) {
-            npup.error('toastAlert 함수의 다크모드 적용이 불가능합니다.');
+            npup.error('toastAlert 함수의 다크모드 적용이 불가능합니다.', e.stack);
         }
     }
 

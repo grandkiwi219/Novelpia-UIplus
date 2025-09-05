@@ -10,10 +10,12 @@ mobileCa['bottom-nav'].system = function (r) {
 mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
     if (!r['origin-header'] && !r['bottom-nav']) return;
 
-    targetHandler(() => document.querySelector('header.mobile_hidden'), () => scrollHiddenHeader());
+    targetHandler(() => document.getElementById('copyright_bar'), () => scrollHiddenHeader());
 
     function scrollHiddenHeader() {
         const header = document.querySelector('header.mobile_hidden');
+        let header_all_height = null;
+        let header_height = null;
         header.style.top = 0;
 
         let scrollY = window.scrollY;
@@ -23,7 +25,12 @@ mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
 
         decideMenuTap();
 
-        window.addEventListener('scroll', () => {
+        if (window.innerWidth < 892) {
+            header_all_height = getHeaderHeight(header);
+            header_height = header.getBoundingClientRect().height; 
+        }
+
+        const scrollHeader = () => {
             if (window.innerWidth >= 892) {
                 header.style.top = '0px';
                 if (menu_tap) menu_tap.style.top = '';
@@ -31,16 +38,21 @@ mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
                 return;
             }
 
+            if (!header_all_height) {
+                header_all_height = getHeaderHeight(header);
+                header_height = header.getBoundingClientRect().height;
+            }
+
             const scroll_gap = window.scrollY - scrollY;
             scrollY = window.scrollY;
 
             let header_top = parseFloat(header.style.top) || 0;
-            const header_height = getHeaderHeight(header);
+            
             const header_calc = header_top - scroll_gap;
 
             if (scroll_gap > 0 && window.scrollY > 0) { // scroll up
-                if (header_top == -header_height) return;
-                header_top = header_calc < -header_height ? -header_height : header_calc;
+                if (header_top == -header_all_height) return;
+                header_top = header_calc < -header_all_height ? -header_all_height : header_calc;
             }
             else if (scroll_gap < 0) { // scroll down
                 if (header_top == 0) return;
@@ -48,16 +60,20 @@ mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
             }
 
             if (menu_tap) {
-                const menu_tap_calc = header.getBoundingClientRect().height - 1 + header_top;
+                if (!document.body.contains(menu_tap)) decideMenuTap();
+                const menu_tap_calc = header_height - 1 + header_top;
                 if (menu_top_important) menu_tap.style.setProperty('top', `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`, 'important');
                 else menu_tap.style.top = `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`;
             }
 
             header.style.top = `${header_top}px`;
-        });
+        }
+        window.addEventListener('scroll', scrollHeader);
+
         scrollY = window.scrollY;
 
-        window.addEventListener(npup.event.router, route_event => decideMenuTap(route_event.detail.pCheck));
+        const decideMenuRouter = route_event => decideMenuTap(route_event.detail.pCheck);
+        window.addEventListener(npup.event.router, decideMenuRouter);
 
 
         function decideMenuTap(pCheck = pathChecker) {
@@ -77,6 +93,11 @@ mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
                 menu_tap = undefined;
             }
         }
+
+        removeEventForEngine(() => {
+            window.removeEventListener('scroll', scrollHeader);
+            window.removeEventListener(npup.event.router, decideMenuRouter);
+        });
     }
 }
 

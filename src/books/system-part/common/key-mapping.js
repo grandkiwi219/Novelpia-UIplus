@@ -262,12 +262,12 @@ let books_dark = {
 
 keyMappingCa['books-page-dark'].system = keyMappingBase(r => {
     const result = setBooksDark('페이지', 'npup_books_page_dark');
-    toastAlert({ title: '다크모드', msg: `다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
+    if (!engineChecker('페이지')) toastAlert({ title: '다크모드', msg: `다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });
 
 keyMappingCa['books-viewer-dark'].system = keyMappingBase(r => {
     const result = setBooksDark('뷰어', 'npup_books_viewer_dark');
-    toastAlert({ title: '뷰어 다크모드', msg: `뷰어 다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
+    if (!engineChecker('뷰어')) toastAlert({ title: '뷰어 다크모드', msg: `뷰어 다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });
 
 

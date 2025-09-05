@@ -83,13 +83,18 @@ html[npup-origin-header], html[npup-bottom-nav] {
         }
         
         /* header border 일부 페이지서 보이지 않는 문제 해결 */
-        
         body:has(.top-menu-margin_simple) > header.mobile_hidden {
             border-bottom: 1px solid #E6E6E6;
         }
         
         header.mobile_hidden {
             transition: border .24s;
+        }
+
+        /* 소설 페이지에서 후원, 댓글 부분이 공지와 겹치는 문제 해결 */
+        .epnew-wrapper {
+            margin: 0 !important;
+            padding-top: 20px;
         }
         
 
@@ -105,11 +110,6 @@ html[npup-origin-header], html[npup-bottom-nav] {
         
         #tab_top + table {
             top: 89px !important;
-        }
-                
-            /* /novel 부분 */
-        body > div:has(.epnew-wrapper) {
-            top: 20px;
         }
         
             /* 공지 */

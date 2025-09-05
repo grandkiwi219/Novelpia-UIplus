@@ -41,8 +41,6 @@
 function routeDetector({ path = path } = {}) {
     const result = changeEngine({ path });
 
-    npup.dev(result)
-
     const data = {
         path: path,
         pathChecker: (paths) => { return pathChecker(paths, path) },
