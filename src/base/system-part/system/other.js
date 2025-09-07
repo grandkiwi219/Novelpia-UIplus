@@ -173,7 +173,7 @@ otherCa['last-ep'].system = async function(r) {
             cooltime = null;
         }
 
-        const current = new Date().getTime()
+        const current = new Date().getTime();
 
         if (cooltime > current) {
             freeze = true;
@@ -183,7 +183,7 @@ otherCa['last-ep'].system = async function(r) {
             const minutes = Math.floor(remaining / (1000 * 60)) % 60;
             const hours = Math.floor(remaining / (1000 * 60 * 60));
 
-            npup.log(`알림 쿨타임 남은 시간: ${hours}시간 ${minutes}분 ${seconds}초`);
+            npup.log(`알림 쿨타임 남은 시간: ${hours ? `${hours}시간 ` : ''}${minutes ? `${minutes}분 ` : ''}${seconds}초`);
         }
         else {
             localStorage.removeItem('last_episode_timestamp');
@@ -201,7 +201,7 @@ otherCa['last-ep'].system = async function(r) {
 
     function setContinueContent() {
         content_text.innerHTML = `<p><b>${data?.novel || '소설 제목'}</b></p>`
-            + `<p><b>${data?.ep ?? 'EP.?'}</b> <span style="font-weight: 400;">${data?.title ?? '회차 제목'}</span></p>`
+            + `<p><b>${data?.ep ?? 'EP.?'}</b> <span style="font-weight: 400;">${data?.title || '회차 제목'}</span></p>`
             + `(을)를 이어보시겠습니까?`;
     }
 
@@ -210,7 +210,7 @@ otherCa['last-ep'].system = async function(r) {
     }
 
     function setRedirectEpContent() {
-        redirect_content.innerHTML = `<b>${data?.ep ?? 'EP.?'}</b>&nbsp;이어보기`;
+        redirect_content.innerHTML = `<b>${data?.ep || 'EP.?'}</b>&nbsp;이어보기`;
     }
 
     function setRedirectNovel() {
@@ -238,7 +238,7 @@ otherCa['last-ep'].system = async function(r) {
 
         const timestamp = new Date();
 
-        const add_time = Number(r['last-ep-cooltime'] ?? 30);
+        const add_time = Number(r['last-ep-cooltime'] || 30);
 
         timestamp.setMinutes(timestamp.getMinutes() + add_time);
 

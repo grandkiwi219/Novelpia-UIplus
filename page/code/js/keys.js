@@ -12,21 +12,19 @@ const npup = {
 };
 
 const mybook_value = {
-    last_data: {
-        tab: null,
-        category: null /* [category_id] */
+    location: {
+        tab: 'last_view',
+        category: 0, /* [category_id] */
+        page: 1,
+        order: 'date'
     },
-    category: [
-        /* { id: [category_id], name: [category_name] },
-        ... */
-    ],
-    tab: {
-        /* [category_id]: {
-            data: [
-            { author: { name: '', href: '' }, title: '', thumbnail: '', novel: '', adult: false, continue: { ep: '', href: '' }, next: { state: true, href: '' } },
-            ...
-            ]
-        },
-        ... */
+    expiration_period: undefined,
+    data: {
+        status: 5,
+        data: {
+            books: undefined,
+            category: undefined,
+            page: undefined
+        }
     }
 }

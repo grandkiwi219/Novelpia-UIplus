@@ -23,7 +23,7 @@ try {
     if (!dark) {
         document.getElementsByTagName('html')[0]
             .setAttribute('dark', 'false');
-        prevDark = false;
+        prevDark = 0;
     } 
 } catch (error) {
     localStorage.dark = 1;
@@ -34,7 +34,7 @@ local.get([sync_key]).then(r => {
     if (!r[sync_key] && typeof r[sync_key] == 'boolean')
         storage = local;
     else if (!r[sync_key] && typeof r[sync_key] != 'boolean')
-        local.set({ [sync_key]: true });
+        local.set({ [sync_key]: 1 });
 });
 
 console.log(`   

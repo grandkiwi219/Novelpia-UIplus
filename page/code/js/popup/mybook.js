@@ -4,6 +4,11 @@ const npup_loading = '';
 const npup_success = '';
 const npup_failed = '';
 
+const expiration_period_for_update = 10 * 60; // 저장된 데이터 유효기간
+
+const tab_type = ['last_view', 'like', 'alarm', 'collect'];
+const order_type = ['date', 'view', 'list', 'vote'];
+
 
 /**
  * 정보 불러오기 버튼 있을 시 중복 방지를 위한 로드 상태 확인 함수
@@ -18,26 +23,112 @@ function loadStateMybookData() {
 /**
  * 마지막으로 연 내서재 위치 가져오기
  */
-async function getLastMybookData() {
-    let data = mybook_value.last_data;
-    await local.get(mybook).then(r => {
-        data = r[mybook]?.last_data || data;
-    });
-
-    return data;
+function getMybookLocationData() {
+    try {
+        return JSON.parse(localStorage[mybook])?.location || data;
+    } catch (e) {
+        return mybook_value.location;
+    }
 }
 
 /**
  * 마지막으로 연 내서재 위치 저장하기
  */
-async function setLastMybookData({ tab = null, category = null } = {}) {
-    await local.get(mybook).then(async r => {
-        let data = r[mybook] || {};
+function setMybookLocationData({ tab = 'last_view', category = 0, page = 1, order = 'date' } = {}) {
+    let data = {};
 
-        data.last_data = { tab: tab, category: category };
+    try {
+        data = JSON.parse(localStorage[mybook]) || {};
+    } catch (e) {}
 
-        await local.set({ [mybook]: data });
-    });
+    data.location = { tab: tab, category: category, page: page, order: order };
+
+    localStorage[mybook] = JSON.stringify(data);
+}
+
+/**
+ * 저장된 데이터의 유효기간 가져오기
+ */
+function getExpirationPeriod() {
+    try {
+        return JSON.parse(localStorage[mybook])?.expiration_period;
+    } catch (e) {
+        return undefined;
+    }
+}
+
+/**
+ * 저장된 데이터가 아직 유효한지 확인하기
+ */
+function confirmExpirationPeriod() {
+    const period = getExpirationPeriod();
+    const current_period = new Date().getTime();
+
+    if (period > current_period) {
+        const remaining = period - current_period;
+        const seconds = Math.floor(remaining / 1000) % 60;
+        const minutes = Math.floor(remaining / (1000 * 60)) % 60;
+        const hours = Math.floor(remaining / (1000 * 60 * 60));
+
+        return { status: true, expiration_period: `${hours ? `${hours}시간 ` : ''}${minutes ? `${minutes}분 ` : ''}${seconds}초` };
+    }
+    else { 
+        return { status: false, expiration_period: undefined };
+    }
+}
+
+/**
+ * 데이터의 유효기간 갱신하기
+ */
+function updateExpirationPeriod() {
+    const timestamp = new Date();
+
+    const add_time = Number(expiration_period_for_update);
+
+    timestamp.setSeconds(timestamp.getSeconds() + add_time);
+
+    let data = {};
+
+    try {
+        data = JSON.parse(localStorage[mybook]) || {};
+    } catch (e) {}
+
+    data.expiration_period = timestamp.getTime();
+
+    localStorage[mybook] = JSON.stringify(data);
+}
+
+/**
+ * 저장된 소설 데이터 가져오기
+ */
+function getMybookData() {
+    try {
+        return JSON.parse(localStorage[mybook])?.data || data;
+    } catch (e) {
+        return mybook_value.data;
+    }
+}
+
+/**
+ * 소설 데이터 저장하기
+ */
+function setMybookData(mybook_data_param) {
+    let mybook_data = {
+        status: 5,
+        data: { books: null, category: null, page: null }
+    }
+
+    Object.assign(mybook_data, mybook_data_param);
+
+    let data = {};
+
+    try {
+        data = JSON.parse(localStorage[mybook]) || data;
+    } catch (e) {}
+
+    data.data = mybook_data;
+
+    localStorage[mybook] = JSON.stringify(data);
 }
 
 /* 로드 */
@@ -99,14 +190,22 @@ async function loadMybookData(tab, category, page, order) {
  * tab = [last_view, collect, alarm, like]
  * status > 2 = 성공, 3 = 카테고리에 등록된 책이 존재하지 않음, 4 = 로그인 상태가 아님, 5 = 정보를 가져올 수 없음, 6 = 데이터 변환 도중 오류
  */
-async function mybookData(tab, category = undefined, page = 1, order = 'date') {
-    let fetch_url = `${novelpia}/mybook/${tab}/`;
+async function mybookData(tab = 'last_view', category = 0, page = 1, order = 'date') {
+    let fetch_url = `${novelpia}/mybook/${tab_type.includes(tab) ? tab : 'last_view'}/`;
 
-    const fetch_url_plus = `${category}/${order}/${page}`;
+    const c_bool = category > -3 && typeof category == 'string' && typeof Number(category) == 'number';
+    const o_bool = order_type.includes(order);
+    const p_bool = page > 1;
 
-    if (category) fetch_url += fetch_url_plus;
-    else if (page > 1) fetch_url += fetch_url_plus;
-    else if (order != 'date') fetch_url += fetch_url_plus;
+    const c_filter = c_bool ? category : 0;
+    const o_filter = o_bool ? order : 'date';
+    const p_filter = p_bool ? page : 1;
+
+    const fetch_url_plus = `${c_filter}/${o_filter}/${p_filter}`;
+
+    if (c_bool) fetch_url += fetch_url_plus;
+    else if (p_bool) fetch_url += fetch_url_plus;
+    else if (o_filter != 'date' && o_bool) fetch_url += fetch_url_plus;
 
     console.log(`데이터 URL: ${fetch_url}`);
 

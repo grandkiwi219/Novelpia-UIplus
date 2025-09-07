@@ -3,7 +3,7 @@ const update_key = 'extension-update';
 const mybook_key = 'quick-mybook';
 const popup_location = '/page/popup.html';
 
-let qm = false;
+let qm = 0;
 
 
 /**
@@ -12,11 +12,11 @@ let qm = false;
  */
 chrome.runtime.onInstalled.addListener(async d => {
     if (d.reason === 'install') {
-        await chrome.storage.local.set({ [sync_key]: true });
+        await chrome.storage.local.set({ [sync_key]: 1 });
         chrome.runtime.openOptionsPage();
     }
     else if (d.reason === "update") {
-        chrome.storage.local.set({ [update_key]: true });
+        chrome.storage.local.set({ [update_key]: 1 });
         qm = checkQuickMybook();
     }
 });
@@ -49,9 +49,9 @@ function setPopup(r) {
         chrome.action.setPopup({
             popup: popup_location
         });
-        return true;
+        return 1;
     }
-    else return false;
+    else return 0;
 }
 
 /**

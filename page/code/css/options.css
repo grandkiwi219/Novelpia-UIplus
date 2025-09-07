@@ -126,6 +126,7 @@ footer {
 }
 
 button {
+    box-sizing: content-box;
     font-family: var(--font);
     font-size: var(--font-size);
     background-color: rgba(0, 0, 0, 0);

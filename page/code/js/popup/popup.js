@@ -20,7 +20,7 @@ function checkPopup(r) {
     if (!r[mybook_key]) {
         openOptions();
     } else {
-        resolveMybookData({ thumb_off: r[`${mybook_key}-thumb`] });
+        resolveMybookData({ open: true, thumb_off: r[`${mybook_key}-thumb`] });
         thumb_off = r[`${mybook_key}-thumb`];
     }
 }

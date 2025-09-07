@@ -13,14 +13,32 @@ document.addEventListener('click', e => {
     }
 });
 
+document.addEventListener('keydown', e => {
+    const active = document.activeElement;
+
+    if (
+        active.tagName === 'INPUT' ||
+        active.tagName === 'TEXTAREA' ||
+        active.isContentEditable
+    ) return;
+
+    if (
+        !(e.code == 'KeyN' && e.ctrlKey && e.shiftKey)
+    ) return
+
+    e.preventDefault();
+
+    mybookSetup();
+});
+
 function mybookSetup() {
     storage.get([mybook_key]).then(r => {
         if (r[mybook_key]) {
-            storage.set({ [mybook_key]: false });
+            storage.set({ [mybook_key]: 0 });
             console.log('빠른 내서재 옵션을 수동으로 \'취소\'시켰습니다.');
         }
         else {
-            storage.set({ [mybook_key]: true });
+            storage.set({ [mybook_key]: 1 });
             console.log('빠른 내서재 옵션을 수동으로 \'작동\'시켰습니다.');
             checkQuickMybook();
             mybookBinding();

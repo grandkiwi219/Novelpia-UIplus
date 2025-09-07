@@ -9,12 +9,12 @@ document.querySelectorAll('.switch').forEach(r => {
 
         const data = await ss_storage.get([key]);
         
-        if (data[key] == true) {
+        if (data[key]) {
             r.setAttribute('check', 'false');
-            await ss_storage.set({ [key]: false });
+            await ss_storage.set({ [key]: 0 });
         } else {
             r.setAttribute('check', 'true');
-            await ss_storage.set({ [key]: true });
+            await ss_storage.set({ [key]: 1 });
         }
 
         if (key == sync_key) return location.reload();

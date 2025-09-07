@@ -32,15 +32,36 @@ function loadComplete() {
         }
     }
 
-
-
-    document.getElementById(npup_need_id).addEventListener('click', async () => {
+    const reloadMybookDataFunc = () => {
         if (loadStateMybookData()) return;
 
         resolveMybookData({ thumb_off: thumb_off });
+    }
+
+    document.getElementById(npup_need_id).addEventListener('click', reloadMybookDataFunc);
+
+    document.addEventListener('keydown', e => {
+        const active = document.activeElement;
+
+        if (
+            active.tagName === 'INPUT' ||
+            active.tagName === 'TEXTAREA' ||
+            active.isContentEditable
+        ) return;
+
+        const key_match = e.code != 'F5';
+        
+        if (
+            (key_match) ||
+            (!key_match && (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey))
+        ) return
+
+        e.preventDefault();
+
+        reloadMybookDataFunc();
     });
 
-    document.addEventListener('click', async e => {
+    document.addEventListener('click', e => {
         mybookDataAttribute(e);
         getNextEpAttribute(e);
     });
@@ -69,7 +90,7 @@ async function mybookDataAttribute(e) {
         order: att_data.length > 3 ? att_data[3] : 'date'
     };
 
-    await setLastMybookData({ tab: data.tab, category: data.category });
+    setMybookLocationData(data);
 
     const mybook_wrap = document.getElementById('p-mybook');
 
@@ -162,7 +183,7 @@ function changeNovelLogo(url) {
 
 
 /* 초기화된 마지막 내서재 정보를 들고온다 */
-async function resolveMybookData({ thumb_off = false } = {}) {
+async function resolveMybookData({ open = false, thumb_off = false } = {}) {
     const mybook_wrap = document.getElementById('p-mybook-novel-wrap');
     const category_wrap = document.getElementById('p-mybook-category-wrap');
 
@@ -173,171 +194,195 @@ async function resolveMybookData({ thumb_off = false } = {}) {
     } 
 
     
-    let last_data = await getLastMybookData();
-
-    if (!last_data.tab) last_data.tab = 'last_view';
-
-    const active_tab = document.querySelector('.p-mybook-tab.active');
-    if (active_tab) active_tab.classList.remove('active');
-
-    document.getElementById(last_data.tab).classList.add('active');
-
-
-    const mb_att = document.getElementById('p-mybook');
-    mb_att.setAttribute('tab', last_data.tab);
-    mb_att.setAttribute('category', last_data.category);
-
-    const tab_att =  mb_att.getAttribute('tab');
-    let category_att = mb_att.getAttribute('category');
-
-    const page_att = mb_att.getAttribute('page');
-    const order_att = mb_att.getAttribute('order');
-
-    let mybook_data;
-    
     try {
-        mybook_data = await loadMybookData(last_data.tab, last_data.category, page_att, order_att);
-    } catch (e) {
-        console.error(e);
-        return mybook_wrap.classList.add('failed');
-    }
-
-
-    changeNovelLogo(mybook_data.url);
-
-    const novel_data = mybook_data.data;
-
-    setLastMybookData({ tab: mb_att.getAttribute('tab'), category: mb_att.getAttribute('category') });
-
-    mybook_wrap.classList.remove('waiting');
+        let last_data = getMybookLocationData();
     
-    categorySetup();
-
-    pageSetup();
-
-    let status = undefined;
-
-    switch (mybook_data.status) {
-        case 3:
-            status = 'empty';
-            break;
-        case 4:
-            status = 'logout';
-            break;
-        case 5:
-            status = 'failed';
-            break;
-        case 6:
-            status = 'error';
-            break;
-    }
-
-    if (status)
-        return mybook_wrap.classList.add(status);
-
-    novel_data.books.forEach(r => {
-        const novel = document.createElement('novel-item');
-        novel.setAttribute('novel', r.title);
-        novel.setAttribute('author', r.author.name);
-        novel.setAttribute('author-id', r.author.id);
-        novel.setAttribute('thumb', thumb_off ? `https://images.novelpia.com/img/layout/readycover4.wimg` : r.thumbnail);
-        novel.setAttribute('id', r.id);
-        novel.setAttribute('adult', r.adult);
-        novel.setAttribute('cont-ep', r.continue.ep);
-        novel.setAttribute('cont-id', r.continue.id);
-        novel.setAttribute('next-status', r.next.status);
-        novel.setAttribute('next-parameter', r.next.parameter);
-        novel.setAttribute('open', r.open);
-        novel.setAttribute('type', r.type);
-
-        mybook_wrap.appendChild(novel);
-    });
-
-
-    async function categorySetup() {
-        category_wrap.innerHTML = '';
-        novel_data.category?.forEach(r => {
-            const category = document.createElement('button');
-            category.classList.add('p-mybook-category');
-            if (r.id == last_data.category) category.classList.add('active');
-            category.id = r.id;
-            category.textContent = r.name;
-            category.setAttribute(mb_func_att, `${last_data.tab},${r.id},${page_att},${order_att}`);
-
-            category_wrap.appendChild(category);
-        });
-
-        if (last_data.category == 'null' || (!last_data.category && last_data.category != 0)) {
-            if (!category_wrap.children[0]) {
-                mb_att.setAttribute('category', 0);
-            }
-            else {
-                category_wrap.children[0].classList.add('active');
-                mb_att.setAttribute('category', category_wrap.children[0].id);
-                category_att = mb_att.getAttribute('category');
-            }
-            setLastMybookData({ tab: tab_att, category: category_att });
-        }
-    }
-
-    async function pageSetup() {
-        const page_items = document.querySelectorAll('.p-mybook-page-items');
+        if (!last_data.tab) last_data.tab = 'last_view';
     
-        if (!novel_data.page || novel_data.page?.last <= 1) return page_items.forEach(ptem => ptem.innerHTML = '');
+        const active_tab = document.querySelector('.p-mybook-tab.active');
+        if (active_tab) active_tab.classList.remove('active');
     
-        const page_side_size = 2;
+        document.getElementById(last_data.tab).classList.add('active');
+    
+    
+        const mb_att = document.getElementById('p-mybook');
+        mb_att.setAttribute('tab', last_data.tab || mybook_value.location.tab);
+        mb_att.setAttribute('category', last_data.category || mybook_value.location.category);
+        mb_att.setAttribute('page', last_data.page || mybook_value.location.page);
+        mb_att.setAttribute('order', last_data.order || mybook_value.location.order);
+    
+        const tab_att =  mb_att.getAttribute('tab');
+        let category_att = mb_att.getAttribute('category');
+    
+        const page_att = mb_att.getAttribute('page');
+        const order_att = mb_att.getAttribute('order');
+    
+        let mybook_data;
+    
+        const expiration_period = confirmExpirationPeriod();
         
-        page_items.forEach(ptem => {
-            ptem.innerHTML = '';
-    
-            const first_page = pageItem(1, { content: '<<' });
-    
-            ptem.appendChild(first_page);
-    
-            let last_set_page = novel_data.page.active;
-    
-            for (let i = novel_data.page.active - 1; i >= 1 && i >= novel_data.page.active - page_side_size; i--) {
-                first_page.insertAdjacentElement('afterend', pageItem(i));
-                last_set_page--;
-            }
-    
-            if (last_set_page > 1) {
-                first_page.insertAdjacentElement('afterend', pageItem(last_set_page - 1, { content: '<' }));
-            } else {
-                first_page.insertAdjacentElement('afterend', pageItem(1, { content: '<' }));
-            }
-    
-            ptem.appendChild(pageItem(novel_data.page.active, { active: true }));
-    
-            last_set_page = novel_data.page.active;
-    
-            for (let i = novel_data.page.active + 1; i <= novel_data.page.last && i <= novel_data.page.active + page_side_size; i++) {
-                ptem.appendChild(pageItem(i));
-                last_set_page++;
-            }
-    
-            if (last_set_page < novel_data.page.last) {
-                ptem.appendChild(pageItem(last_set_page + 1, { content: '>' }));
-            } else {
-                ptem.appendChild(pageItem(novel_data.page.last, { content: '>' }));
-            }
-    
-            ptem.appendChild(pageItem(novel_data.page.last, { content: '>>' }));
-        });
-    }
-
-    function pageItem(page_num, { content = undefined, active = false } = {}) {
-        const el = document.createElement('button');
-        el.classList.add('p-mybook-page-item');
-        if (active) el.classList.add('active');
-        el.setAttribute('mybook-data', `${tab_att},${category_att},${page_num},${order_att}`);
-        if (content) {
-            el.textContent = content;
-            el.title = page_num;
-        } else {
-            el.textContent = page_num;
+        if (open && expiration_period.status) {
+            mybook_data = getMybookData();
+            console.log('데이터가 유효합니다.');
+            console.log(`데이터의 남은 유효기간: ${expiration_period.expiration_period}`);
+            if (mybook_data?.url) console.log(`데이터의 원위치: ${mybook_data.url}`);
         }
-        return el;
+        else {
+            try {
+                mybook_data = await loadMybookData(last_data.tab, last_data.category, page_att, order_att);
+                setMybookData(mybook_data);
+                updateExpirationPeriod();
+            } catch (e) {
+                console.error(e);
+                return mybook_wrap.classList.add('failed');
+            }
+        }
+    
+    
+        changeNovelLogo(mybook_data.url);
+    
+        const novel_data = mybook_data.data;
+    
+        setMybookLocationData({
+            tab: mb_att.getAttribute('tab'),
+            category: mb_att.getAttribute('category'),
+            page: mb_att.getAttribute('page'),
+            order: mb_att.getAttribute('order')
+        });
+    
+        mybook_wrap.classList.remove('waiting');
+        
+        categorySetup();
+    
+        pageSetup();
+    
+        let status = undefined;
+    
+        switch (mybook_data.status) {
+            case 3:
+                status = 'empty';
+                break;
+            case 4:
+                status = 'logout';
+                break;
+            case 5:
+                status = 'failed';
+                break;
+            case 6:
+                status = 'error';
+                break;
+        }
+    
+        if (status)
+            return mybook_wrap.classList.add(status);
+    
+        novel_data.books.forEach(r => {
+            const novel = document.createElement('novel-item');
+            novel.setAttribute('novel', r?.title || '알 수 없음');
+            novel.setAttribute('author', r?.author?.name || '알 수 없음');
+            novel.setAttribute('author-id', r?.author?.id || undefined);
+            novel.setAttribute('thumb', thumb_off ? `https://images.novelpia.com/img/layout/readycover4.wimg` : (r?.thumbnail || `https://images.novelpia.com/img/layout/readycover4.wimg`));
+            novel.setAttribute('id', r?.id || '');
+            novel.setAttribute('adult', r?.adult || 'false');
+            novel.setAttribute('cont-ep', r?.continue?.ep || undefined);
+            novel.setAttribute('cont-id', r?.continue?.id || undefined);
+            novel.setAttribute('next-status', r?.next?.status || undefined);
+            novel.setAttribute('next-parameter', r?.next?.parameter || undefined);
+            novel.setAttribute('open', r?.open || 'undefined');
+            novel.setAttribute('type', r?.type || 'normal');
+    
+            mybook_wrap.appendChild(novel);
+        });
+    
+    
+        async function categorySetup() {
+            category_wrap.innerHTML = '';
+            novel_data.category?.forEach(r => {
+                const category = document.createElement('button');
+                category.classList.add('p-mybook-category');
+                if (r.id == last_data.category) category.classList.add('active');
+                category.id = r.id;
+                category.textContent = r.name;
+                category.setAttribute(mb_func_att, `${last_data.tab},${r.id},${page_att},${order_att}`);
+    
+                category_wrap.appendChild(category);
+            });
+    
+            if (!last_data.category && last_data.category != 0) {
+                if (!category_wrap.children[0]) {
+                    mb_att.setAttribute('category', 0);
+                }
+                else {
+                    category_wrap.children[0].classList.add('active');
+                    mb_att.setAttribute('category', category_wrap.children[0].id);
+                    category_att = mb_att.getAttribute('category');
+                }
+                setMybookLocationData({ tab: tab_att, category: category_att, page: page_att, order: order_att });
+            }
+        }
+    
+        async function pageSetup() {
+            const page_items = document.querySelectorAll('.p-mybook-page-items');
+        
+            if (!novel_data.page || novel_data.page?.last <= 1) return page_items.forEach(ptem => ptem.innerHTML = '');
+        
+            const page_side_size = 2;
+            
+            page_items.forEach(ptem => {
+                ptem.innerHTML = '';
+        
+                const first_page = pageItem(1, { content: '<<' });
+        
+                ptem.appendChild(first_page);
+        
+                let last_set_page = novel_data.page.active;
+        
+                for (let i = novel_data.page.active - 1; i >= 1 && i >= novel_data.page.active - page_side_size; i--) {
+                    first_page.insertAdjacentElement('afterend', pageItem(i));
+                    last_set_page--;
+                }
+        
+                if (last_set_page > 1) {
+                    first_page.insertAdjacentElement('afterend', pageItem(last_set_page - 1, { content: '<' }));
+                } else {
+                    first_page.insertAdjacentElement('afterend', pageItem(1, { content: '<' }));
+                }
+        
+                ptem.appendChild(pageItem(novel_data.page.active, { active: true }));
+        
+                last_set_page = novel_data.page.active;
+        
+                for (let i = novel_data.page.active + 1; i <= novel_data.page.last && i <= novel_data.page.active + page_side_size; i++) {
+                    ptem.appendChild(pageItem(i));
+                    last_set_page++;
+                }
+        
+                if (last_set_page < novel_data.page.last) {
+                    ptem.appendChild(pageItem(last_set_page + 1, { content: '>' }));
+                } else {
+                    ptem.appendChild(pageItem(novel_data.page.last, { content: '>' }));
+                }
+        
+                ptem.appendChild(pageItem(novel_data.page.last, { content: '>>' }));
+            });
+        }
+
+        function pageItem(page_num, { content = undefined, active = false } = {}) {
+            const el = document.createElement('button');
+            el.classList.add('p-mybook-page-item');
+            if (active) el.classList.add('active');
+            el.setAttribute('mybook-data', `${tab_att},${category_att},${page_num},${order_att}`);
+            if (content) {
+                el.textContent = content;
+                el.title = page_num;
+            } else {
+                el.textContent = page_num;
+            }
+            return el;
+        }
+    } catch (error) {
+        mybook_wrap.classList.add('failed');
+        console.error(error);
     }
 }
 
@@ -443,7 +488,7 @@ class NovelItem extends HTMLElement {
         if (data.type == 'collect') {
             0;
         }
-        else if (data.continue.ep != 'undefined') {
+        else if (data.continue.ep != 'undefined' && data.continue.id != 'undefined') {
             const continue_btn = document.createElement('a');
             continue_btn.classList.add('normal-button');
             continue_btn.classList.add('continue');
@@ -452,7 +497,7 @@ class NovelItem extends HTMLElement {
             continue_btn.href = `${novelpia}viewer/${data.continue.id}`;
             continue_btn.textContent = `EP.${data.continue.ep} 이어보기`;
 
-            const next_btn = document.createElement('a');
+            const next_btn = document.createElement('button');
             next_btn.classList.add('normal-button');
             next_btn.classList.add('next');
             if (data.next.status == 'true') {
