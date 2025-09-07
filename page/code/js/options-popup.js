@@ -23,7 +23,7 @@ document.addEventListener('keydown', e => {
     ) return;
 
     if (
-        !(e.code == 'KeyN' && e.ctrlKey && e.shiftKey)
+        !(e.code == 'KeyM' && e.ctrlKey && e.shiftKey)
     ) return
 
     e.preventDefault();
