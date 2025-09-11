@@ -30,20 +30,34 @@ try {
 }
 
 // 로딩 전 로컬 스토리지의 싱크 키 존재 유무 확인
+let prevSync = false;
+
 local.get([sync_key]).then(r => {
     if (!r[sync_key] && r[sync_key] != undefined)
         storage = local;
     else if (!r[sync_key])
         local.set({ [sync_key]: 1 });
+
+    prevSync = true;
+    window.dispatchEvent(new Event('prevSync'));
 });
 
 
 
 let setting_data = [];
 window.addEventListener('DOMContentLoaded', () => {
-    setting_data.forEach(d => {
-        customElements.define(`setting-${d.name}`, d.element);
-    });
+    if (prevSync) {
+        settingSetup();
+    }
+    else {
+        window.addEventListener('prevSync', settingSetup, { once: true });
+    }
+
+    function settingSetup() {
+        setting_data.forEach(d => {
+            customElements.define(`setting-${d.name}`, d.element);
+        });
+    }
 });
 
 
