@@ -34,7 +34,7 @@ document.addEventListener('keydown', e => {
 function mybookSetup() {
     storage.get([mybook_key]).then(r => {
         if (r[mybook_key]) {
-            storage.set({ [mybook_key]: 0 });
+            storage.remove([mybook_key]);
             console.log('빠른 내서재 옵션을 수동으로 \'취소\'시켰습니다.');
         }
         else {

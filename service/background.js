@@ -3,7 +3,7 @@ const update_key = 'extension-update';
 const mybook_key = 'quick-mybook';
 const popup_location = '/page/popup.html';
 
-let qm = 0;
+let qm = true;
 
 
 /**
@@ -49,9 +49,9 @@ function setPopup(r) {
         chrome.action.setPopup({
             popup: popup_location
         });
-        return 1;
+        return true;
     }
-    else return 0;
+    else return false;
 }
 
 /**

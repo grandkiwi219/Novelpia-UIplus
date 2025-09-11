@@ -62,7 +62,6 @@ function loadComplete() {
     document.addEventListener('click', e => {
         mybookDataAttribute(e);
         getNextEpAttribute(e);
-        novelSrcAttribute(e);
     });
 }
 window.addEventListener('DOMContentLoaded', loadComplete);
@@ -113,21 +112,6 @@ function getNextEpAttribute(e) {
     getNextEp(data);
 }
 
-async function novelSrcAttribute(e) {
-    if (!e.target.getAttribute(nh_func_att) && !e.target.parentElement.getAttribute(nh_func_att)) return;
-
-    const att_data = e.target.getAttribute(nh_func_att) || e.target.parentElement.getAttribute(nh_func_att);
-
-    try {
-        await chrome.tabs.create({
-            url: att_data
-        });
-
-        e.preventDefault();
-    } catch (error) {
-        console.error(error);
-    }
-}
 
 
 
