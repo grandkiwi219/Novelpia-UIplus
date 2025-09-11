@@ -1,4 +1,4 @@
-npup.options = { ...npup.options,
+npup.options = {
     header: {
         icon: '🚩',
         name: '헤더',
@@ -115,11 +115,12 @@ npup.options = { ...npup.options,
 
     novel: {
         icon: '📕',
-        name: '소설 페이지',
+        name: '소설 목록',
         engine: '페이지',
         options: {
             'novel-page': {
                 desc: '페이지 이동 상단 추가',
+                /* engine: 'all', */
                 type: {
                     option: 'switch',
                     structure: ['system']
@@ -434,7 +435,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                             structure: ['common']
                         },
                         settings: {
-                            local: true
+                            storage: 'local'
                         }
                     },
                     'quick-mapping-menu-page': {
@@ -444,12 +445,12 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                             structure: ['common']
                         },
                         settings: {
-                            local: true
+                            storage: 'local'
                         }
                     },
                 },
                 settings: {
-                    local: true
+                    storage: 'local'
                 }
             },
             'after-ep': {
@@ -539,7 +540,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
         }
     },
 
-    experimental: { // 스크립트 인젝션처럼 스타일 인젝션 만들기
+    experimental: {
         icon: '🧬',
         name: '실험 기능',
         engine: 'all',
@@ -580,10 +581,10 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
             'extension-sync': {
                 desc: '이 장치에서의 설정 동기화',
                 type: {
-                    option: 'switch'
+                    option: 'switch-sync'
                 },
                 settings: {
-                    local: true
+                    storage: 'local'
                 }
             },
             'extension-log': {
@@ -592,9 +593,11 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                     option: 'switch'
                 },
                 settings: {
-                    local: true
+                    storage: 'local'
                 }
             }
         }
     },
+
+    ...npup.options,
 }

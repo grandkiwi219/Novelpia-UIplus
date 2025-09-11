@@ -171,7 +171,7 @@ class SwitchEngine extends EngineStructure {
         this.getKeys().forEach(async key => {
             const system_structure = this.getSystemStructure(key);
 
-            const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+            const system_check = (storage_type == 'sync' && system_structure.settings?.storage == 'local');
 
             const att_key = npup.project.prefix.css + key;
 
@@ -206,7 +206,7 @@ class SelectorEngine extends EngineStructure {
         this.getKeys().forEach(async key => {
             const system_structure = this.getSystemStructure(key);
 
-            const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+            const system_check = (storage_type == 'sync' && system_structure.settings?.storage == 'local');
 
             const att_key = npup.project.prefix.css + key;
 
@@ -239,7 +239,7 @@ class SystemEngine extends EngineStructure {
                 if (!system_structure.structure.router)
                     return;
 
-            const system_check = (storage_type == 'sync' && system_structure.settings?.local);
+            const system_check = (storage_type == 'sync' && system_structure.settings?.storage == 'local');
 
             if (!r[key] || system_check) {
                 if (system_check) {

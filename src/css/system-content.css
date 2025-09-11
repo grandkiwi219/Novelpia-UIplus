@@ -627,7 +627,6 @@ last episode alarm
 
         width: 380px;
         height: 220px;
-        padding: var(--last-ep-padding);
         padding-top: calc(var(--last-ep-padding) - 6px);
         border-radius: 25px;
     }
@@ -797,6 +796,7 @@ quick mapping menu
     --npup-qmm-wrap-center: 55svh;
 
     --npup-qmm-btn-size: 44px;
+    --npup-qmm-btn-padding: calc(var(--npup-qmm-btn-size) / 4);
 
     --npup-qmm-menu-top: var(--npup-qmm-wrap-top);
     --npup-qmm-menu-bottom: var(--npup-qmm-wrap-bottom);
@@ -816,7 +816,7 @@ quick mapping menu
         --npup-qmm-wrap-top: 283px;
         /* --npup-qmm-wrap-bottom: calc(20px + var(--npup-qmm-btn-size)); */
 
-        --npup-qmm-menu-width: 680px;
+        --npup-qmm-menu-width: 630px;
         --npup-qmm-menu-top: 202px;
     }
 
@@ -848,7 +848,7 @@ quick mapping menu
         box-sizing: border-box;
         width: fit-content;
         height: fit-content;
-        padding: 12px;
+        padding: var(--npup-qmm-btn-padding);
         border-radius: 100px;
         box-shadow: rgba(80, 80, 80, 0.5) 0px 0px 5px;
         background-color: var(--npup-qmm-bgc);

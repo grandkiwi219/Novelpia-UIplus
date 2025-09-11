@@ -3,7 +3,7 @@
     "name": "노벨피아 UI+",
     "description": "더 나은 노벨피아 UI를 경험해보세요!",
     "author": "grand-kiwi",
-    "version": "3.5.2.0",
+    "version": "3.6.0.0",
     "browser_specific_settings": {
         "gecko": {
             "id": "",
@@ -18,7 +18,8 @@
                 "./src/css/setup-content.css",
                 "./src/css/system-content.css",
                 "./src/css/mobile-content.css",
-                "./src/css/books-content.css"
+                "./src/css/books-content.css",
+                "./src/css/webtoon-content.css"
             ],
             "run_at": "document_start"
         },
@@ -114,6 +115,35 @@
                 "./src/books/system-part/custom/custom-css.js",
 
                 "./src/books/system-part/pre-common/other.js"
+            ],
+            "run_at": "document_start"
+        },
+
+
+
+
+
+        {
+            "tag": "웹툰 노벨피아",
+            "matches": ["*://toptoon.novelpia.com/*"],
+            "js": [
+                "./src/webtoon/engine.js"
+            ],
+            "run_at": "document_start"
+        },
+        {
+            "matches": ["*://toptoon.novelpia.com/*"],
+            "exclude_matches": [
+                "*://toptoon.novelpia.com/_nuxt/*",
+                "*://toptoon.novelpia.com/scripts/*",
+                "*://toptoon.novelpia.com/robots.txt"
+            ],
+            "js": [
+                "./src/webtoon/settings.js",
+
+                "./src/webtoon/system-part/common/key-mapping.js",
+                
+                "./src/webtoon/system-part/custom/custom-css.js"
             ],
             "run_at": "document_start"
         },

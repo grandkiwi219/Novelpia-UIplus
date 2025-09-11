@@ -181,3 +181,24 @@ function keyMappingBase(callback, { condition = () => { return true; }, executio
         execution();
     }
 }
+
+/**
+ * custom css system 함수를 출력
+ * @returns customCssSystem
+ */
+function customCssAsset() {
+    return function (r) {
+        const id = `${npup.project.prefix.css}${this.key}`;
+
+        const style = document.createElement('style');
+        style.id = id;
+        style.textContent = r[this.key];
+
+        if (document.getElementById(id))
+            document.getElementById(id).remove();
+
+        tryChecker(() => {
+            document.head.appendChild(style);
+        }, '커스텀', 'css', style);
+    }
+}

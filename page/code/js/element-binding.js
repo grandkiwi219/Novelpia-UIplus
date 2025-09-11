@@ -1,189 +1,351 @@
-// 추천
-/* class ChuCheon extends HTMLElement {
+// 기본 토대
+class SettingBase extends HTMLElement {
+    key = this.getAttribute('key');
+    get storage() {
+        switch (this.getAttribute('storage')) {
+            case 'local':
+                return { cache: local, type: 'local' };
+            default:
+                return { cache: storage, type: 'sync' };
+        }
+    }
+    
     connectedCallback() {
-        let chu = document.createElement('span');
-        chu.classList.add('chucheon')
-        chu.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;(추천)';
+        this.appendChild(this.generateElement());
+        this.useStorage();
+        this.setEvent();
+    }
 
-        this.appendChild(chu);
+    generateElement() {
+        return document.createElement('div');
+    }
+
+    useStorage() {
+        return;
+    }
+
+    setEvent() {
+        return;
     }
 }
-customElements.define('chu-', ChuCheon); */
 
 
 
 // 세팅 스위치 컴포넌트
-class SettingSwitch extends HTMLElement {
-    connectedCallback() {
-        let center = document.createElement('div');
-        let setting_switch = document.createElement('button');
-        let key = this.getAttribute('key');
-        let local_storage = this.getAttribute('local');
+class SettingSwitch extends SettingBase {
+    remove_data = true;
 
-        center.className = 'center';
-        this.appendChild(center);
-        center.appendChild(setting_switch);
-        setting_switch.className='switch';
+    center = document.createElement('div');
+    setting_switch = document.createElement('button');
 
-        let ss_storage = local_storage == 'true' ? local : storage;
+    generateElement() {
+        this.center.className = 'center';
+        this.center.appendChild(this.setting_switch);
+        this.setting_switch.className = 'switch';
 
-        ss_storage.get([key]).then(r => {
-            r[key] ? setting_switch.setAttribute('check', 'true') : setting_switch.setAttribute('check', 'false');
+        return this.center;
+    }
+
+    useStorage() {
+        this.storage.cache.get([this.key]).then(r => {
+            r[this.key] ? this.setting_switch.setAttribute('check', 'true') : this.setting_switch.setAttribute('check', 'false');
         });
     }
+
+    setEvent() {
+        this.addEventListener('click', async () => {
+            const data = await this.storage.cache.get([this.key]);
+
+            if (data[this.key]) {
+                this.setting_switch.setAttribute('check', 'false');
+
+                if (this.remove_data)
+                    await this.storage.cache.remove([this.key]);
+                else
+                    await this.storage.cache.set({ [this.key]: 0 });
+            } else {
+                this.setting_switch.setAttribute('check', 'true');
+                await this.storage.cache.set({ [this.key]: 1 });
+            }
+
+            try {
+                this.addEvent();
+            } catch (e) {
+                console.error(e.stack);
+            }
+        });
+    }
+
+    addEvent() {
+        return;
+    }
 }
-customElements.define('setting-switch', SettingSwitch);
+insertSettingData('switch', SettingSwitch);
+
+
+
+class SettingSwitchSync extends SettingSwitch {
+    remove_data = false;
+
+    addEvent() {
+        location.reload()
+    }
+}
+insertSettingData('switch-sync', SettingSwitchSync);
 
 
 
 // 세팅 셀렉트 컴포넌트
-class SettingSelect extends HTMLElement {
-    connectedCallback() {
-        let contents = this.innerHTML.split('|').filter(r => r.trim() != "").map(r => {
+class SettingSelector extends SettingBase {
+    remove_data = true;
+
+    contents = this.innerHTML.split('|').filter(r => r.trim() != "").map(r => {
             let splitContent = r.replace('}', '').split('{');
             return { value: splitContent[1].trim(), value_name: splitContent[0].trim() };
         });
+
+    selector = document.createElement('div');
+    selector_value = document.createElement('button');
+    value_name = document.createElement('div');
+    arrow_pointer = document.createElement('div');
+    selector_list_wrap = document.createElement('div');
+    selector_list = document.createElement('div');
+
+    generateElement() {
         this.innerHTML = '';
 
-        let key = this.getAttribute('key');
-        let local_storage = this.getAttribute('local');
+        this.selector.classList.add('selector');
+        if (this.getAttribute('type')?.trim() == 'long') this.selector.classList.add('long-form');
 
-        let selector = document.createElement('div');
-        selector.classList.add('selector');
-        if (this.getAttribute('type')?.trim() == 'long') selector.classList.add('long-form');
+        this.selector_value.classList.add('selector-value');
 
-        this.appendChild(selector);
+        this.value_name.classList.add('value-name');
 
-        let selector_value = document.createElement('button');
-        selector_value.classList.add('selector-value');
+        this.arrow_pointer.innerHTML = ''
+            +`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -2 14 14">`
+                + `<path d="M0 3 4 7.2 8 3 0 3" fill="currentColor" stroke="rgb(145, 145, 145)" stroke-width=".5px"/>`
+            + `</svg>`;
 
-        let value_name = document.createElement('div');
-        value_name.classList.add('value-name');
+        this.selector_value.appendChild(this.value_name)
+        this.selector_value.appendChild(this.arrow_pointer);
 
-        let arrow_pointer = document.createElement('div');
-        arrow_pointer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -2 14 14">`
-                                    + `<path d="M0 3 4 7.2 8 3 0 3" fill="currentColor" stroke="rgb(145, 145, 145)" stroke-width=".5px"/>`
-                                + `</svg>`
+        this.selector.appendChild(this.selector_value);
 
-        selector_value.appendChild(value_name), selector_value.appendChild(arrow_pointer);
-        selector.appendChild(selector_value);
+        this.selector_list_wrap.classList.add('selector-list-wrap');
+ 
+        this.selector_list.classList.add('selector-list');
 
-        let selector_list_wrap = document.createElement('div');
-        selector_list_wrap.classList.add('selector-list-wrap');
-
-        let selector_list = document.createElement('div');
-        selector_list.classList.add('selector-list');
-
-        for (var i = 0; i < contents.length; i++) {
+        this.contents.forEach((v) => {
             let option = document.createElement('button');
             option.classList.add('selector-option');
-            option.setAttribute('value', contents[i].value);
-            option.innerHTML = contents[i].value_name;
+            option.setAttribute('value', v.value);
+            option.innerHTML = v.value_name;
 
-            selector_list.appendChild(option);
-        }
+            this.selector_list.appendChild(option);
+        });
 
-        selector_list_wrap.appendChild(selector_list);
-        selector.appendChild(selector_list_wrap);
+        this.selector_list_wrap.appendChild(this.selector_list);
+        this.selector.appendChild(this.selector_list_wrap);
 
-        let ss_storage = local_storage == 'true' ? local : storage;
+        return this.selector;
+    }
 
-        ss_storage.get([key]).then(r => {
-            if (r[key]) {
-                //selector.setAttribute('value', r[key]);
-                value_name.innerHTML = contents.find(v => v.value == r[key])?.value_name ? contents.find(v => v.value == r[key]).value_name : value_name.innerHTML = contents[0].value_name;
+    useStorage() {
+        this.storage.cache.get([this.key]).then(r => {
+            if (r[this.key]) {
+                //selector.setAttribute('value', r[this.key]);
+                this.value_name.innerHTML = this.contents.find(v => v.value == r[this.key])?.value_name ? this.contents.find(v => v.value == r[this.key]).value_name : this.value_name.innerHTML = this.contents[0].value_name;
             } else {
-                //selector.setAttribute('value', contents[0].value);
-                value_name.innerHTML = contents[0].value_name;
+                //selector.setAttribute('value', this.contents[0].value);
+                this.value_name.innerHTML = this.contents[0].value_name;
             }
         });
     }
+
+    setEvent() {
+        // 세팅 셀렉터 창 열림은 event-binding.js 에서
+
+        // 세팅 셀렉터 창 닫힘
+        document.addEventListener('keydown', (e) => {
+            if (e.key == 'Escape') {
+                this.selector.classList.remove('selector-active');
+            }
+        });
+
+
+        // 세팅 셀럭터 크롬 스토리지 상호작용
+        this.querySelectorAll('.selector-option').forEach(r => {
+            r.addEventListener('click', () => {
+                let value = r.getAttribute('value');
+                let value_name = r.innerHTML;
+
+                this.storage.cache.get([this.key]).then(() => {
+                    if (value == this.contents[0].value && this.remove_data) 
+                        this.storage.cache.remove([this.key]);
+                    else
+                        this.storage.cache.set({ [this.key]: value });
+                    //selector.setAttribute('value', value);
+                    this.selector.querySelector('.value-name').innerHTML = value_name;
+                });
+            });
+        });
+    }
 }
-customElements.define('setting-selector', SettingSelect);
+insertSettingData('selector', SettingSelector);
 
 
 
 // 세팅 텍스트아레아 컴포넌트
-class SettingTextarea extends HTMLElement {
-    connectedCallback() {
-        var value = this.innerHTML;
+class SettingTextarea extends SettingBase {
+    value = this.innerHTML;
+    placeholder = this.getAttribute('placeholder');
+
+    center = document.createElement('div');
+    ta_wrap = document.createElement('div');
+    ta = document.createElement('textarea');
+
+    tas_wrap = document.createElement('div');
+    tas = document.createElement('button');
+
+    black = 'tas-black';
+    active = 'tas-active';
+
+    generateElement() {
         this.innerHTML = '';
 
-        const key = this.getAttribute('key');
-        const placeholder = this.getAttribute('placeholder');
+        this.center.classList.add('text-area');
 
-        let center = document.createElement('div');
-        center.classList.add('text-area');
+        this.ta_wrap.classList.add('text-area-wrap');
 
-        this.appendChild(center);
+        this.ta.placeholder = this.placeholder;
+        this.ta.name = this.key;
 
-        let ta_wrap = document.createElement('div');
-        ta_wrap.classList.add('text-area-wrap');
+        this.ta_wrap.appendChild(this.ta);
+        this.center.appendChild(this.ta_wrap);
+        
+        this.tas_wrap.classList.add('text-area-submit-wrap');
+        
+        this.tas.classList.add('text-area-submit');
+        
+        this.tas_wrap.appendChild(this.tas);
+        this.center.appendChild(this.tas_wrap);
+        
+        return this.center;
+    }
 
-        let ta = document.createElement('textarea');
-        ta.placeholder = placeholder;
-        ta.name = key;
+    useStorage() {
+        this.storage.cache.get([this.key])
+        .then(r =>
+            typeof r[this.key] == 'string' ?
+            this.ta.value = r[this.key] : ( this.ta.value = this.value, this.storage.cache.set({ [this.key]: this.value }) )
+        );
+    }
 
-        const local_storage = this.getAttribute('local'), ss_storage = local_storage == 'true' ? local : storage;
-        ss_storage.get([key]).then(r => typeof r[key] == 'string' ? ta.value = r[key] : (ta.value = value, ss_storage.set({ [key]: value })));
+    setEvent() {
+        this.tas.addEventListener('click', () => {
+            if (this.tas.className.includes(this.black) || this.tas.className.includes(this.active)) return;
 
-        ta_wrap.appendChild(ta);
-        center.appendChild(ta_wrap);
+            const value = this.ta.value;
 
-        let tas_wrap = document.createElement('div');
-        tas_wrap.classList.add('text-area-submit-wrap');
+            this.storage.cache.get([this.key]).then(() => {
+                this.storage.cache.set({ [this.key]: value });
+                saveSuccess();
+            });
+        });
 
-        let tas = document.createElement('button');
-        tas.classList.add('text-area-submit');
-
-        tas_wrap.appendChild(tas);
-        center.appendChild(tas_wrap);
+        const saveSuccess = () => {
+            this.tas.classList.add(this.black);
+            setTimeout(() => {
+                this.tas.classList.add(this.active);
+                this.tas.classList.remove(this.black);
+                setTimeout(() => {
+                    this.tas.classList.add(this.black);
+                    setTimeout(() => {
+                        this.tas.classList.remove(this.active);
+                        this.tas.classList.remove(this.black);
+                    }, 600);
+                }, 1200);
+            }, 600);
+        }
     }
 }
-customElements.define('setting-textarea', SettingTextarea);
+insertSettingData('textarea', SettingTextarea);
 
 
 
 // 세팅 매핑 컴포넌트
-class SettingMapping extends HTMLElement {
-    connectedCallback() {
-        let key = this.getAttribute('key');
-        let local_storage = this.getAttribute('local');
+class SettingMapping extends SettingBase {
+    center = document.createElement('div');
+    wrap = document.createElement('div');
+    input = document.createElement('div');
+    cancel = document.createElement('div');
 
-        let center = document.createElement('div');
-        center.classList.add('center');
+    nothing = 'mapping-nothing';
 
-        let wrap = document.createElement('div');
-        wrap.classList.add('mapping-wrap');
+    generateElement() {
+        this.center.classList.add('center');
 
-        let input = document.createElement('div');
-        Object.assign(input, {
+        this.wrap.classList.add('mapping-wrap');
+
+        Object.assign(this.input, {
             className: 'mapping',
             tabIndex: "0"
         });
 
-        let cancel = document.createElement('div');
-        cancel.classList.add('mapping-cancel');
-        cancel.innerHTML = ''
-        + `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="20" height="20" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round">`
-            + `<path d="M5 5 L25 25 M5 25 L25 5" />`
-        + `</svg>`;
+        this.cancel.classList.add('mapping-cancel');
+        this.cancel.innerHTML = ''
+            + `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="20" height="20" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round">`
+                + `<path d="M5 5 L25 25 M5 25 L25 5" />`
+            + `</svg>`;
 
-        wrap.appendChild(input);
-        wrap.appendChild(cancel);
+        this.wrap.appendChild(this.input);
+        this.wrap.appendChild(this.cancel);
 
-        center.appendChild(wrap);
-        this.appendChild(center);
+        this.center.appendChild(this.wrap);
 
-        let ss_storage = local_storage == 'true' ? local : storage;
+        return this.center;
+    }
 
-        ss_storage.get([key]).then(r => {
-            if (r[key] && (r[key].code || r[key].key)) {
-                input.textContent = wordMapping(r[key]);
+    useStorage() {
+        this.storage.cache.get([this.key]).then(r => {
+            if (r[this.key] && (r[this.key].code || r[this.key].key)) {
+                this.setMapping(r[this.key]);
             } else {
-                input.innerHTML = `<div class="mapping-nothing">설정 필요</div>`;
+                this.setNothing();
             }
         });
     }
+
+    setEvent() {
+        document.addEventListener('keydown', async e => {
+            if (!this.contains(e.target)) return;
+
+            e.preventDefault();
+
+            await this.storage.cache.get([this.key]).then(() => {
+                this.storage.cache.set({ [this.key]: { code: e.code, key: e.key } });
+            });
+
+            this.setMapping(e);
+        });
+
+        this.cancel.addEventListener('click', async e => {
+            await this.storage.cache.get([this.key]).then(() => {
+                this.storage.cache.remove([this.key]);
+            });
+
+            this.setNothing();
+        });
+    }
+
+    setMapping(text = null) {
+        this.input.classList.remove(this.nothing);
+        this.input.textContent = wordMapping(text);
+    }
+
+    setNothing() {
+        this.input.classList.add(this.nothing);
+        this.input.textContent = '설정 필요';
+    }
 }
-customElements.define('setting-mapping', SettingMapping);
+insertSettingData('mapping', SettingMapping);

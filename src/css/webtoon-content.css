@@ -1,0 +1,35 @@
+html[npup-wt-thumb-msc] {
+    .content-card {
+        & > * > img {
+            filter: blur(10px) grayscale(50%);
+        }
+
+        html[npup-wt-thumb-msc-hover] &:hover {
+            & > * > img {
+                filter: none;
+            }
+        }
+    }
+}
+
+html[npup-wt-banner-msc] {
+    .topBanner {
+        .swiper-slide {
+            filter: blur(10px) grayscale(50%);
+
+            html[npup-wt-thumb-msc-hover] &:hover {
+                filter: none;
+            }
+        }
+    }
+
+    .bannerArea {
+        img {
+            filter: blur(10px) grayscale(50%);
+
+            html[npup-wt-thumb-msc-hover] &:hover {
+                filter: none;
+            }
+        }
+    }
+}

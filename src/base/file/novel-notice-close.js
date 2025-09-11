@@ -23,10 +23,12 @@ function npupNoticeToggle() {
 let npup_notice_tot_hei = 0;
 
 function npupNoticeToggleLong() {
-    if (!npup_notice_tot_hei)
-        document.querySelectorAll('.notice_table > tbody > tr.ep_style4').forEach((e, n) => {
+    if (!npup_notice_tot_hei) {
+        document.querySelectorAll('table > tbody > tr.ep_style4').forEach((e, n) => {
             if (n > 2) npup_notice_tot_hei += e.offsetHeight;
-        }); 
+        });
+    }
+        
 
     window.scrollBy({ top: -npup_notice_tot_hei });
 

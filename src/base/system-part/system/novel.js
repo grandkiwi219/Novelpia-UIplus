@@ -1,32 +1,68 @@
 const novelCa = npup.options.novel.options;
 
 novelCa['novel-page'].system = function(r) {
-    if (!pathChecker('/novel/')) return;
+    let target = () => undefined;
+    let handler = () => undefined;
+
+    if (engineChecker('페이지')) {
+        let attachTarget = () =>  undefined;
+
+        if (pathChecker('/novel/')) {
+            target = () => document.getElementById('episode_table');
+            attachTarget = () => document.getElementById('episode_table');
+        }
+        else if (pathChecker('/collect_novel/')) {
+            target = () => document.querySelector('div.d-flex.align-items-center.justify-content-center');
+            attachTarget = () => document.getElementById('episode_list');
+        }
+        else return;
+
+        handler = () => {
+            novelPageItem(attachTarget);
+            dynamicNovelPageItem();
+        }
+    }
+    /* else if (engineChecker('뷰어')) {
+        target = () => document.getElementById('list_box');
+        handler = () => {
+            console.log('hi')
+        }
+    } */
+    else return;
 
     new MutationObserver((mus, ob) => {
-        if (!document.getElementById('episode_table')) return;
+        if (!target()) return;
 
         ob.disconnect();
 
-        novelPageItem();
-        dynamicNovelPageItem();
+        handler();
     }).observe(document.body, observer_setup);
 }
 
 
-function novelPageItem() {
-    const page_items_tmp = document.querySelectorAll('div.s_inv.d-flex.align-items-center.justify-content-center');
+function novelPageItem(findTarget) {
+    const target = findTarget();
+
+    const page_items_tmp = document.querySelectorAll('div.d-flex.align-items-center.justify-content-center');
     const page_items = page_items_tmp[page_items_tmp.length - 1].cloneNode(true);
-    page_items.style = 'border-top: 1px solid #EFEFEF; height: 80px'
+    page_items.style = 'border-top: 1px solid #EFEFEF; height: 80px';
+    page_items.classList.add(`${npup.project.prefix.css}${this.key}`);
+
+    const remained_page_item = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}`)[0];
+
+    if (remained_page_item) remained_page_item.replaceWith(page_items);
+    else target.insertAdjacentElement('beforebegin', page_items);
 
     const page_selector_tmp = document.getElementsByClassName('select_episode_box');
-    const page_selector = page_selector_tmp[page_selector_tmp.length - 1].cloneNode(true);
-    page_selector.style = 'margin-bottom: 20px;';
+    if (page_selector_tmp[0]) {
+        const page_selector = page_selector_tmp[page_selector_tmp.length - 1].cloneNode(true);
+        page_selector.style = 'margin-bottom: 20px;';
+    
+        //const remained_page_selector = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}-selector`)[0];
 
-    const target = document.getElementById('episode_table');
-
-    target.insertAdjacentElement('beforebegin', page_items);
-    target.insertAdjacentElement('beforebegin', page_selector);
+        //if (remained_page_selector) remained_page_selector.replaceWith(page_selector); else
+        target.insertAdjacentElement('beforebegin', page_selector);
+    }
 
     function novelPageItemEsc(e) {
         if (e.key == 'Escape') {
@@ -64,7 +100,7 @@ function dynamicNovelPageItem() {
 }
 
 novelCa['novel-notice-close'].system = function(r) {
-    if (!pathChecker('/novel/')) return;
+    if (!pathChecker(['/novel/', '/collect_novel/'])) return;
 
     const addCloseFunction = () => {
         const more_btn = document.getElementsByClassName('notice_toggle_btn')[0];
@@ -81,7 +117,7 @@ novelCa['novel-notice-close'].system = function(r) {
 
         more_btn.outerHTML = more_btn.outerHTML.replace('notice_toggle()', 'npupNoticeToggle()');
 
-        const notice_table = document.getElementsByClassName('notice_table')[0];
+        const notice_table = document.getElementsByClassName('notice_table')[0] || document.querySelector('table[style*=width]:has(> * > .ep_style4)');
 
         if (notice_table.getElementsByClassName('ep_style4').length > 7) {
             const more_btn_long = more_btn.cloneNode(true);
@@ -99,9 +135,13 @@ novelCa['novel-notice-close'].system = function(r) {
                 .replace('더보기', '접기')
                 .replace('down', 'up');
         }
+        else npup.dev('공지를 담는 요소를 찾지 못했습니다.');
     }
 
-    targetHandler(() => document.getElementsByClassName('notice_table')[0], () => addCloseFunction());
+    targetHandler(
+        () => document.getElementsByClassName('notice_table')[0] || document.querySelector('table[style*=width]:has(> * > .ep_style4)'),
+        () => addCloseFunction()
+    );
 
     const close_script = scriptInjection(`/src/base/file/${this.key}.js`);
 

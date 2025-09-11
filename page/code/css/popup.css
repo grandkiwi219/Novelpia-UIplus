@@ -96,11 +96,14 @@ button#options > svg {
         background-color: var(--purple);
     }
 
-    &.next.disabled {
-        font-size: 9.8px;
+    &.disabled {
         color: gray;
         background-color: rgb(241, 241, 241);
         cursor: no-drop;
+
+        &.next {
+            font-size: 9.8px;
+        }
     }
 
     @media (hover: hover) and (pointer: fine) {
@@ -244,6 +247,14 @@ html[dark=false] {
 
     &.logout:after {
         content: '로그인이 필요해 보입니다.';
+    }
+
+    &.crash:after {
+        content: '작업 도중 오류가 발생했습니다.';
+    }
+
+    &.blocked:after {
+        content: '데이터를 불러오는 도중에 오류가 발생했습니다.';
     }
 }
 

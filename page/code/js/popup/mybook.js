@@ -286,13 +286,13 @@ function mybookJson(data) {
             title: data.children[i].getElementsByClassName('novel-name')[0].textContent.replace('\n', '').trim(),
             thumbnail: data.children[i].getElementsByClassName('cover_style ')[0].src.replace(/[a-zA-Z0-9+.-]+-extension:\/\//, 'https://'),
             id: data_html.match(/novel\/(\d+)/)[1],
-            adult: data.children[i].getElementsByClassName('age-mark')[0] ? true : false,
+            adult: data.children[i].getElementsByClassName('age-mark')[0] ? 1 : 0,
             continue: { 
                 ep: cont_ep ? cont_ep[1] : undefined, 
                 id: cont_id ? cont_id[1] : undefined
             },
             next: { 
-                status: data.children[i].getElementsByClassName('novel-btn-nothing')[0] ? false : true,
+                status: data.children[i].getElementsByClassName('novel-btn-nothing')[0] ? 0 : 1,
                 parameter: ''
             },
             open: data.children[i].getElementsByClassName('novel-open-time')[0]?.textContent,
@@ -324,13 +324,13 @@ function mybookCollectJson(data) {
             title: item[i].getElementsByClassName('cut_line_one')[0].textContent.trim(),
             thumbnail: item[i].querySelector('img[src*=cover]').src.replace(/[a-zA-Z0-9+.-]+-extension:\/\//, 'https://'),
             id: data_html.match(/novel\/(\d+)/)[1],
-            adult: item[i].querySelector('img[src*="19-2.png"]') ? true : false,
+            adult: item[i].querySelector('img[src*="19-2.png"]') ? 1 : 0,
             continue: { 
                 ep: undefined, 
                 id: undefined
             },
             next: { 
-                status: undefined,
+                status: 0,
                 parameter: ''
             },
             open: undefined,

@@ -1,6 +1,6 @@
 // 옵션 페이지 다크 모드
 const headerThemeButton = document.getElementById('theme');
-const html = document.querySelector('html');
+const html = document.documentElement;
 
 
 
@@ -43,7 +43,7 @@ headerThemeButton.addEventListener('click', function () {
         });
 
     // 버전 업데이트 알림
-    chrome.storage.local.get([update_key]).then(r => {
+    local.get([update_key]).then(r => {
         if (!r[update_key]) return;
 
         /* const banner_wrap = document.createElement('div');
@@ -73,6 +73,6 @@ headerThemeButton.addEventListener('click', function () {
             banner_wrap.classList.add('active');
         }, 10); */
         
-        chrome.storage.local.set({ [update_key]: false });
+        local.set({ [update_key]: false });
     });
 })();

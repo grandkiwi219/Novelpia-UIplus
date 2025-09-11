@@ -33,8 +33,6 @@ function loadComplete() {
     }
 
     const reloadMybookDataFunc = () => {
-        if (loadStateMybookData()) return;
-
         resolveMybookData({ thumb_off: thumb_off });
     }
 
@@ -64,6 +62,7 @@ function loadComplete() {
     document.addEventListener('click', e => {
         mybookDataAttribute(e);
         getNextEpAttribute(e);
+        novelSrcAttribute(e);
     });
 }
 window.addEventListener('DOMContentLoaded', loadComplete);
@@ -75,10 +74,9 @@ window.addEventListener('DOMContentLoaded', loadComplete);
 
 const mb_func_att = 'mybook-data';
 const gne_func_att = 'get-next-ep';
+const nh_func_att = 'href'; //'novel-href';
 
-async function mybookDataAttribute(e) {
-    if (loadStateMybookData()) return;
-
+function mybookDataAttribute(e) {
     if (!e.target.getAttribute(mb_func_att)) return;
 
     const att_data = e.target.getAttribute(mb_func_att).split(',');
@@ -91,6 +89,7 @@ async function mybookDataAttribute(e) {
     };
 
     setMybookLocationData(data);
+    setMybookData();
 
     const mybook_wrap = document.getElementById('p-mybook');
 
@@ -114,6 +113,23 @@ function getNextEpAttribute(e) {
     getNextEp(data);
 }
 
+async function novelSrcAttribute(e) {
+    if (!e.target.getAttribute(nh_func_att) && !e.target.parentElement.getAttribute(nh_func_att)) return;
+
+    const att_data = e.target.getAttribute(nh_func_att) || e.target.parentElement.getAttribute(nh_func_att);
+
+    try {
+        await chrome.tabs.create({
+            url: att_data
+        });
+
+        e.preventDefault();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
 
 async function getNextEp(novel_data) {
     try {
@@ -130,7 +146,12 @@ async function getNextEp(novel_data) {
                     console.log(`공개 전 소설 (id: ${novel_data['novel_no']})`, `\n다음 소설 회차 오픈시간: ${data.result.content_viewdate}`);
                 } else {
                     console.log(`다음 회차로 이동합니다. (id: ${novel_data['novel_no']}) (ep_id: ${data.result.next_episode_no})`);
-                    window.open(novelpia + '/viewer/' + data.result.next_episode_no);
+                    try {
+                        chrome.tabs.create({ url: novelpia + '/viewer/' + data.result.next_episode_no });
+                    } catch (e) {
+                        window.open(novelpia + '/viewer/' + data.result.next_episode_no);
+                        console.error(e);
+                    }
                 }
             } else {
                 if (data.result.end_episode == '1') {
@@ -184,6 +205,8 @@ function changeNovelLogo(url) {
 
 /* 초기화된 마지막 내서재 정보를 들고온다 */
 async function resolveMybookData({ open = false, thumb_off = false } = {}) {
+    if (loadStateMybookData()) return;
+
     const mybook_wrap = document.getElementById('p-mybook-novel-wrap');
     const category_wrap = document.getElementById('p-mybook-category-wrap');
 
@@ -226,15 +249,30 @@ async function resolveMybookData({ open = false, thumb_off = false } = {}) {
             console.log('데이터가 유효합니다.');
             console.log(`데이터의 남은 유효기간: ${expiration_period.expiration_period}`);
             if (mybook_data?.url) console.log(`데이터의 원위치: ${mybook_data.url}`);
+
+            if (mybook_data?.status >= 4) {
+                console.log('데이터의 상태가 좋지 않습니다. 데이터를 다시 불러옵니다.');
+
+                if (!await mybookDataSetup())
+                    return mybook_wrap.classList.add('blocked');
+            }
         }
         else {
+            if (!await mybookDataSetup()) 
+                return mybook_wrap.classList.add('blocked');
+        }
+
+        async function mybookDataSetup() {
             try {
                 mybook_data = await loadMybookData(last_data.tab, last_data.category, page_att, order_att);
                 setMybookData(mybook_data);
                 updateExpirationPeriod();
+                return true;
             } catch (e) {
-                console.error(e);
-                return mybook_wrap.classList.add('failed');
+                setMybookData();
+                console.error(e.stack);
+                localStorage.mybook_error = new Date() + '\n' + e.stack;
+                return false;
             }
         }
     
@@ -276,25 +314,11 @@ async function resolveMybookData({ open = false, thumb_off = false } = {}) {
         if (status)
             return mybook_wrap.classList.add(status);
     
-        novel_data.books.forEach(r => {
-            const novel = document.createElement('novel-item');
-            novel.setAttribute('novel', r?.title || '알 수 없음');
-            novel.setAttribute('author', r?.author?.name || '알 수 없음');
-            novel.setAttribute('author-id', r?.author?.id || undefined);
-            novel.setAttribute('thumb', thumb_off ? `https://images.novelpia.com/img/layout/readycover4.wimg` : (r?.thumbnail || `https://images.novelpia.com/img/layout/readycover4.wimg`));
-            novel.setAttribute('id', r?.id || '');
-            novel.setAttribute('adult', r?.adult || 'false');
-            novel.setAttribute('cont-ep', r?.continue?.ep || undefined);
-            novel.setAttribute('cont-id', r?.continue?.id || undefined);
-            novel.setAttribute('next-status', r?.next?.status || undefined);
-            novel.setAttribute('next-parameter', r?.next?.parameter || undefined);
-            novel.setAttribute('open', r?.open || 'undefined');
-            novel.setAttribute('type', r?.type || 'normal');
-    
-            mybook_wrap.appendChild(novel);
-        });
-    
-    
+        novel_data.books.forEach(r => mybook_wrap.appendChild(novelItem(r, { thumb_off: thumb_off })));
+
+
+
+
         async function categorySetup() {
             category_wrap.innerHTML = '';
             novel_data.category?.forEach(r => {
@@ -380,9 +404,12 @@ async function resolveMybookData({ open = false, thumb_off = false } = {}) {
             }
             return el;
         }
-    } catch (error) {
-        mybook_wrap.classList.add('failed');
-        console.error(error);
+    } catch (e) {
+        mybook_wrap.classList.add('crash');
+        setMybookData();
+        console.error(e.stack);
+        localStorage.mybook_error = new Date() + '\n' + e.stack;
+        // error port?
     }
 }
 
@@ -390,141 +417,144 @@ async function resolveMybookData({ open = false, thumb_off = false } = {}) {
 
 
 
+function novelItem(mybook_data, { thumb_off = false } = {}) {
+    const data = {
+        title: mybook_data?.title || '알 수 없음',
+        author: {
+            name: mybook_data?.author?.name || '알 수 없음',
+            id: mybook_data?.author?.id
+        },
+        thumb: thumb_off ? `https://images.novelpia.com/img/layout/readycover4.wimg` : (mybook_data?.thumbnail || `https://images.novelpia.com/img/layout/readycover4.wimg`),
+        id: mybook_data?.id || '',
+        adult: mybook_data?.adult,
+        continue: {
+            ep: mybook_data?.continue?.ep,
+            id: mybook_data?.continue?.id
+        },
+        next: {
+            status: mybook_data?.next?.status,
+            parameter: mybook_data?.next?.parameter
+        },
+        open: mybook_data?.open,
+        type: mybook_data?.type || 'normal',
+    }
 
-class NovelItem extends HTMLElement {
-    connectedCallback() {
-        const data = {
-            title: this.getAttribute('novel'),
-            author: {
-                name: this.getAttribute('author'),
-                id: this.getAttribute('author-id')
-            },
-            thumb: this.getAttribute('thumb'),
-            id: this.getAttribute('id'),
-            adult: this.getAttribute('adult'),
-            continue: {
-                ep: this.getAttribute('cont-ep'),
-                id: this.getAttribute('cont-id')
-            },
-            next: {
-                status: this.getAttribute('next-status'), 
-                parameter: this.getAttribute('next-parameter')
-            },
-            open: this.getAttribute('open'),
-            type: this.getAttribute('type'),
-        }
+    const novelpia = 'https://novelpia.com/'
 
-        const novelpia = 'https://novelpia.com/'
+    const wrap = document.createElement('div');
+    wrap.classList.add('p-novel-item-wrap');
 
-        const wrap = document.createElement('div');
-        wrap.classList.add('p-novel-item-wrap');
-
-        const item = document.createElement('div');
-        item.classList.add('p-novel-item');
+    const item = document.createElement('div');
+    item.classList.add('p-novel-item');
 
 
-        const thumb = document.createElement('a');
-        thumb.classList.add('p-novel-thumb');
-        thumb.title = data.title;
-        thumb.target = '_blank';
-        thumb.rel = 'noopener';
-        thumb.href = `${novelpia}novel/${data.id}`;
+    const thumb = document.createElement('a');
+    thumb.classList.add('p-novel-thumb');
+    thumb.title = data.title;
+    thumb.target = '_blank';
+    thumb.rel = 'noopener';
+    thumb.href = `${novelpia}novel/${data.id}`;
 
-        const thumb_img = document.createElement('img');
-        thumb_img.src = data.thumb;
-        thumb_img.alt = data.thumb;
+    const thumb_img = document.createElement('img');
+    thumb_img.src = data.thumb;
+    thumb_img.alt = data.thumb;
 
-        if (data.adult == 'true') {
-            const adult = document.createElement('div');
-            adult.classList.add('p-novel-adult-mark');
+    if (data.adult) {
+        const adult = document.createElement('div');
+        adult.classList.add('p-novel-adult-mark');
 
-            thumb.appendChild(adult);
-        }
+        thumb.appendChild(adult);
+    }
 
-        thumb.appendChild(thumb_img);
-        item.appendChild(thumb);
-
-
-        const info = document.createElement('div');
-        info.classList.add('p-novel-info');
-
-        const title = document.createElement('a');
-        title.classList.add('p-novel-title');
-        title.title = data.title;
-        title.href = `${novelpia}${data.type == 'collect' ? 'collect_' : ''}novel/${data.id}`;
-        title.target = '_blank';
-        title.rel = 'noopener';
-        title.textContent = data.title;
-
-        const author = document.createElement('a');
-        author.classList.add('p-novel-author');
-        author.title = data.author.name;
-        if (data.author.id != 'undefined') author.href = `${novelpia}user/${data.author.id}`;
-        else author.classList.add('disabled');
-        author.target = '_blank';
-        author.rel = 'noopener';
-        author.textContent = data.author.name;
-
-        info.appendChild(title);
-        info.appendChild(author);
-
-        if (data.open != 'undefined') {
-            const open_time = document.createElement('div');
-            open_time.classList.add('p-novel-open');
-            open_time.textContent = data.open;
-
-            info.appendChild(open_time);
-        }
-
-        item.appendChild(info);
+    thumb.appendChild(thumb_img);
+    item.appendChild(thumb);
 
 
-        wrap.appendChild(item);
+    const info = document.createElement('div');
+    info.classList.add('p-novel-info');
+
+    const title = document.createElement('a');
+    title.classList.add('p-novel-title');
+    title.title = data.title;
+    if (data.id) title.href = `${novelpia}${data.type == 'collect' ? 'collect_' : ''}novel/${data.id}`;
+    title.target = '_blank';
+    title.rel = 'noopener';
+    title.textContent = data.title;
+
+    const author = document.createElement('a');
+    author.classList.add('p-novel-author');
+    author.title = data.author.name;
+    if (data.author.id) author.href = `${novelpia}user/${data.author.id}`;
+    else author.classList.add('disabled');
+    author.target = '_blank';
+    author.rel = 'noopener';
+    author.textContent = data.author.name;
+
+    info.appendChild(title);
+    info.appendChild(author);
+
+    if (data.open) {
+        const open_time = document.createElement('div');
+        open_time.classList.add('p-novel-open');
+        open_time.textContent = data.open;
+
+        info.appendChild(open_time);
+    }
+
+    item.appendChild(info);
 
 
-        const btns = document.createElement('div');
-        btns.classList.add('p-novel-btns');
+    wrap.appendChild(item);
 
-        if (data.type == 'collect') {
-            0;
-        }
-        else if (data.continue.ep != 'undefined' && data.continue.id != 'undefined') {
-            const continue_btn = document.createElement('a');
-            continue_btn.classList.add('normal-button');
-            continue_btn.classList.add('continue');
-            continue_btn.target = '_blank';
-            continue_btn.rel = 'noopener';
-            continue_btn.href = `${novelpia}viewer/${data.continue.id}`;
-            continue_btn.textContent = `EP.${data.continue.ep} 이어보기`;
 
-            const next_btn = document.createElement('button');
-            next_btn.classList.add('normal-button');
-            next_btn.classList.add('next');
-            if (data.next.status == 'true') {
+    const btns = document.createElement('div');
+    btns.classList.add('p-novel-btns');
+
+    if (data.type == 'collect') {
+        0;
+    }
+    else if (data.continue.ep && data.continue.id) {
+        const continue_btn = document.createElement('a');
+        continue_btn.classList.add('normal-button');
+        continue_btn.classList.add('continue');
+        continue_btn.target = '_blank';
+        continue_btn.rel = 'noopener';
+        if (typeof data.continue.id == 'string') continue_btn.href = `${novelpia}viewer/${data.continue.id}`;
+        else continue_btn.classList.add('disabled');
+        continue_btn.textContent = `EP.${typeof data.continue.ep == 'string' ? data.continue.ep : '?'} 이어보기`;
+
+        const next_btn = document.createElement('button');
+        next_btn.classList.add('normal-button');
+        next_btn.classList.add('next');
+        if (data.next.status) {
+            if (typeof data.next.parameter == 'string') {
                 next_btn.setAttribute('get-next-ep', data.next.parameter);
                 next_btn.textContent = '다음화 보기';
             }
             else {
                 next_btn.classList.add('disabled');
-                next_btn.textContent = '신규회차 없음';
+                next_btn.textContent = '불러올 수 없음';
             }
-
-            btns.appendChild(continue_btn);
-            btns.appendChild(next_btn);
         }
         else {
-            const next_btn = document.createElement('a');
-            next_btn.classList.add('normal-button');
-            next_btn.classList.add('next');
             next_btn.classList.add('disabled');
-            next_btn.textContent = '불러올 수 없음';
-
-            btns.appendChild(next_btn);
+            next_btn.textContent = '신규회차 없음';
         }
 
-        wrap.appendChild(btns);
-
-        this.appendChild(wrap);
+        btns.appendChild(continue_btn);
+        btns.appendChild(next_btn);
     }
+    else {
+        const next_btn = document.createElement('a');
+        next_btn.classList.add('normal-button');
+        next_btn.classList.add('next');
+        next_btn.classList.add('disabled');
+        next_btn.textContent = '불러올 수 없음';
+
+        btns.appendChild(next_btn);
+    }
+
+    wrap.appendChild(btns);
+
+    return wrap;
 }
-customElements.define('novel-item', NovelItem);

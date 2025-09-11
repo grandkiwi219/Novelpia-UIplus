@@ -322,12 +322,12 @@ keyMappingCa['secret'].system = keyMappingBase(r => {
     const result = toggleCookie('secret_mode');
 
     useMode('시크릿 모드', result, {
-        handler: () => { if (result) localStorage.secret_alert = true; }
+        handler: () => { localStorage.npup_secret_alert = result ? true : false; }
     });
 });
 
 
-function useMode(name, result, { condition = true, handler = () => {} }) {
+function useMode(name, result, { condition = true, handler = () => {} } = {}) {
     if (condition) {
         if (!navigator.onLine)
             toastAlert({ title: '네트워크', msg: '인터넷에 연결되어 있지 않아 새로고침되지 않습니다.', type: 'warn' });

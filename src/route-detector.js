@@ -10,7 +10,7 @@
 
     if (!is_possible) return;
 
-    if (!pathChecker(is_possible.matches) || pathChecker(is_possible.excludes)) return;
+    if (!is_possible.routes || !pathChecker(is_possible.routes)) return;
 
     window.addEventListener('DOMContentLoaded', () => {
         let c_path = window.location.pathname;

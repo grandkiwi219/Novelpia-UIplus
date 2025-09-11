@@ -1,4 +1,4 @@
-npup.options = { ...npup.options,
+npup.options = {
     other: {
         icon: '🛠️',
         name: '기타',
@@ -53,7 +53,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
     background-color: rgba(40, 40, 40, 0.12);
 }`,
                 settings: {                                 // 옵션 UI 설정
-                    placeholder: ``
+                    placeholder: `설정 필요`
                 }
             }
         }
@@ -90,7 +90,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                             structure: ['common']
                         },
                         settings: {
-                            local: true
+                            storage: 'local'
                         }
                     },
                     'books-quick-mapping-menu-page': {
@@ -100,12 +100,12 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                             structure: ['common']
                         },
                         settings: {
-                            local: true
+                            storage: 'local'
                         }
                     },
                 },
                 settings: {
-                    local: true
+                    storage: 'local'
                 }
             },
             'books-after-ep': {
@@ -168,18 +168,5 @@ div.flex.w-\\[420px\\]:has(input:focus) {
         }
     },
 
-    /* experimental: { // 스크립트 인젝션처럼 스타일 인젝션 만들기
-        icon: '🧬',
-        name: '실험 기능',
-        engine: 'all',
-        options: {
-            'frosted-glass': {
-                desc: '간유리(Frosted glass) 효과 적용',
-                type: {
-                    option: 'switch',
-                    structure: ['pre-common']
-                }
-            },
-        }
-    }, */
+    ...npup.options,
 }

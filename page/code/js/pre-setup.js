@@ -31,11 +31,22 @@ try {
 
 // 로딩 전 로컬 스토리지의 싱크 키 존재 유무 확인
 local.get([sync_key]).then(r => {
-    if (!r[sync_key] && typeof r[sync_key] == 'boolean')
+    if (!r[sync_key] && r[sync_key] != undefined)
         storage = local;
-    else if (!r[sync_key] && typeof r[sync_key] != 'boolean')
+    else if (!r[sync_key])
         local.set({ [sync_key]: 1 });
 });
+
+
+
+let setting_data = [];
+window.addEventListener('DOMContentLoaded', () => {
+    setting_data.forEach(d => {
+        customElements.define(`setting-${d.name}`, d.element);
+    });
+});
+
+
 
 console.log(`   
 %c███╗   ██╗  ██████╗  ██╗   ██╗  ██████╗ 
