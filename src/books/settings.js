@@ -157,7 +157,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '내서재로 이동 (데이터 주의)',
+                desc: '내서재로 이동',
                 type: {
                     option: 'mapping'
                 },

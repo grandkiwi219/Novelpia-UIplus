@@ -67,37 +67,99 @@ npup.options = {
         name: '조작',
         engine: 'all',
         options: {
+            'wt-quick-mapping-menu': {
+                tag: {
+                    quick_mapping_menu: false
+                },
+                desc: '조작 퀵 메뉴',
+                type: {
+                    option: 'selector',    
+                    structure: ['selector', 'common']
+                },
+                values: [
+                    { name: '사용 안함', value: 'normal' },
+                    { name: '오른쪽 위', value: 'right-top' },
+                    { name: '오른쪽 중앙', value: 'right-center' },
+                    { name: '오른쪽 아래', value: 'right-bottom' },
+                    { name: '왼쪽 위', value: 'left-top' },
+                    { name: '왼쪽 중앙', value: 'left-center' },
+                    { name: '왼쪽 아래', value: 'left-bottom' },
+                ],
+                options: {
+                    'wt-quick-mapping-menu-viewer': {
+                        desc: '뷰어에서 사용하지 않음',
+                        type: {
+                            option: 'switch',
+                            structure: ['common']
+                        },
+                        settings: {
+                            storage: 'local'
+                        }
+                    },
+                    'wt-quick-mapping-menu-page': {
+                        desc: '뷰어 이외의 곳에서 사용하지 않음',
+                        type: {
+                            option: 'switch',
+                            structure: ['common']
+                        },
+                        settings: {
+                            storage: 'local'
+                        }
+                    },
+                },
+                settings: {
+                    storage: 'local'
+                }
+            },
             'wt-after-ep': {
+                tag: {
+                    quick_mapping_menu: false
+                },
                 desc: '다음화로 가기 (뷰어)',
                 type: {
                     option: 'mapping'
                 },
             },
             'wt-before-ep': {
+                tag: {
+                    quick_mapping_menu: false
+                },
                 desc: '이전화로 가기 (뷰어)',
                 type: {
                     option: 'mapping'
                 },
             },
             'wt-ep-home': {
+                tag: {
+                    quick_mapping_menu: false
+                },
                 desc: '웹툰 목록으로 이동 (뷰어)',
                 type: {
                     option: 'mapping'
                 },
             },
             'wt-ep-scroll': {
+                tag: {
+                    quick_mapping_menu: false
+                },
                 desc: '자동 스크롤 (뷰어)',
                 type: {
                     option: 'mapping'
                 },
             },
             'wt-ep-list': {
+                tag: {
+                    quick_mapping_menu: false
+                },
                 desc: '웹툰 목록 열기 (뷰어)',
                 type: {
                     option: 'mapping'
                 },
             },
             'wt-move-mb': {
+                tag: {
+                    quick_mapping_menu: true
+                },
                 desc: '내서재로 이동',
                 type: {
                     option: 'mapping'

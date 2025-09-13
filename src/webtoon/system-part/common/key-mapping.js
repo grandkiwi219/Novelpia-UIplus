@@ -1,6 +1,20 @@
 const keyMappingCa = npup.options.mapping.options;
 
 
+keyMappingCa['wt-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, comic_viewer) => {
+    if ((engineChecker('뷰어')) && !r[`${this.key}-viewer`]) {
+        /* if (routing)
+            document.getElementById('bottomMenu').appendChild(menu);
+        else */
+            window.addEventListener('DOMContentLoaded', () => document.getElementById('bottomMenu').appendChild(menu));
+    }
+    else if (!r[`${this.key}-page`])
+        document.body.appendChild(menu);
+    else 
+        return false;
+
+    return true;
+});
 
 
 keyMappingCa['wt-after-ep'].system = keyMappingBase(r => {

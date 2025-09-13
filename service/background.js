@@ -14,6 +14,7 @@ chrome.runtime.onInstalled.addListener(async d => {
     if (d.reason === 'install') {
         await chrome.storage.local.set({ [sync_key]: 1 });
         chrome.runtime.openOptionsPage();
+        qm = checkQuickMybook();
     }
     else if (d.reason === "update") {
         chrome.storage.local.set({ [update_key]: 1 });

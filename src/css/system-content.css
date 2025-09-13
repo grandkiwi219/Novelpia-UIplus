@@ -830,6 +830,8 @@ quick mapping menu
     position: fixed;
     bottom: 0;
 
+    font-size: 14px;
+
     z-index: 999;
     user-select: none;
 
@@ -943,7 +945,9 @@ quick mapping menu
     }
 
 
-    html[npup-quick-mapping-menu^=right] &, html[npup-books-quick-mapping-menu^=right] & {
+    html[npup-quick-mapping-menu^=right] &,
+    html[npup-wt-quick-mapping-menu^=right] &,
+    html[npup-books-quick-mapping-menu^=right] & {
         right: 0;
 
         .npup-qmm {
@@ -979,7 +983,9 @@ quick mapping menu
         }
     }
 
-    html[npup-quick-mapping-menu^=left] &, html[npup-books-quick-mapping-menu^=left] & {
+    html[npup-quick-mapping-menu^=left] &,
+    html[npup-wt-quick-mapping-menu^=left] &,
+    html[npup-books-quick-mapping-menu^=left] & {
         left: 0;
 
         .npup-qmm {
@@ -1011,7 +1017,9 @@ quick mapping menu
         }
     }
 
-    html[npup-quick-mapping-menu$=top] &, html[npup-books-quick-mapping-menu$=top] & {
+    html[npup-quick-mapping-menu$=top] &,
+    html[npup-wt-quick-mapping-menu$=top] &,
+    html[npup-books-quick-mapping-menu$=top] & {
         .npup-qmm-wrap {
             top: var(--npup-qmm-wrap-top);
         }
@@ -1029,7 +1037,9 @@ quick mapping menu
         }
     }
 
-    html[npup-quick-mapping-menu$=center] &, html[npup-books-quick-mapping-menu$=center] & {
+    html[npup-quick-mapping-menu$=center] &,
+    html[npup-wt-quick-mapping-menu$=center] &,
+    html[npup-books-quick-mapping-menu$=center] & {
         .npup-qmm-wrap {
             bottom: var(--npup-qmm-wrap-center);
         }
@@ -1049,7 +1059,9 @@ quick mapping menu
 
     }
 
-    html[npup-quick-mapping-menu$=bottom] &, html[npup-books-quick-mapping-menu$=bottom] & {
+    html[npup-quick-mapping-menu$=bottom] &,
+    html[npup-wt-quick-mapping-menu$=bottom] &,
+    html[npup-books-quick-mapping-menu$=bottom] & {
         .npup-qmm-wrap {
             top: var(--npup-qmm-wrap-bottom);
         }

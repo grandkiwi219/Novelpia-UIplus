@@ -73,7 +73,6 @@ window.addEventListener('DOMContentLoaded', loadComplete);
 
 const mb_func_att = 'mybook-data';
 const gne_func_att = 'get-next-ep';
-const nh_func_att = 'href'; //'novel-href';
 
 function mybookDataAttribute(e) {
     if (!e.target.getAttribute(mb_func_att)) return;
