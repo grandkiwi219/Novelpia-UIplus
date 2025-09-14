@@ -493,6 +493,12 @@ last episode alarm
 .last-ep-alarm {
     --last-ep-padding: 15px;
 
+    box-sizing: border-box;
+
+    * {
+        box-sizing: border-box;
+    }
+
     width: 280px;
     height: 190px;
     padding: var(--last-ep-padding);
@@ -501,6 +507,7 @@ last episode alarm
     box-shadow: 0 0 20px rgba(80, 80, 80, 0.5);
     background-color: #fff;
     text-align: center;
+    font-size: 14px;
     user-select: none;
     display: flex;
     flex-flow: column wrap;
