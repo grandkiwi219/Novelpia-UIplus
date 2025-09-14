@@ -31,9 +31,9 @@ chrome.runtime.onStartup.addListener(() => {
     qm = checkQuickMybook();
 });
 
-async function checkQuickMybook() {
+function checkQuickMybook() {
     let bool = false;
-    await chrome.storage.local.get([sync_key, mybook_key]).then(r => {
+    chrome.storage.local.get([sync_key, mybook_key]).then(r => {
         if (r[sync_key]) 
             chrome.storage.sync.get([mybook_key]).then(r1 => {
                 bool = setPopup(r1);
