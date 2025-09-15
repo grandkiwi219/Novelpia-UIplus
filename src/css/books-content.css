@@ -6,6 +6,7 @@ html.npup-books-dark {
     footer,
     .w-screen.flex.justify-center:not(.event), .w-screen.flex.justify-center:not(.event) > *, /* 프로모션 페이지 */
     .relative.w-full.flex.justify-center, /* 프로모션 페이지 2 */
+    .event, /* 프로모션 페이지 3 */
     .mark-wrp, .set-mark-wrp, .sale-mark-wrp, .absolute-bottom
     {
         filter: invert(1);
