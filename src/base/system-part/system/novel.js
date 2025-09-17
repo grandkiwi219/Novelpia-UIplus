@@ -19,7 +19,7 @@ novelCa['novel-page'].system = function(r) {
 
         handler = () => {
             novelPageItem(attachTarget);
-            dynamicNovelPageItem();
+            dynamicNovelPageItem(attachTarget);
         }
     }
     /* else if (engineChecker('뷰어')) {
@@ -40,8 +40,10 @@ novelCa['novel-page'].system = function(r) {
 }
 
 
-function novelPageItem(findTarget) {
+function novelPageItem(findTarget = () => undefined) {
     const target = findTarget();
+
+    if (!target) return npup.error('페이지 아이템을 표시할 위치를 확인할 수 없습니다.');
 
     const page_items_tmp = document.querySelectorAll('div.d-flex.align-items-center.justify-content-center');
     const page_items = page_items_tmp[page_items_tmp.length - 1].cloneNode(true);
@@ -79,7 +81,7 @@ function novelPageItem(findTarget) {
     });
 }
     
-function dynamicNovelPageItem() {
+function dynamicNovelPageItem(findTarget) {
     const target = document.getElementById('episode_list');
 
     const obs = new MutationObserver((mus, ob) => {
@@ -87,7 +89,7 @@ function dynamicNovelPageItem() {
 
         ob.disconnect();
 
-        novelPageItem();
+        novelPageItem(findTarget);
 
         obs.observe(target, observer_setup);
     });
