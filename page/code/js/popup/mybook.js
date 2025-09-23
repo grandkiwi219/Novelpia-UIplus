@@ -278,8 +278,17 @@ function mybookJson(data) {
         let cont_ep = data_html.match(/EP\.(\d+)/);
         let cont_id = data_html.match(/viewer\/(\d+)/);
 
+        let next_status = 1;
+
+        if (data.children[i].getElementsByClassName('novel-btn-nothing')[0]) {
+            next_status = 0;
+        }
+        else if (data.children[i].getElementsByClassName('novel-btn-reserve')[0]) {
+            next_status = 2;
+        }
+
         let data_data = {
-            author: { 
+            author: {
                 name: data.children[i].getElementsByClassName('writer-name')[0].textContent.replace('\n', '').trim(),
                 id: author_id ? author_id[1] : undefined
             },
@@ -292,7 +301,7 @@ function mybookJson(data) {
                 id: cont_id ? cont_id[1] : undefined
             },
             next: { 
-                status: data.children[i].getElementsByClassName('novel-btn-nothing')[0] ? 0 : 1,
+                status: next_status,
                 parameter: ''
             },
             open: data.children[i].getElementsByClassName('novel-open-time')[0]?.textContent,

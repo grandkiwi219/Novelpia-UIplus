@@ -81,7 +81,7 @@ function novelPageItem(findTarget = () => undefined) {
     });
 }
     
-function dynamicNovelPageItem(findTarget) {
+function dynamicNovelPageItem(findTarget = () => undefined) {
     const target = document.getElementById('episode_list');
 
     const obs = new MutationObserver((mus, ob) => {

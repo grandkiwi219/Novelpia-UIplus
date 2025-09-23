@@ -509,23 +509,29 @@ function novelItem(mybook_data, { thumb_off = false } = {}) {
         const next_btn = document.createElement('button');
         next_btn.classList.add('normal-button');
         next_btn.classList.add('next');
-        if (data.next.status) {
+        if (data.next.status == 1) {
             if (typeof data.next.parameter == 'string') {
                 next_btn.setAttribute('get-next-ep', data.next.parameter);
                 next_btn.textContent = '다음화 보기';
             }
             else {
-                next_btn.classList.add('disabled');
-                next_btn.textContent = '불러올 수 없음';
+                nextDisable('불러올 수 없음');
             }
         }
+        else if (data.next.status == 2) {
+            nextDisable('예약회차 있음');
+        }
         else {
-            next_btn.classList.add('disabled');
-            next_btn.textContent = '신규회차 없음';
+            nextDisable('신규회차 없음');
         }
 
         btns.appendChild(continue_btn);
         btns.appendChild(next_btn);
+
+        function nextDisable(content) {
+            next_btn.classList.add('disabled');
+            next_btn.textContent = content;
+        }
     }
     else {
         const next_btn = document.createElement('a');
