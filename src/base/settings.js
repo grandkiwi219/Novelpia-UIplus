@@ -307,10 +307,21 @@ npup.options = {
                     },
                 },
             },
+
+            'new-alarm': {
+                desc: '알림 페이지에 새 알림 표시',
+                type: {
+                    option: 'switch',
+                    structure: ['system']
+                },
+                structure: {
+                    router: true,
+                },
+            },
         },
-        /* setups: {                                         // 옵션 카테고리 UI '특수' 설정
+        setups: {                                         // 옵션 카테고리 UI '특수' 설정
             length: 2
-        } */
+        }
     },
 
     custom_css: {

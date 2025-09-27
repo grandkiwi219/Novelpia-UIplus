@@ -361,16 +361,16 @@ function setWidth(continue_ep, style) {
 mobileCa['top-ep'].system = function(r) {
     if (!pathChecker('/novel/')) return;
 
-    targetHandler(() => document.getElementsByClassName('btn-view-run')[0], () => setTopEp());
+    targetHandler(() => document.getElementsByClassName('btn-view-run')[0], (t) => setTopEp(t));
 
-    function setTopEp() {
-        let top_ep = document.getElementsByClassName('btn-view-run')[0].parentElement.cloneNode(true);
+    function setTopEp(target) {
+        let top_ep = target.parentElement.cloneNode(true);
         top_ep.style = 'justify-content: center;';
         top_ep.firstElementChild.style = 'max-width: 585px; width: 100%; margin-top: 20px;';
         if (top_ep.children.length > 1) top_ep.lastElementChild.style.display = 'none';
 
-        const target = document.querySelector('.epnew-mobile-btn-area-relative');
+        const final_target = document.querySelector('.epnew-mobile-btn-area-relative');
 
-        target.insertAdjacentElement('beforebegin', top_ep);
+        final_target.insertAdjacentElement('beforebegin', top_ep);
     }
 }

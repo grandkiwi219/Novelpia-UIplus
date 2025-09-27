@@ -3,10 +3,34 @@ const keyMappingCa = npup.options.mapping.options;
 
 keyMappingCa['books-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, comic_viewer) => {
     if ((engineChecker('뷰어')) && !r[`${this.key}-viewer`]) {
-        if (routing)
+        if (routing) {
+            appendMenu();
+        }
+        else {
+            let menu_exist = false;
+            
+            const menuRegen = () => {
+                if (!document.contains(menu)) {
+                    appendMenu();
+                }
+                else {
+                    if (document_status >= 3) {
+                        menu_exist = true;
+                        window.removeEventListener('click', menuRegen);
+                    }
+                }
+            }
+
+            document.addEventListener('click', menuRegen);
+
+            removeEventForEngine(() => {
+                if (!menu_exist) document.removeEventListener('click', menuRegen);
+            });
+        }
+
+        function appendMenu() {
             document.getElementsByClassName('viewer-bottom-wrapper')[0].appendChild(menu);
-        else
-            window.addEventListener('DOMContentLoaded', () => document.getElementsByClassName('viewer-bottom-wrapper')[0].appendChild(menu));
+        }
     }
     else if (!r[`${this.key}-page`])
         document.body.appendChild(menu);
@@ -21,21 +45,21 @@ keyMappingCa['books-after-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-next')[0].click();
 },
 {
-    condition: () => { return engineChecker('뷰어'); }
+    condition: () => engineChecker('뷰어')
 });
 
 keyMappingCa['books-before-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-prev')[0].click();
 },
 {
-    condition: () => { return engineChecker('뷰어'); }
+    condition: () => engineChecker('뷰어')
 });
 
 keyMappingCa['books-ep-home'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-back')[0].click();
 },
 {
-    condition: () => { return engineChecker('뷰어'); }
+    condition: () => engineChecker('뷰어')
 });
 
 keyMappingCa['books-move-mb'].system = keyMappingBase(async r => {

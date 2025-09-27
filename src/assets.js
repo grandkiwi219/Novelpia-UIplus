@@ -3,16 +3,18 @@
  * @param {function} target 감지할 요소
  * @param {function} handler 실행할 함수
  */
-function targetHandler(target, handler) {
-    if (target()) {
-        tryChecker(() => handler(), 'targetHandler -> handler', false);
+function targetHandler(targetFinder, handler) {
+    let target = targetFinder();
+    if (target) {
+        tryChecker(() => handler(target), 'targetHandler -> handler', false);
     } else {
         let target_found = false;
 
         const targetOb = new MutationObserver((mus, ob) => {
-            if (!target()) return; 
+            let target = targetFinder();
+            if (!target) return; 
             target_found = true;
-            tryChecker(() => handler(), 'targetHandler -> handler', false);
+            tryChecker(() => handler(target), 'targetHandler -> handler', false);
             ob.disconnect();
         });
         targetOb.observe(html, { childList: true });
@@ -20,7 +22,7 @@ function targetHandler(target, handler) {
         setTimeout(() => {
             if (!target_found) {
                 targetOb.disconnect();
-                npup.warn(`타겟을 찾는 데에 시간이 오래 걸려 함수 실행을 취소했습니다.`);
+                npup.dev(`타겟을 찾는 데에 시간이 오래 걸려 함수 실행을 취소했습니다.`);
             }
         }, 8 * 1000);
     }

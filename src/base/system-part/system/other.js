@@ -46,6 +46,39 @@ otherCa['notice'].system = function(r) {
 
 
 
+otherCa['new-alarm'].system = function(r) {
+    if (!pathChecker('/alarm/')) return;
+
+    targetHandler(() => document.querySelector('.menu_alarm td.active .menu-counter'), (target) => newAlarmSystem(target));
+
+    function newAlarmSystem(target) {
+        const active_counter = Number(target?.textContent);
+
+        npup.dev('active_counter:', active_counter);
+
+        if (!active_counter) return;
+
+        const active_alarm = '' +
+`
+.note-editor > .alarm_box:nth-child(-n + ${active_counter}) {
+    border: 1px solid var(--novelpia-color);
+}
+`;
+
+        const new_alarm_style = styleInjection(npup.project.prefix.css + this.key, active_alarm);
+
+        npup.dev(new_alarm_style);
+
+        removeEvent(() => {
+            new_alarm_style.remove();
+        });
+    }
+}
+
+
+
+
+
 otherCa['last-ep'].system = async function(r) {
     let cooltime = null;
     let freeze = false;

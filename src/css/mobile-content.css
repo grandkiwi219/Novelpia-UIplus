@@ -59,22 +59,36 @@ html[npup-origin-header], html[npup-bottom-nav] {
             height: 25px !important;
         }
 
-        .logo-novelpia img {
-            width: auto !important;
-            height: 22px !important;
-        }
+        .logo-novelpia {
+            img {
+                width: auto !important;
+                height: 22px !important;
+            }
 
-        .logo-novelpia > a {
-            display: flex;
-        }
+            & > a {
+                display: flex;
+            }
 
-        .logo-novelpia > a > img:last-child {
-            content: url('https://images.novelpia.com/img/new/header/logo_novelpia_mobile.svg');
-        }
+            & > a > .logo-novelpia-img {
+                content: url('https://images.novelpia.com/img/new/header/logo_novelpia_mobile.svg');
 
-        /* 다크모드 로고 안 보임 해결책 */
-        body[bgcolor="black"] .logo-novelpia > a > img:last-child {
-            content: url('https://images.novelpia.com/img/new/header/logo_novelpia_mobile_dark.svg');
+                /* 다크모드 로고 안 보임 해결책 */
+                body[bgcolor="black"] & {
+                    content: url('https://images.novelpia.com/img/new/header/logo_novelpia_mobile_dark.svg');
+                }
+            }
+
+            /* 콘테스트 D-day 표시 */
+            & > a > .logo_contest {
+                margin-top: -0.5px !important;
+                margin-left: 2px;
+                gap: 2px;
+
+                & > img {
+                    width: auto !important;
+                    height: 26.5px !important;
+                }
+            }
         }
 
         /* 조금도 보이지 않게 처리 */

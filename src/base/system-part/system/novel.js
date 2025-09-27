@@ -104,7 +104,7 @@ function dynamicNovelPageItem(findTarget = () => undefined) {
 novelCa['novel-notice-close'].system = function(r) {
     if (!pathChecker(['/novel/', '/collect_novel/'])) return;
 
-    const addCloseFunction = () => {
+    const addCloseFunction = (notice_table) => {
         const more_btn = document.getElementsByClassName('notice_toggle_btn')[0];
 
         if (!more_btn) return npup.log('공지 더보기 버튼이 없습니다.');
@@ -118,8 +118,6 @@ novelCa['novel-notice-close'].system = function(r) {
         }
 
         more_btn.outerHTML = more_btn.outerHTML.replace('notice_toggle()', 'npupNoticeToggle()');
-
-        const notice_table = document.getElementsByClassName('notice_table')[0] || document.querySelector('table[style*=width]:has(> * > .ep_style4)');
 
         if (notice_table.getElementsByClassName('ep_style4').length > 7) {
             const more_btn_long = more_btn.cloneNode(true);
@@ -142,7 +140,7 @@ novelCa['novel-notice-close'].system = function(r) {
 
     targetHandler(
         () => document.getElementsByClassName('notice_table')[0] || document.querySelector('table[style*=width]:has(> * > .ep_style4)'),
-        () => addCloseFunction()
+        (t) => addCloseFunction(t)
     );
 
     const close_script = scriptInjection(`/src/base/file/${this.key}.js`);

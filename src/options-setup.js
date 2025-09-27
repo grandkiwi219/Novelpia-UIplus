@@ -64,8 +64,6 @@ function optionBinding(ca, op) {
             optionBinding(ca, opop);
         });
     }
-
-    delete opbi;
 }
 
 function optionsReset() {

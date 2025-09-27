@@ -5,6 +5,9 @@ let storage_type = 'sync';
 let extension_load = false;
 let performance_standard = performance.now();
 
+let document_status = 1;
+let dom_loaded = false;
+
 let routing = false;
 
 local.get([npup.keys.sync]).then(async r => {
@@ -33,6 +36,10 @@ local.get([npup.keys.debug, npup.keys.log]).then(r => {
         npup.dev = function() { return; }
     }
 });
+
+
+// dom_loaded
+window.addEventListener('DOMContentLoaded', () => dom_loaded = true);
 
 
 

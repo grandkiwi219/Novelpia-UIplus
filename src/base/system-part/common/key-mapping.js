@@ -22,21 +22,21 @@ keyMappingCa['after-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-next-item')[0].click();
 },
 {
-    condition: () => { return engineChecker('뷰어'); }
+    condition: () => engineChecker('뷰어')
 });
 
 keyMappingCa['before-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-bottom-item')[0].click();
 },
 {
-    condition: () => { return engineChecker('뷰어'); }
+    condition: () => engineChecker('뷰어')
 });
 
 keyMappingCa['ep-home'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-top-home')[0].click();
 },
 {
-    condition: () => { return engineChecker('뷰어'); }
+    condition: () => engineChecker('뷰어')
 });
 
 function clickDisplay() {
@@ -61,7 +61,7 @@ keyMappingCa['ep-comment'].system = keyMappingBase(r => {
         document.getElementsByClassName('menu-bottom-item')[3].click();
 },
 {
-    condition: () => { return engineChecker('뷰어'); }
+    condition: () => engineChecker('뷰어')
 });
 
 keyMappingCa['ep-vote'].system = keyMappingBase(r => {
@@ -79,7 +79,7 @@ keyMappingCa['ep-vote'].system = keyMappingBase(r => {
     }
 },
 {
-    condition: () => { return engineChecker('뷰어'); }
+    condition: () => engineChecker('뷰어')
 });
 
 keyMappingCa['move-mb'].system = keyMappingBase(async r => {

@@ -3,7 +3,7 @@
     "name": "노벨피아 UI+",
     "description": "더 나은 노벨피아 UI를 경험해보세요!",
     "author": "grand-kiwi",
-    "version": "3.7.0.4",
+    "version": "3.8.0.0",
     "browser_specific_settings": {
         "gecko": {
             "id": "",
@@ -40,6 +40,30 @@
                 "./src/route-detector.js"
             ],
             "run_at": "document_start"
+        },
+        {
+            "tag": "document-status",
+            "matches": ["*://*.novelpia.com/*"],
+            "exclude_matches": [
+                "*://images.novelpia.com/*",
+                "*://image.novelpia.com/*"
+            ],
+            "js": [
+                "./src/etc/document-status.js"
+            ],
+            "run_at": "document_end"
+        },
+        {
+            "tag": "document-status",
+            "matches": ["*://*.novelpia.com/*"],
+            "exclude_matches": [
+                "*://images.novelpia.com/*",
+                "*://image.novelpia.com/*"
+            ],
+            "js": [
+                "./src/etc/document-status.js"
+            ],
+            "run_at": "document_idle"
         },
 
         

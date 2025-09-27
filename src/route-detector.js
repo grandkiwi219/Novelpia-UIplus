@@ -16,13 +16,12 @@
         let c_path = window.location.pathname;
         if (!c_path.endsWith('/')) c_path += '/';
         const routerObserver = new MutationObserver(() => {
-            routing = true;
-    
             let current_path = window.location.pathname;
             if (!current_path.endsWith('/')) current_path += '/';
 
             if (c_path == current_path) { 0 }
             else {
+                routing = true;
                 performance_standard = performance.now();
                 c_path = current_path;
                 routeDetector({ path: c_path });

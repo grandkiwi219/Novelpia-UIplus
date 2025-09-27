@@ -217,20 +217,21 @@ async function mybookData(tab = 'last_view', category = 0, page = 1, order = 'da
     let doc = null;
     let item = null;
 
-    await fetch(fetch_url)
-        .then(res => {
-            console.log(`데이터 새로고침 결과 상태 코드: ${res.status}`);
-            return res.text();
-        })
-        .then(html => {
-            const parser = new DOMParser();
-            doc = parser.parseFromString(html, "text/html");
-            item = doc.querySelector('.mybook-data-list-items');
-        })
-        .catch(e => {
-            console.error(e.stack);
-            status = 5;
-        });
+    try {
+        await fetch(fetch_url)
+            .then(res => {
+                console.log(`데이터 새로고침 결과 상태 코드: ${res.status}`);
+                return res.text();
+            })
+            .then(html => {
+                const parser = new DOMParser();
+                doc = parser.parseFromString(html, "text/html");
+                item = doc.querySelector('.mybook-data-list-items');
+            });
+    } catch (error) {
+        console.error(error.stack);
+        status = 5;
+    }
 
     if (!status) {
         try {
