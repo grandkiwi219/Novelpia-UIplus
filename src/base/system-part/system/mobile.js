@@ -85,6 +85,14 @@ mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
                 menu_tap = document.querySelector('*:has(> div > .tap-box)');
                 menu_top_important = false;
             }
+            else if (document.getElementsByClassName('contest_menu')[0]) {
+                menu_tap = document.getElementsByClassName('contest_menu')[0];
+                menu_top_important = false;
+            }
+            else if (document.getElementsByClassName('contest-tab')[0]) {
+                menu_tap = document.getElementsByClassName('contest-tab')[0];
+                menu_top_important = false;
+            }
             else if (pCheck('/comic_main/')) {
                 menu_tap = document.getElementsByClassName('comic-new-header-wp')[0];
                 menu_top_important = false;

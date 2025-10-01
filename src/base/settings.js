@@ -564,6 +564,17 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 }
             },
 
+            'repair': {
+                desc: '잘못된 부분 수정',
+                type: {
+                    option: 'switch',
+                    structure: ['switch']
+                },
+                setups: {
+                    invisible: true,
+                },
+            },
+
             'quick-mybook': {
                 desc: '빠른 내서재 (확장프로그램 아이콘 클릭 시)',
                 type: {
