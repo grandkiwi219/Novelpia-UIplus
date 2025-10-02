@@ -265,7 +265,7 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined } = {}) => {
                         alert_box.style.filter = 'invert(1)';
             }
             else if (npup.func.domainChecker('books')) {
-                0
+                alert_box.classList.add('s_inv');
             }
             else if (npup.func.domainChecker('global')){
                 if (document.body?.classList.contains('dark'))

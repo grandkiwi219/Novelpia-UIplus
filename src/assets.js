@@ -136,7 +136,7 @@ function keyMappingBase(callback, { condition = () => { return true; }, executio
                 }, `<keyMappingBase - quick-mapping-menu> ${this.key}`, false)
             ]);
 
-            if (result[0].status != 2) toastAlert({
+            if (result[0].status > 2) toastAlert({
                     title: `오류 발생 | ${this.key}`,
                     msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
                     type: 'error'
@@ -169,7 +169,7 @@ function keyMappingBase(callback, { condition = () => { return true; }, executio
                 }, `<keyMappingBase> ${this.key}`, false)
             ]);
 
-            if (result[0].status != 2) toastAlert({
+            if (result[0].status > 2) toastAlert({
                     title: `오류 발생 | ${this.key}`,
                     msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
                     type: 'error'
@@ -209,6 +209,7 @@ function customCssAsset() {
     }
 }
 
+/* !keyMappingCa! */
 /**
  * quick mapping menu system 함수를 출력
  * @param {function} engineCallback 각 엔진 별 취할 액션
@@ -303,9 +304,13 @@ function quickMappingMenuAsset(engineCallback = () => false) {
 
         const comic_viewer = pathChecker('/comic_viewer/') && domainChecker('base');
 
-        const result = await engineCallback(r, menu_base, comic_viewer);
-
-        if (!result) return;
+        const result = await Promise.all([
+                tryChecker(async () => {
+                    await engineCallback(r, menu_base, comic_viewer);
+                }, `<keyMappingBase - quick-mapping-menu> ${this.key}`, false)
+            ]);
+        
+        if (!result[0]?.status > 2) return;
 
 
         // 열림 닫힘

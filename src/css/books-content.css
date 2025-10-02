@@ -1,23 +1,87 @@
 html.npup-books-dark {
-    &,
-    .main-mark-box-wrp, .bnr-show-number,
-    img:where([src*=prime], [src*=imagebox], [src*=emoticon], [src*=ebook], [src*="/img/new/icon/"], [src*=main_no_data]):not([src*=comment]),
-    img[onerror*=none_user],
-    footer,
-    .w-screen.flex.justify-center:not(.event), .w-screen.flex.justify-center:not(.event) > *, /* 프로모션 페이지 */
-    .relative.w-full.flex.justify-center, /* 프로모션 페이지 2 */
-    .event, /* 프로모션 페이지 3 */
-    .mark-wrp, .set-mark-wrp, .sale-mark-wrp, .absolute-bottom
-    {
-        filter: invert(1);
+    &:not(&:has(div.viewer-contents-wrapper/* npup-engine[type*=뷰어] */)) {
+        &,
+        .main-mark-box-wrp,
+        .bnr-show-number,
+        img:where([src*=prime], [src*=imagebox], [src*=emoticon], [src*=ebook], [src*="/img/new/icon/"], [src*=main_no_data]):not([src*=comment]),
+        img[onerror*=none_user],
+        footer,
+        .w-screen.flex.justify-center:not(.event),
+        .w-screen.flex.justify-center:not(.event)>*,
+        /* 프로모션 페이지 */
+        .relative.w-full.flex.justify-center,
+        /* 프로모션 페이지 2 */
+        .event,
+        /* 프로모션 페이지 3 */
+        .mark-wrp,
+        .set-mark-wrp,
+        .sale-mark-wrp,
+        .absolute-bottom {
+            filter: invert(1);
+        }
+    
+        .mark-wrp,
+        .set-mark-wrp,
+        .sale-mark-wrp,
+        .mark-img,
+        .absolute-bottom {
+            z-index: 1;
+        }
     }
 
-    .mark-wrp,
-    .set-mark-wrp, 
-    .sale-mark-wrp,
-    .mark-img,
-    .absolute-bottom
-    {
-        z-index: 1;
+    &:has(div.viewer-contents-wrapper/* npup-engine[type*=뷰어] */) {
+        .s_inv {
+            filter: invert(1);
+        }
+
+        scrollbar-color: gray black;
+
+        .viewer-contents-wrapper,
+        .viewer-contents {
+            color: white !important;
+            background-color: black !important;
+        }
+
+        .viewer-header-wrapper,
+        .viewer-bottom-wrapper,
+        .buy-checkbox > input,
+        .txt-sort img,
+        .comment-write-box,
+        .flex.flex-col.gap-\[5px\]:has(> .px-2\.5.py-\[3px\].border.border-black.text-center), /* 이모티콘 제목, 이모티콘 보기 */
+        img[src*="emoticon_shop"], img[src*="emoticon_setting"], img[src*="emoticon_gacha"], img[src*="sort_toggle"]
+        {
+            filter: invert(1);
+        }
+
+        img[src*=fav_off] {
+            filter: invert(0.5);
+        }
+
+        .bg-\[\#F8F9FA\] {
+            background-color: #f8f9fa2f;
+        }
+
+        .comment-write-box > textarea {
+            color: black;
+            border-color: silver;
+        }
+
+        .comment-all-wrapper,
+        *:has(> .comment-all-wrapper) {
+            color: gray;
+            background-color: black;
+        }
+
+        .comment-list-wrapper {
+            border-color: white;
+        }
+
+        .user-nickname,
+        .btn-other-menu,
+        .user-comment,
+        .checkmark,
+        .txt-sort {
+            color: white;
+        }
     }
 }

@@ -689,7 +689,7 @@ toast alert
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    transition: all 0.4s;
+    transition: width 0.4s;
 
     &.active {
         opacity: 80%;

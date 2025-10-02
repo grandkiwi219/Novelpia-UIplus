@@ -3,30 +3,25 @@ const keyMappingCa = npup.options.mapping.options;
 
 keyMappingCa['books-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, comic_viewer) => {
     if ((engineChecker('뷰어')) && !r[`${this.key}-viewer`]) {
-        if (routing) {
-            appendMenu();
-        }
-        else {
-            let menu_exist = false;
-            
-            const menuRegen = () => {
-                if (!document.contains(menu)) {
-                    appendMenu();
-                }
-                else {
-                    if (document_status >= 3) {
-                        menu_exist = true;
-                        window.removeEventListener('click', menuRegen);
-                    }
+        let menu_exist = false;
+
+        const menuRegen = () => {
+            if (!document.contains(menu)) {
+                appendMenu();
+            }
+            else {
+                if (document_status >= 3) {
+                    menu_exist = true;
+                    document.removeEventListener('click', menuRegen);
                 }
             }
-
-            document.addEventListener('click', menuRegen);
-
-            removeEventForEngine(() => {
-                if (!menu_exist) document.removeEventListener('click', menuRegen);
-            });
         }
+
+        document.addEventListener('click', menuRegen);
+
+        removeEventForEngine(() => {
+            if (!menu_exist) document.removeEventListener('click', menuRegen);
+        });
 
         function appendMenu() {
             document.getElementsByClassName('viewer-bottom-wrapper')[0].appendChild(menu);
