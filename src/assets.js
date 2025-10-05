@@ -403,7 +403,7 @@ function quickMappingMenuAsset(engineCallback = () => false) {
             document.querySelectorAll(`.${npup.project.prefix.css}selector-option`).forEach(r => {
                 if (!r.contains(e.target)) return;
 
-                let local_storage = this.settings?.local;
+                let this_storage = this.settings?.storage;
                 let value = r.getAttribute('value');
 
                 if (value == this.options[0]) {
@@ -413,10 +413,19 @@ function quickMappingMenuAsset(engineCallback = () => false) {
 
                 let value_name = r.innerHTML;
 
-                let ss_storage = local_storage == true ? local : storage;
+                let cache;
 
-                ss_storage.get([this.key]).then(() => {
-                    ss_storage.set({ [this.key]: value });
+                switch (this_storage) {
+                    case 'local':
+                        cache = local;
+                        break;
+                    default: 
+                        cache = storage;
+                        break;
+                }
+
+                cache.get([this.key]).then(() => {
+                    cache.set({ [this.key]: value });
                     html.setAttribute(`${npup.project.prefix.css}${this.key}`, value);
                     menu_base.querySelector(`.${npup.project.prefix.css}value-name`).innerHTML = value_name;
                 });

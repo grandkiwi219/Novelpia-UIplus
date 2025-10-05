@@ -36,6 +36,7 @@ html.npup-books-dark {
 
         scrollbar-color: gray black;
 
+        body,
         .viewer-contents-wrapper,
         .viewer-contents {
             color: white !important;
