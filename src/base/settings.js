@@ -169,6 +169,7 @@ npup.options = {
                     router: true,
                 },
             },
+
             'click-alert': {
                 desc: '우클릭 알림 삭제',
                 type: {
@@ -177,6 +178,14 @@ npup.options = {
                 },
                 structure: {
                     router: true,
+                },
+            },
+
+            'dbl-like': {
+                desc: '두 번 터치(클릭)하여 \'추천\' 누르기',
+                type: {
+                    option: 'switch',
+                    structure: ['system']
                 },
             },
         }

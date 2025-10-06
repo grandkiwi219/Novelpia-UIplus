@@ -39,14 +39,6 @@ keyMappingCa['ep-home'].system = keyMappingBase(r => {
     condition: () => engineChecker('뷰어')
 });
 
-function clickDisplay() {
-    document.getElementById('novel_drawing').click();
-}
-
-function clickVote() {
-    document.getElementById('recommend_tap').children[0].click();
-}
-
 keyMappingCa['ep-comment'].system = keyMappingBase(r => {
     if (document.getElementById('header_bar').style.display != 'block')
         clickDisplay();
@@ -69,13 +61,14 @@ keyMappingCa['ep-vote'].system = keyMappingBase(r => {
 
     if (!vote) clickVote(), toastAlert({ msg: '추천을 완료하였습니다.' });
     else {
-        if (document.getElementById('viewer-modal')) {
+        toastAlert({ msg: '추천을 이미 완료하였습니다.' });
+        /* if (document.getElementById('viewer-modal')) {
             document.getElementById('viewer-modal').getElementsByClassName('close-x')[0].click();
         } else if (document.getElementById('header_bar').style.display != 'block') {
             clickVote(), document.getElementById('novel_drawing').click();
         } else {
             clickVote();
-        }
+        } */
     }
 },
 {
@@ -115,20 +108,3 @@ keyMappingCa['secret'].system = keyMappingBase(r => {
         handler: () => { localStorage.npup_secret_alert = result ? true : false; }
     });
 });
-
-
-function useMode(name, result, { condition = true, handler = () => {} } = {}) {
-    if (condition) {
-        if (!navigator.onLine)
-            toastAlert({ title: '네트워크', msg: '인터넷에 연결되어 있지 않아 새로고침되지 않습니다.', type: 'warn' });
-        else if (navigator.connection?.type == 'cellular')
-            toastAlert({ title: '모바일 데이터', msg: '모바일 데이터를 사용 중이므로 새로고침되지 않습니다.' });
-        else {
-            handler();
-            location.reload();
-            return;
-        }
-    }
-
-    toastAlert({ title: name, msg: `${name}가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
-}

@@ -3,6 +3,8 @@ const viewerCa = npup.options.viewer.options;
 
 viewerCa['old-icon'].system = function(r) {
     window.addEventListener('DOMContentLoaded', iconSetup);
+
+    /* route detector? */
 }
 
 
@@ -96,4 +98,37 @@ viewerCa['click-alert'].system = function(r) {
     npup.log('우클릭 제거 준비가 완료되었습니다.');
 
     scriptInjection('src/base/file/delete-click-alert.js');
+
+    /* route detector? */
+}
+
+
+
+viewerCa['dbl-like'].system = function(r) {
+    let last = {
+        time: 0,
+        pos: { x: 0, y: 0 }
+    }
+
+    const cooltime = 180;
+    const pos_error = 100;
+
+    document.addEventListener('click', (e) => {
+        if (!document.getElementById('novel_box').contains(e.target)) return;
+
+        const now = performance.now();
+
+        const last_time = now - last.time;
+        const dist = Math.hypot(e.clientX - last.pos.x, e.clientY - last.pos.y);
+
+        if (last_time < cooltime && dist < pos_error) {
+            const vote = document.getElementById('btn_episode_vote').src.includes('recommend_on');
+
+            if (!vote) clickVote(), toastAlert({ msg: '추천을 완료하였습니다.' });
+            else toastAlert({ msg: '추천을 이미 완료하였습니다.' });
+        }
+
+        last.time = now;
+        last.pos = { x: e.clientX, y: e.clientY };
+    });
 }

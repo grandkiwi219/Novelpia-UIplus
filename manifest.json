@@ -94,6 +94,7 @@
             ],
             "js": [
                 "./src/base/settings.js",
+                "./src/base/assets.js",
 
                 "./src/base/system-part/system/header.js",
                 "./src/base/system-part/system/navigation.js",
