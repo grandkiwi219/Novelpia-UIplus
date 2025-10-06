@@ -19,7 +19,7 @@ headerCa['adult'].system = async function(r) {
 }
 
 
-    
+
 
 
 headerCa['search'].system = function(r) {
@@ -308,3 +308,36 @@ headerCa['alarm'].system = function(r) {
         ob.disconnect();
     }).observe(document.body, observer_setup);
 } 
+
+
+
+
+
+headerCa['writer-room'].system = async function(r) {
+
+    const generateWriterIcon = () => {
+        let writer_wrap = document.createElement('a');
+        writer_wrap.href = '/writer_room';
+        writer_wrap.classList.add(`${npup.project.prefix.css}${this.key}`);
+    
+        let writer_icon = document.createElement('img');
+        writer_icon.src = '//image.novelpia.com/img/new/menu/w/write.png';
+        writer_icon.alt = '내작품';
+    
+        writer_wrap.appendChild(writer_icon);
+
+        return writer_wrap;
+    }
+
+    new MutationObserver((mus, ob) => {
+        let target = document.getElementsByClassName('header-gift');
+
+        if (!target[0]) return;
+
+        for (let i = 0; i < target.length; i++) {
+            target[i].insertAdjacentElement("afterend", generateWriterIcon());
+        }
+         
+        ob.disconnect();
+    }).observe(document.body, observer_setup);
+}

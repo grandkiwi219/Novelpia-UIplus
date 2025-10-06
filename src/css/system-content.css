@@ -1,3 +1,23 @@
+/* 
+writer room css
+*/
+
+.npup-writer-room {
+    @media screen and (max-width: 892px) {
+        img {
+            width: 20px;
+        }
+    }
+}
+
+html:has(.npup-writer-room) {
+    @media screen and (max-width: 892px) {
+        .header-gift {
+            display: none;
+        }
+    }
+}
+
 /*
 nav css
 */

@@ -16,8 +16,9 @@
     --header-font-size: 18px;
     --container-width: 1000px;
     --container-width-min: 300px;
-    /*--template-rows-size: 233px;*/
-    --template-rows-size: 283px;
+    /* --template-rows-size: 233px; */
+    /* --template-rows-size: 283px; */
+    --template-rows-size: 300px;
     --tools-headline-color: rgba(233, 233, 255, 0.4);
     --theme-transition-speed: .4s;
     --theme-header-transition-speed: .26s;

@@ -28,10 +28,10 @@ function toolBox(name, { icon = '🥝', icon_svg = null } = {}, settings = {}, s
         tool_box.setAttribute(r, settings[r]);
     });
 
-    if (setups.length > 1) 
+    if (Math.ceil(setups.length) > 1) 
         Object.assign(tool_box.style, {
             height: `calc(var(--template-rows-size) * ${setups.length} + var(--box-grid-row-gap) * ${setups.length - 1})`,
-            gridRow: `auto / span ${setups.length}`
+            gridRow: `auto / span ${Math.ceil(setups.length)}`
         });
 
     let tool_icon = icon_svg ? `<img src="${icon_svg}" alt="${icon}">&nbsp;` : icon;

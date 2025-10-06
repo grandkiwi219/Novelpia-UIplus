@@ -62,6 +62,17 @@ npup.options = {
                     { name: '이벤트 알림', value: 'event' },
                 ]
             },
+
+            'writer-room': {
+                desc: '작품 관리 아이콘 추가 (기존 헤더로 사용시 모바일에서 쿠폰함 제거)',
+                type: {
+                    option: 'switch',
+                    structure: ['system']
+                },
+                settings: {
+                    storage: 'local'
+                }
+            },
         }
     },
 
@@ -319,9 +330,9 @@ npup.options = {
                 },
             },
         },
-        setups: {                                         // 옵션 카테고리 UI '특수' 설정
+        /* setups: {                                         // 옵션 카테고리 UI '특수' 설정
             length: 2
-        }
+        } */
     },
 
     custom_css: {
