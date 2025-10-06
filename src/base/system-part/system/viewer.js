@@ -131,4 +131,6 @@ viewerCa['dbl-like'].system = function(r) {
         last.time = now;
         last.pos = { x: e.clientX, y: e.clientY };
     });
+
+    /* route detector? */
 }
