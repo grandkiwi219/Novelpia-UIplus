@@ -18,6 +18,8 @@ html:has(.npup-writer-room) {
     }
 }
 
+
+
 /*
 nav css
 */
@@ -1264,4 +1266,35 @@ selector
 .npup-selector-option:active {
     background-color: var(--npup-selector-gpp);
     transition: background-color 0s;
+}
+
+
+
+/* 
+dbl vote css
+*/
+
+.npup-vote-icon {
+    --npup-vote-icon-size: 28px;
+
+    width: var(--npup-vote-icon-size);
+    height: var(--npup-vote-icon-size);
+    top: calc(0 - var(--npup-vote-icon-size));
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    position: fixed;
+    transition: opacity .2s, transform 0.4s ease-out;
+
+    &.show {
+        opacity: 1;
+    }
+
+    &.down {
+        transform: translateX(-50%) translateY(calc(60px + var(--npup-vote-icon-size)));
+    }
+
+    &.up {
+        transform: translateX(-50%) translateY(calc(60px + 5px));
+    }
 }

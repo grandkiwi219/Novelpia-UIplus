@@ -57,11 +57,8 @@ keyMappingCa['ep-comment'].system = keyMappingBase(r => {
 });
 
 keyMappingCa['ep-vote'].system = keyMappingBase(r => {
-    const vote = document.getElementById('btn_episode_vote').src.includes('recommend_on');
+    executeClickVote();
 
-    if (!vote) clickVote(), toastAlert({ msg: '추천을 완료하였습니다.' });
-    else {
-        toastAlert({ msg: '추천을 이미 완료하였습니다.' });
         /* if (document.getElementById('viewer-modal')) {
             document.getElementById('viewer-modal').getElementsByClassName('close-x')[0].click();
         } else if (document.getElementById('header_bar').style.display != 'block') {
@@ -69,7 +66,6 @@ keyMappingCa['ep-vote'].system = keyMappingBase(r => {
         } else {
             clickVote();
         } */
-    }
 },
 {
     condition: () => engineChecker('뷰어')

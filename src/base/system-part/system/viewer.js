@@ -104,7 +104,7 @@ viewerCa['click-alert'].system = function(r) {
 
 
 
-viewerCa['dbl-like'].system = function(r) {
+viewerCa['dbl-vote'].system = function(r) {
     let last = {
         time: 0,
         pos: { x: 0, y: 0 }
@@ -121,16 +121,29 @@ viewerCa['dbl-like'].system = function(r) {
         const last_time = now - last.time;
         const dist = Math.hypot(e.clientX - last.pos.x, e.clientY - last.pos.y);
 
-        if (last_time < cooltime && dist < pos_error) {
-            const vote = document.getElementById('btn_episode_vote').src.includes('recommend_on');
-
-            if (!vote) clickVote(), toastAlert({ msg: '추천을 완료하였습니다.' });
-            else toastAlert({ msg: '추천을 이미 완료하였습니다.' });
-        }
+        if (last_time < cooltime && dist < pos_error)
+           executeClickVote();
 
         last.time = now;
         last.pos = { x: e.clientX, y: e.clientY };
     });
+
+    if (r[`${this.key}-plus`]) {
+        targetHandler(
+            () => document.getElementById('novel_drawing'),
+            (target) => targetFunction(target)
+        );
+
+        const targetFunction = (target) => {
+            scriptInjection(`src/base/file/${this.key}-plus.js`);
+            target.outerHTML = target.outerHTML.replace('navi_view();', 'npupNaviView();');
+            const sendData = setInterval(
+                () => window.dispatchEvent(new CustomEvent(npup.event.dbl_vote.send, { detail: { cooltime: cooltime } })),
+                500
+            );
+            window.addEventListener(npup.event.dbl_vote.answer, () => clearInterval(sendData));
+        }
+    }
 
     /* route detector? */
 }

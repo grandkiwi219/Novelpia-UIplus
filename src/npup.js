@@ -96,6 +96,10 @@ const npup = {
 npup.event = {
     load: `${npup.project.name}LoadSuccess`,
     router: `${npup.project.name}RouterEnd`,
+    dbl_vote: {
+        send: `${npup.project.name}DblVoteSend`,
+        answer: `${npup.project.name}DblVoteAnswer`   
+    }
 }
 
 

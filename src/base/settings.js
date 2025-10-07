@@ -181,12 +181,21 @@ npup.options = {
                 },
             },
 
-            'dbl-like': {
+            'dbl-vote': {
                 desc: '두 번 터치(클릭)하여 \'추천\' 누르기',
                 type: {
                     option: 'switch',
                     structure: ['system']
                 },
+                options: {
+                    'dbl-vote-plus': {
+                        desc: '메뉴바 깜빡임 해결 (메뉴바가 늦게 나타남)',
+                        type: {
+                            option: 'switch',
+                            structure: ['system']
+                        },
+                    }
+                }
             },
         }
     },
