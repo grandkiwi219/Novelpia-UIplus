@@ -105,15 +105,39 @@ viewerCa['click-alert'].system = function(r) {
 
 
 viewerCa['dbl-vote'].system = function(r) {
+    let enhanced = {
+        key: `${this.key}-plus`,
+        func: () => {}
+    }
+
+    if (r[enhanced.key]) {
+        targetHandler(
+            () => document.getElementById('novel_drawing'),
+            (target) => targetFunction(target)
+        );
+
+        const targetFunction = (target) => {
+            target.outerHTML = target.outerHTML.replace('navi_view()', '');
+        }
+
+        enhanced.func = () => {
+            clearTimeout(last.clickTimer);
+            last.clickTimer = setTimeout(() => {
+                scriptInjection(`src/base/file/${enhanced.key}.js`);
+            }, cooltime);
+        }
+    }
+
     let last = {
         time: 0,
-        pos: { x: 0, y: 0 }
+        pos: { x: 0, y: 0 },
+        clickTimer: undefined
     }
 
     const cooltime = 180;
     const pos_error = 100;
-
-    document.addEventListener('click', (e) => {
+    
+    const dblVoteEvent = (e) => {
         if (!document.getElementById('novel_box').contains(e.target)) return;
 
         const now = performance.now();
@@ -121,29 +145,23 @@ viewerCa['dbl-vote'].system = function(r) {
         const last_time = now - last.time;
         const dist = Math.hypot(e.clientX - last.pos.x, e.clientY - last.pos.y);
 
-        if (last_time < cooltime && dist < pos_error)
-           executeClickVote();
+        if (last_time < cooltime && dist < pos_error) {
+            clearTimeout(last.clickTimer);
+            resetLast(0);
+            executeClickVote();
+            return;
+        }
 
-        last.time = now;
-        last.pos = { x: e.clientX, y: e.clientY };
-    });
+        resetLast(now);
+        enhanced.func();
 
-    if (r[`${this.key}-plus`]) {
-        targetHandler(
-            () => document.getElementById('novel_drawing'),
-            (target) => targetFunction(target)
-        );
-
-        const targetFunction = (target) => {
-            scriptInjection(`src/base/file/${this.key}-plus.js`);
-            target.outerHTML = target.outerHTML.replace('navi_view();', 'npupNaviView();');
-            const sendData = setInterval(
-                () => window.dispatchEvent(new CustomEvent(npup.event.dbl_vote.send, { detail: { cooltime: cooltime } })),
-                500
-            );
-            window.addEventListener(npup.event.dbl_vote.answer, () => clearInterval(sendData));
+        function resetLast(time) {
+            last.time = time;
+            last.pos = { x: e.clientX, y: e.clientY };
         }
     }
+
+    document.addEventListener('click', dblVoteEvent);
 
     /* route detector? */
 }
