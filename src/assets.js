@@ -2,12 +2,19 @@
  * 불러올 요소가 없을 수도 있을 떄 불러오는 걸 감지해서 핸들을 실행시켜주는 함수
  * @param {function} target 감지할 요소
  * @param {function} handler 실행할 함수
+ * @param {Object} [param2={}] 
+ * @param {boolean} [param2.redetect=false] 재탐지
+ * @param {number} [param2.method=0] 0 = 기본적으로 작동, * = 기본적으로 탐지함
  */
-function targetHandler(targetFinder, handler) {
+function targetHandler(targetFinder, handler, {
+    redetect = false,
+    method = 0
+} = {}) {
     let target = targetFinder();
-    if (target) {
+    if (target && method == 0) {
         tryChecker(() => handler(target), 'targetHandler -> handler', false);
-    } else {
+    }
+    else {
         let target_found = false;
 
         const targetOb = new MutationObserver((mus, ob) => {
@@ -22,7 +29,13 @@ function targetHandler(targetFinder, handler) {
         setTimeout(() => {
             if (!target_found) {
                 targetOb.disconnect();
-                npup.dev(`타겟을 찾는 데에 시간이 오래 걸려 함수 실행을 취소했습니다.`);
+                if (redetect) {
+                    targetHandler(targetFinder, handler);
+                    npup.dev('타겟을 찾지 못하였습니다. 재탐지를 시작합니다.');
+                }
+                else { 
+                    npup.dev(`타겟을 찾는 데에 시간이 오래 걸려 함수 실행을 취소했습니다.`);
+                }
             }
         }, 8 * 1000);
     }

@@ -201,7 +201,7 @@ npup.func.tryChecker = async (func, type, not_engine, ...comment) => {
         npup.error('엔진을 실행할 수 없습니다.\n원인: 함수가 아닙니다.');
         if (npup.debug?.alert) npup.func.toastAlert({
                     title: `오류 발생`,
-                    msg: `${type ? type + space + `${system_type} | `: ''}오류 발생\n원인: ${err}`,
+                    msg: `${type ? `${type} | `: ''}오류 발생\n원인: 함수가 아닙니다.`,
                     type: 'error'
                 });
         return { status: 4, error: '실행할 함수를 찾을 수 없습니다.' };

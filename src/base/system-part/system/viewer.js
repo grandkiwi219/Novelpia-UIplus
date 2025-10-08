@@ -113,11 +113,15 @@ viewerCa['dbl-vote'].system = function(r) {
     if (r[enhanced.key]) {
         targetHandler(
             () => document.getElementById('novel_drawing'),
-            (target) => targetFunction(target)
+            (target) => targetFunction(target),
+            {
+                method: 1,
+                redetect: true
+            }
         );
 
         const targetFunction = (target) => {
-            target.outerHTML = target.outerHTML.replace('navi_view()', '');
+            target.outerHTML = target.outerHTML.replace('onclick', '');
         }
 
         enhanced.func = () => {
