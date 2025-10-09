@@ -111,14 +111,16 @@ viewerCa['dbl-vote'].system = function(r) {
     }
 
     if (r[enhanced.key]) {
-        targetHandler(
-            () => document.getElementById('novel_drawing'),
-            (target) => targetFunction(target),
-            {
-                method: 1,
-                redetect: true
-            }
-        );
+        ['novel_drawing', 'novel_drawing_page_c'].forEach(nd => {
+            targetHandler(
+                () => document.getElementById(nd),
+                (target) => targetFunction(target),
+                {
+                    method: 1,
+                    redetect: true
+                }
+            );
+        })
 
         const targetFunction = (target) => {
             target.outerHTML = target.outerHTML.replace('onclick', '');
@@ -142,6 +144,15 @@ viewerCa['dbl-vote'].system = function(r) {
     const pos_error = 100;
     
     const dblVoteEvent = (e) => {
+        let page_arrow = ['novel_drawing_right', 'novel_drawing_left'];
+
+        for (let i = 0; i < page_arrow.length; i++) {
+            if (
+                document.getElementById(page_arrow[i]) == e.target ||
+                document.getElementById(page_arrow[i]).contains(e.target)
+            ) return;
+        }
+
         if (!document.getElementById('novel_box').contains(e.target)) return;
 
         const now = performance.now();
