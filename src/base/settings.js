@@ -197,6 +197,17 @@ npup.options = {
                     }
                 }
             },
+
+            'scroll-close-menu': {
+                desc: '스크롤시 메뉴바 숨김',
+                type: {
+                    option: 'switch',
+                    structure: ['system']
+                },
+                structure: {
+                    router: true,
+                },
+            },
         }
     },
 
@@ -497,7 +508,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '다음화로 가기 (뷰어)',
+                desc: '(뷰어) 다음화로 가기',
                 type: {
                     option: 'mapping'
                 },
@@ -506,7 +517,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '이전화로 가기 (뷰어)',
+                desc: '(뷰어) 이전화로 가기',
                 type: {
                     option: 'mapping'
                 },
@@ -515,7 +526,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '소설 페이지로 이동 (뷰어)',
+                desc: '(뷰어) 소설 페이지로 이동',
                 type: {
                     option: 'mapping'
                 },
@@ -524,7 +535,16 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '댓글창 열기 (뷰어)',
+                desc: '(뷰어) 댓글창 열기',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'ep-list': {
+                tag: {
+                    quick_mapping_menu: false
+                },
+                desc: '(뷰어) 소설 회차 목록 열기',
                 type: {
                     option: 'mapping'
                 },
@@ -533,7 +553,43 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '추천 누르기 (뷰어)',
+                desc: '(뷰어) 추천 누르기',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'ep-like': {
+                tag: {
+                    quick_mapping_menu: false
+                },
+                desc: '(뷰어) 선호작 등록/취소',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'ep-up': {
+                tag: {
+                    quick_mapping_menu: false
+                },
+                desc: '(뷰어) 위로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'ep-down': {
+                tag: {
+                    quick_mapping_menu: false
+                },
+                desc: '(뷰어) 아래로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'ep-menu': {
+                tag: {
+                    quick_mapping_menu: false
+                },
+                desc: '(뷰어) 메뉴바 열기/닫기',
                 type: {
                     option: 'mapping'
                 },
@@ -576,7 +632,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
             },
         },
         setups: {
-            length: 2
+            length: 3
         }
     },
 

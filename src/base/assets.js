@@ -1,16 +1,55 @@
-function clickDisplay() {
-    document.getElementById('novel_drawing').click();
+function executeVote() {
+    if (!document.getElementById('btn_episode_vote').src.includes('_on')) {
+        document.getElementById('recommend_tap').children[0].click();
+        showIcon(iconFunc);
+    }
+    else {
+        showIcon(iconFunc, true);
+    }
+
+    function iconFunc(on = false) {
+        return `//images.novelpia.com/img/new/viewer/navbar/v2/recommend${on ? '_on' : ''}.svg`;
+    }
 }
 
-function clickVote() {
-    document.getElementById('recommend_tap').children[0].click();
+function executeLike() {
+    const target = document.getElementById('btn_like');
+
+    if (!target.src.includes('_on')) {
+        target.click();
+        showIcon(iconFunc());
+    }
+    else {
+        target.click();
+        showIcon(iconFunc(true));
+    }
+
+    function iconFunc(reverse = false) {
+        return function (on = false) {
+            const willOn = reverse ? (on ? '' : '_on') : (on ? '_on' : '');
+            return `//image.novelpia.com/img/new/viewer/navbar/v2/like${willOn}.svg`
+        }
+    }
 }
 
-function executeClickVote() {
-    const vote = document.getElementById('btn_episode_vote').src.includes('recommend_on');
+function naviView() {
+    return scriptInjection(`src/base/file/novelpia/navi-view.js`);
+}
 
-    if (!vote) clickVote(), showVote();
-    else showVote(true);
+function btnComment2() {
+    return scriptInjection(`src/base/file/novelpia/btn-comment2.js`);
+}
+
+function btnList2() {
+    return scriptInjection(`src/base/file/novelpia/btn-list2.js`);
+}
+
+function movePage(position) {
+    try {
+        return scriptInjection(`src/base/file/novelpia/page-${position}.js`);
+    } catch (error) {
+        return undefined;
+    }
 }
 
 function useMode(name, result, { condition = true, handler = () => {} } = {}) {
@@ -27,35 +66,4 @@ function useMode(name, result, { condition = true, handler = () => {} } = {}) {
     }
 
     toastAlert({ title: name, msg: `${name}가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
-}
-
-async function showVote(already = false) {
-    const vote = document.createElement('div');
-    vote.classList.add('content_memo');
-
-    const vote_icon = document.createElement('img');
-    vote_icon.src = already ? voteIcon(true) : voteIcon();
-    vote_icon.classList.add('npup-vote-icon');
-
-    vote.appendChild(vote_icon);
-    document.body.appendChild(vote);
-
-    await setDelay(100);
-    vote_icon.classList.add('show');
-    vote_icon.classList.add('down');
-    await setDelay(400);
-    if (!already) vote_icon.src = voteIcon(true);
-    vote_icon.classList.add('up');
-    await setDelay(400);
-    vote_icon.classList.remove('show');
-    await setDelay(200);
-    vote.remove();
-
-    function voteIcon(on = false) {
-        return `//images.novelpia.com/img/new/viewer/navbar/v2/recommend${on ? '_on' : ''}.svg`;
-    }
-}
-
-async function setDelay(time) {
-    return await new Promise(r => setTimeout(r, time));
 }

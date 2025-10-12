@@ -163,26 +163,3 @@ html[npup-bottom-nav] {
         bottom: 60px;
     } */
 }
-
-/* 
-bottom-heart-alarm
-*/
-html[npup-bottom-heart-alarm],
-html[npup-origin-header],
-html[npup-bottom-nav] {
-
-    /* 10px is margin */
-    --npup-ep-li-al-width: calc(var(--npup-ep-width) + 10px + 44px + 10px + 44px);
-
-    .btn-view-episode {
-        left: calc(50% - ((var(--npup-ep-li-al-width) / 2) - (var(--npup-ep-width) / 2)));
-    }
-
-    .sbm-icon-menu.btn-view-episode:has(.sbm_icon_alert) {
-        left: calc(50% + ((var(--npup-ep-li-al-width) / 2) - 22px));
-    }
-
-    .sbm-icon-menu.btn-view-episode:has(.sbm_icon_heart) {
-        left: calc(50% + ((var(--npup-ep-li-al-width) / 2) - (22px + 10px + 44px)));
-    }
-}

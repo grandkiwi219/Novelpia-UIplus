@@ -9,12 +9,12 @@ Object.values(npup.options).forEach(ca => {
         tools.push(toolsStructure(...tools_childs));
     });
 
-    let tool_box = toolBox(ca.name, { icon: ca.icon, icon_svg: ca.icon_svg }, ca.settings, ca.setups, ...tools);
+    let tool_box = toolBox(ca.key, ca.name, { icon: ca.icon, icon_svg: ca.icon_svg }, ca.settings, ca.setups, ...tools);
 
     document.getElementById('waiting').insertAdjacentElement('beforebegin', tool_box);
 });
 
-function toolBox(name, { icon = '🥝', icon_svg = null } = {}, settings = {}, setups_param, ...node) {
+function toolBox(key, name, { icon = '🥝', icon_svg = null } = {}, settings = {}, setups_param, ...node) {
     let setups = {
         length: 1
     }
@@ -28,12 +28,6 @@ function toolBox(name, { icon = '🥝', icon_svg = null } = {}, settings = {}, s
         tool_box.setAttribute(r, settings[r]);
     });
 
-    if (Math.ceil(setups.length) > 1) 
-        Object.assign(tool_box.style, {
-            height: `calc(var(--template-rows-size) * ${setups.length} + var(--box-grid-row-gap) * ${setups.length - 1})`,
-            gridRow: `auto / span ${Math.ceil(setups.length)}`
-        });
-
     let tool_icon = icon_svg ? `<img src="${icon_svg}" alt="${icon}">&nbsp;` : icon;
     let tool_headline_structure = ` ${tool_icon} ${name} 설정`;
 
@@ -41,16 +35,114 @@ function toolBox(name, { icon = '🥝', icon_svg = null } = {}, settings = {}, s
     tool_headline.classList.add('tools-headline');
     tool_headline.insertAdjacentHTML('afterbegin', tool_headline_structure);
 
-    const tool_warp = document.createElement('div');
-    tool_warp.classList.add('tools-wrap');
+    const tool_options_wrap = document.createElement('div');
+    tool_options_wrap.classList.add('tools-options-wrap');
+
+    const tool_options = document.createElement('div');
+    tool_options.classList.add('tools-options');
 
     node.forEach(r => {
         if (!r) return;
-        tool_warp.appendChild(r);
+        tool_options.appendChild(r);
     });
 
+    tool_options_wrap.appendChild(tool_options);
+
+    if (Math.ceil(setups.length) > 1) {
+        const type_key = `${document.documentElement.getAttribute('type')}-${key}`;
+
+        const folding_btn = document.createElement('button');
+        folding_btn.classList.add('tools-headline-folding-btn');
+        folding_btn.classList.add('header-button');
+
+        folding_btn.innerHTML = ''
+            + `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">`
+                + `<path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`
+            + `</svg>`;
+
+        tool_headline.appendChild(folding_btn);
+
+        setFoldingState();
+
+        folding_btn.addEventListener('click', () => {
+            const data = getFoldingData();
+
+            if (data.includes(type_key)) removeFoldingData();
+            else insertFoldingData();
+
+            setFoldingState();
+        });
+
+
+
+        function getFoldingData() {
+            let fold_data = [];
+
+            try {
+                fold_data = JSON.parse(localStorage['fold']);
+                console.log(fold_data)
+            } catch (error) {}
+
+            if (!Array.isArray(fold_data)) fold_data = [];
+
+            return fold_data;
+        }
+
+        function setFoldingData(data) {
+            try {
+                localStorage['fold'] = JSON.stringify(data);
+            } catch (error) {}
+        }
+
+        function insertFoldingData() {
+            let data = getFoldingData();
+
+            if (!data.includes(type_key)) {
+                data.push(type_key);
+                setFoldingData(data);
+            }
+        }
+
+        function removeFoldingData() {
+            let data = getFoldingData();
+            const index = data.indexOf(type_key);
+
+            if (data.includes(type_key)) {
+                data.splice(index, 1);
+                setFoldingData(data);
+            }
+        }
+
+        function setFoldingState() {
+            const folding = getFoldingData();
+
+            if (folding.includes(type_key)) {
+                folding_btn.childNodes[0].style = ''; // 열기
+                setNormalLength();
+            }
+            else {
+                folding_btn.childNodes[0].style = 'transform: scaleY(-1);'; // 닫기
+                setLength();
+            }
+        }
+
+        function setLength() {
+            tool_box.style = '';
+            Object.assign(tool_box.style, {
+                height: `calc(var(--template-rows-size) * ${setups.length} + var(--box-grid-row-gap) * ${setups.length - 1})`,
+                gridRow: `auto / span ${Math.ceil(setups.length)}`
+            });
+            tool_options_wrap.style = '';
+        }
+
+        function setNormalLength() {
+            tool_box.style = '';
+            tool_options_wrap.style = 'overflow: auto;';
+        }
+    }
+
     tool_box.appendChild(tool_headline);
-    tool_box.appendChild(tool_warp);
+    tool_box.appendChild(tool_options_wrap);
 
     return tool_box;
 }

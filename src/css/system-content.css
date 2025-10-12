@@ -1274,7 +1274,7 @@ selector
 dbl vote css
 */
 
-.npup-vote-icon {
+.npup-show-icon {
     --npup-vote-icon-size: 28px;
 
     width: var(--npup-vote-icon-size);

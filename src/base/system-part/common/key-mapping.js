@@ -18,58 +18,47 @@ keyMappingCa['quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, comi
 });
 
 
+const isViewer = { condition: () => engineChecker('뷰어') }
+
 keyMappingCa['after-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-next-item')[0].click();
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+}, isViewer);
 
 keyMappingCa['before-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-bottom-item')[0].click();
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+}, isViewer);
 
 keyMappingCa['ep-home'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-top-home')[0].click();
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+}, isViewer);
 
 keyMappingCa['ep-comment'].system = keyMappingBase(r => {
-    if (document.getElementById('header_bar').style.display != 'block')
-        clickDisplay();
+    btnComment2();
+}, isViewer);
 
-    let comment_display = false;
-    if (document.getElementById('comment_box').style.display != 'none')
-        comment_display = true;
-
-    if (typeof html.getAttribute(`${npup.project.prefix.css}old-icon`) == 'string')
-        document.getElementsByClassName('comment-ep')[0].click();
-    else 
-        document.getElementsByClassName('menu-bottom-item')[3].click();
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+keyMappingCa['ep-list'].system = keyMappingBase(r => {
+    btnList2();
+}, isViewer);
 
 keyMappingCa['ep-vote'].system = keyMappingBase(r => {
-    executeClickVote();
+    executeVote();
+}, isViewer);
 
-        /* if (document.getElementById('viewer-modal')) {
-            document.getElementById('viewer-modal').getElementsByClassName('close-x')[0].click();
-        } else if (document.getElementById('header_bar').style.display != 'block') {
-            clickVote(), document.getElementById('novel_drawing').click();
-        } else {
-            clickVote();
-        } */
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+keyMappingCa['ep-like'].system = keyMappingBase(r => {
+    executeLike();
+}, isViewer);
+
+keyMappingCa['ep-up'].system = keyMappingBase(r => {
+    movePage('up');
+}, isViewer);
+
+keyMappingCa['ep-down'].system = keyMappingBase(r => {
+    movePage('down');
+}, isViewer);
+
+keyMappingCa['ep-menu'].system = keyMappingBase(r => {
+    naviView();
+}, isViewer);
 
 keyMappingCa['move-mb'].system = keyMappingBase(async r => {
     let where_href;

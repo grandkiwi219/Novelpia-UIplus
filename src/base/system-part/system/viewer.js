@@ -126,10 +126,12 @@ viewerCa['dbl-vote'].system = function(r) {
             target.outerHTML = target.outerHTML.replace('onclick', '');
         }
 
-        enhanced.func = () => {
+        enhanced.func = (target) => {
+            if (document.getElementById('novel_box') == target) return;
+
             clearTimeout(last.clickTimer);
             last.clickTimer = setTimeout(() => {
-                scriptInjection(`src/base/file/${enhanced.key}.js`);
+                naviView();
             }, cooltime);
         }
     }
@@ -144,14 +146,12 @@ viewerCa['dbl-vote'].system = function(r) {
     const pos_error = 100;
     
     const dblVoteEvent = (e) => {
-        let page_arrow = ['novel_drawing_right', 'novel_drawing_left'];
-
-        for (let i = 0; i < page_arrow.length; i++) {
-            if (
-                document.getElementById(page_arrow[i]) == e.target ||
-                document.getElementById(page_arrow[i]).contains(e.target)
-            ) return;
-        }
+        if (
+            document.getElementById('novel_drawing_right') == e.target ||
+            document.getElementById('novel_drawing_right').contains(e.target) ||
+            document.getElementById('novel_drawing_left') == e.target ||
+            document.getElementById('novel_drawing_left').contains(e.target)
+        ) return;
 
         if (!document.getElementById('novel_box').contains(e.target)) return;
 
@@ -162,13 +162,13 @@ viewerCa['dbl-vote'].system = function(r) {
 
         if (last_time < cooltime && dist < pos_error) {
             clearTimeout(last.clickTimer);
-            resetLast(0);
-            executeClickVote();
+            resetLast(-cooltime);
+            executeVote();
             return;
         }
 
         resetLast(now);
-        enhanced.func();
+        enhanced.func(e.target);
 
         function resetLast(time) {
             last.time = time;
@@ -177,6 +177,17 @@ viewerCa['dbl-vote'].system = function(r) {
     }
 
     document.addEventListener('click', dblVoteEvent);
+
+    /* route detector? */
+}
+
+
+
+viewerCa['scroll-close-menu'].system = function(r) {
+    targetHandler(
+        () => document.getElementById('novel_box'),
+        () => scriptInjection(`src/base/file/close-navi-view.js`)
+    );  
 
     /* route detector? */
 }

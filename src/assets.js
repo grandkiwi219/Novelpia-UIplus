@@ -2,9 +2,9 @@
  * 불러올 요소가 없을 수도 있을 떄 불러오는 걸 감지해서 핸들을 실행시켜주는 함수
  * @param {function} target 감지할 요소
  * @param {function} handler 실행할 함수
- * @param {Object} [param2={}] 
- * @param {boolean} [param2.redetect=false] 재탐지
- * @param {number} [param2.method=0] 0 = 기본적으로 작동, * = 기본적으로 탐지함
+ * @param {Object} [setup={}] 
+ * @param {boolean} [setup.redetect=false] 재탐지
+ * @param {number} [setup.method=0] 0 = 기본적으로 작동, * = 기본적으로 탐지함
  */
 function targetHandler(targetFinder, handler, {
     redetect = false,
@@ -221,6 +221,8 @@ function customCssAsset() {
         }, '커스텀', 'css', style);
     }
 }
+
+
 
 /* !keyMappingCa! */
 /**
@@ -461,4 +463,49 @@ function quickMappingMenuAsset(engineCallback = () => false) {
             document.removeEventListener('keydown', menuEsc);
         });
     }
+}
+
+
+
+/**
+ * 상단에서부터 살짝 내려온 뒤 위로 튕기는 애니메이션을 지닌 아이콘을 보이는 함수
+ * @param {function(on: boolean)} iconFunc 꺼져 있는 아이콘과 켜져 있는 아이콘을 출력시킬 수 있는 함수
+ * @param {boolean} already 아이콘의 상태가 켜져있어야 하는가
+ */
+async function showIcon(
+    iconFunc = (on = false) => '//images.novelpia.com/img/new/header/icon_alert.svg',
+    already = false
+) {
+    const vote = document.createElement('div');
+    vote.classList.add('content_memo');
+
+    const vote_icon = document.createElement('img');
+    vote_icon.src = already ? iconFunc(true) : iconFunc();
+    vote_icon.classList.add('npup-show-icon');
+
+    vote.appendChild(vote_icon);
+    document.body.appendChild(vote);
+
+    await setDelay(100);
+    vote_icon.classList.add('show');
+    vote_icon.classList.add('down');
+    await setDelay(400);
+    if (!already) vote_icon.src = iconFunc(true);
+    vote_icon.classList.add('up');
+    await setDelay(400);
+    vote_icon.classList.remove('show');
+    await setDelay(200);
+    vote.remove();
+
+    return true;
+}
+
+
+
+/**
+ * 함수 내에서 지연하기 위한 간단한 함수
+ * @param {number} time 지연 시간
+ */
+async function setDelay(time) {
+    return await new Promise(r => setTimeout(r, time));
 }

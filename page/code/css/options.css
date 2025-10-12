@@ -19,7 +19,12 @@
     /* --template-rows-size: 233px; */
     /* --template-rows-size: 283px; */
     --template-rows-size: 300px;
+    --tools-headline-height: 47px;
+    --tools-headline-side-padding: 13px;
     --tools-headline-color: rgba(233, 233, 255, 0.4);
+    --tools-options-height: calc(var(--template-rows-size) - var(--tools-headline-height));
+    --tools-options-vertical-padding: 8px;
+    --tools-options-side-padding: 20px;
     --theme-transition-speed: .4s;
     --theme-header-transition-speed: .26s;
     --theme-header-transition: background-color var(--theme-header-transition-speed);
@@ -343,7 +348,7 @@ header > .container {
     justify-content: center;
     align-items: center;
     border-radius: 7px;
-    background-color: var(--background-color);
+    background-color: rgba(0, 0, 0, 0);
     user-select : none;
     transition: var(--theme-header-transition), border .24s;
 }
@@ -435,15 +440,16 @@ button.header-button {
 .tools-headline {
     box-sizing: border-box;
     width: 100%;
-    height: 47px;
-    padding: 0px 13px;
-    line-height: 47px;
+    height: var(--tools-headline-height);
+    padding: 0px var(--tools-headline-side-padding);
+    line-height: var(--tools-headline-height);
     background-color: var(--tools-headline-color);
     /*border-radius: 7px 7px 0 0;*/
     font-family: var(--head-font);
     font-size: 20px;
     font-weight: normal; /* for firefox */
     user-select : none;
+    position: relative;
     /*position: sticky;
     top: 0;*/
 }
@@ -453,11 +459,23 @@ button.header-button {
     vertical-align: middle;
 }
 
-.tools-wrap {
-    width: calc(100% - 40px);
-    height: calc(var(--template-rows-size) - 63px);
-    padding: 8px 20px;
-    /*overflow: auto;*/
+.tools-headline-folding-btn {
+    position: absolute;
+    top: 50%;
+    right: var(--tools-headline-side-padding);
+    transform: translateY(-50%);
+}
+
+.tools-options-wrap {
+    width: 100%;
+    height: var(--tools-options-height);
+}
+
+.tools-options {
+    width: calc(100% - (2 * var(--tools-options-side-padding)));
+    height: fit-content;
+    min-height: calc(100% - (2 * var(--tools-options-vertical-padding)));
+    padding: var(--tools-options-vertical-padding) var(--tools-options-side-padding);
 }
 
 .tools-child, .tools-main, .tools-sub {
@@ -711,11 +729,12 @@ html[dark=true] .selector {
 .text-area {
     --textarea-transition-speed: .3s;
     --textarea-transition-slow-speed: 1.2s;
+    --textarea-vertical-padding: 8px;
 
     box-sizing: border-box;
     width: 100%;
-    height: 100%;
-    padding: 8px 0;
+    height: calc(var(--tools-options-height) - (2 * var(--textarea-vertical-padding)));
+    padding: var(--textarea-vertical-padding) 0;
 }
 
 .text-area-wrap {

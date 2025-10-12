@@ -192,25 +192,28 @@ mobileCa['origin-header'].system = function(r) {
 
 
 mobileCa['bottom-heart-alarm'].system = function(r) {
-    if (pathChecker('/novel/'))
+    const target = () => document.querySelector('.btn-view-episode');
+
+    if (pathChecker('/novel/')) {
         new MutationObserver((mus, ob) => {
-            const continue_ep = document.querySelector('.btn-view-episode');
+            const continue_ep = target();
         
             if (!continue_ep) return;
 
             ob.disconnect();
 
-            setBottomHeartAlarm(continue_ep);
+            checkStyleSetup(continue_ep);
         }).observe(document.body, observer_setup);
+    }
     else if (pathChecker('/comic_episode/'))
         new MutationObserver((mus, ob) => {
-            const continue_ep = document.querySelector('.btn-view-episode');
+            const continue_ep = target();
 
             if (!continue_ep) return;
 
             ob.disconnect();
             
-            setBottomHeartAlarm(continue_ep, true);
+            checkStyleSetup(continue_ep, true);
 
             let is_changed = false;
 
@@ -219,10 +222,10 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
 
                 ob2.disconnect();
 
-                setBottomHeartAlarm(document.querySelector('.btn-view-episode'), true);
+                checkStyleSetup(target(), true);
             });
             
-            continueObserver.observe(document.querySelector('.btn-view-episode'), observer_setup);
+            continueObserver.observe(target(), observer_setup);
 
             const continueInterval = setInterval(() => {
                 if (document.querySelector('.loads').style.display != 'none') return;
@@ -240,34 +243,49 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
     else
         return;
 
-    /* 위치 속성은 css에서 / bottom-like-alarm 참고 */
+
+    const style_id = `${npup.project.prefix.css}${this.key}`;
+
+    const icon = {
+        size: 22,
+        gap: 10,
+    }
+
+    let el_data = {
+        size: 0,
+        border: 0,
+    }
+
+    /**
+     * bottom-heart-alarm system 함수 이전 스타일 함수
+     * @param {Element} continue_ep 측정할 이어보기 html 요소
+     * @param {boolean} comic 웹만화인가
+     */
+    function checkStyleSetup(continue_ep, comic = false) {
+        const ep_width = continue_ep.offsetWidth || 0;
+
+        if (ep_width != 0) {    // display: none;
+            setAllSetup(continue_ep);
+        }
+        else {
+            if (!comic)
+                widthObserver(continue_ep, style_id);
+            else
+                widthComicObserver(continue_ep, style_id);
+        }
+    }
 
     /**
      * bottom-heart-alarm system 함수
      * @param {Element} continue_ep 측정할 이어보기 html 요소
-     * @param {boolean} comic 웹만화인가
      */
-    const setBottomHeartAlarm = (continue_ep, comic = false) => {
+    function setBottomHeartAlarm(continue_ep) {
         const bottom_button = 'btn-view-episode';
-        const inner_style = 'width: 40px; height: 44px; padding: 11px 0;';
+        const inner_size = el_data.size - (2 * el_data.border);
+        const inner_style = `width: ${inner_size}px; height: ${inner_size}px; padding: ${(inner_size - icon.size) / 2}px 0;`;
 
         let like = document.getElementsByClassName('sbm_icon_heart')[0].parentElement.cloneNode(true);
         let alarm = document.getElementsByClassName('sbm_icon_alert')[0].parentElement.cloneNode(true);
-
-        const ep_width = continue_ep.offsetWidth/* getBoundingClientRect().width */;
-        let style = document.createElement('style');
-        style.id = `${npup.project.prefix.css}${this.key}`
-
-        if (ep_width != 0) {    // display: none;
-            style.insertAdjacentHTML('afterbegin', epWidth(ep_width));
-            document.head.appendChild(style);
-        }
-        else {
-            if (!comic)
-                widthObserver(continue_ep, style);
-            else
-                widthComicObserver(continue_ep, style);
-        }
 
         [like, alarm].forEach(el => {
             el.classList.add(bottom_button);
@@ -279,89 +297,119 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
             continue_ep.insertAdjacentElement('afterend', el);
         });
     }
-}
 
+    /**
+     * 이어보기 크기 style 값
+     * @param {number} ep_width 이어보기 크기
+     * @returns {string} style 값
+     */
+    function epWidth(ep_width) {
+        const el_li_al = ep_width + icon.gap + el_data.size + icon.gap + el_data.size;
 
+        return '/* bottom-heart-alarm */'
+            + `html[npup-bottom-heart-alarm], html[npup-origin-header], html[npup-bottom-nav] {`
+                + `.btn-view-episode {`
+                    + `left: calc(50% - ((${el_li_al}px / 2) - (${ep_width}px / 2)));`
+                + `}`
 
-/**
- * 이어보기 크기 style 값
- * @param {number} ep_width 이어보기 크기
- * @returns {string} style 값
- */
-function epWidth(ep_width) {
-    return ':root {'
-        + `--${npup.project.prefix.css}ep-width: ${ep_width}px;`
-    + '}';
-}
+                + `.sbm-icon-menu.btn-view-episode:has(.sbm_icon_alert) {`
+                    + `left: calc(50% + ((${el_li_al}px / 2) - (${el_data.size / 2}px)));`
+                + `}`
 
-/**
- * 대형화면에서 시작해서 이어보기 크기가 display: none; 상태에서 width가 0이 되어 불편하게 보이는 것을 방지
- * @param {Element} continue_ep 측정할 이어보기 html 요소
- * @param {HTMLStyleElement} style 미리 생성해놓은 style 노드
- */
-function widthObserver(continue_ep, style) {
-    const widthOb = new MutationObserver((mus, ob) => {
-        if (window.innerWidth > 891) return;
+                + `.sbm-icon-menu.btn-view-episode:has(.sbm_icon_heart) {`
+                    + `left: calc(50% + ((${el_li_al}px / 2) - (${el_data.size / 2}px + ${icon.gap}px + ${el_data.size}px)));`
+                + `}`
+            + `}`;
 
-        ob.disconnect();
-
-        setWidth(continue_ep, style)
-    });
-    widthOb.observe(document.body, { ...observer_setup, attributes: true });
-
-    removeEvent(() => {
-        widthOb.disconnect();
-    });
-}
-
-let width_comic_observer = undefined;
-let width_comic_remove_observer = undefined;
-
-/**
- * 대형화면에서 시작해서 이어보기 크기가 display: none; 상태에서 width가 0이 되어 불편하게 보이는 것을 방지
- * @param {Element} continue_ep 측정할 이어보기 html 요소
- * @param {HTMLStyleElement} style 미리 생성해놓은 style 노드
- */
-function widthComicObserver(continue_ep, style) {
-    if (width_comic_observer) {
-        window.removeEventListener('resize', width_comic_observer);
-        width_comic_observer = undefined;
-        window.removeEventListener(npup.event.router, width_comic_remove_observer);
-        width_comic_remove_observer = undefined;
+        /* ':root {'
+            + `--${npup.project.prefix.css}ep-width: ${ep_width}px;`
+        + '}'; */
     }
 
-    if (window.innerWidth > 891) {
-        width_comic_observer = function resizeListener() {
-            if (window.innerWidth <= 891) {
-                setWidth(continue_ep, style);
-                window.removeEventListener('resize', width_comic_observer);
-                width_comic_observer = undefined;
-            }
-        }
+    /**
+     * 대형화면에서 시작해서 이어보기 크기가 display: none; 상태에서 width가 0이 되어 불편하게 보이는 것을 방지
+     * @param {Element} continue_ep 측정할 이어보기 html 요소
+     */
+    function widthObserver(continue_ep) {
+        const widthOb = new MutationObserver((mus, ob) => {
+            if (window.innerWidth > 891) return;
 
-        window.addEventListener('resize', width_comic_observer);
+            ob.disconnect();
 
-        width_comic_remove_observer = function routerResizeRemove() {
+            setAllSetup(continue_ep);
+        });
+        widthOb.observe(document.body, { ...observer_setup, attributes: true });
+
+        removeEvent(() => {
+            widthOb.disconnect();
+        });
+    }
+
+    let width_comic_observer = undefined;
+    let width_comic_remove_observer = undefined;
+
+    /**
+     * 대형화면에서 시작해서 이어보기 크기가 display: none; 상태에서 width가 0이 되어 불편하게 보이는 것을 방지
+     * @param {Element} continue_ep 측정할 이어보기 html 요소
+     */
+    function widthComicObserver(continue_ep) {
+        if (width_comic_observer) {
             window.removeEventListener('resize', width_comic_observer);
+            width_comic_observer = undefined;
             window.removeEventListener(npup.event.router, width_comic_remove_observer);
+            width_comic_remove_observer = undefined;
         }
 
-        window.addEventListener(npup.event.router, width_comic_remove_observer);
+        if (window.innerWidth > 891) {
+            width_comic_observer = function resizeListener() {
+                if (window.innerWidth <= 891) {
+                    setAllSetup(continue_ep, style_id);
+                    window.removeEventListener('resize', width_comic_observer);
+                    width_comic_observer = undefined;
+                }
+            }
+
+            window.addEventListener('resize', width_comic_observer);
+
+            width_comic_remove_observer = function routerResizeRemove() {
+                window.removeEventListener('resize', width_comic_observer);
+                window.removeEventListener(npup.event.router, width_comic_remove_observer);
+            }
+
+            window.addEventListener(npup.event.router, width_comic_remove_observer);
+        }
+        else
+            setWidth(continue_ep, style_id);
     }
-    else
-        setWidth(continue_ep, style);
+
+    /**
+     * 이이보기 크기 style 삽입
+     * @param {Element} continue_ep 측정할 이어보기 html 요소
+     * @param {HTMLStyleElement} style 미리 생성해놓은 style 노드
+     */
+    function setAllSetup(continue_ep) {
+        setEpData(continue_ep);
+
+        setBottomHeartAlarm(continue_ep);
+        
+        const ep_width = continue_ep.getBoundingClientRect()?.width || 0;
+
+        return styleInjection(style_id, epWidth(ep_width));
+    }
+
+    /**
+     * 에피소드 이어보기 버튼 크기 데이터 추출
+     */
+    function setEpData(el) {
+        el_data = {
+            size: el.offsetHeight,
+            border: (el.offsetHeight - el.clientHeight) / 2
+        }
+    }
 }
 
-/**
- * 이이보기 크기 style 삽입
- * @param {Element} continue_ep 측정할 이어보기 html 요소
- * @param {HTMLStyleElement} style 미리 생성해놓은 style 노드
- */
-function setWidth(continue_ep, style) {
-    const ep_width = continue_ep.getBoundingClientRect().width;
 
-    style.insertAdjacentHTML('afterbegin', epWidth(ep_width)), document.head.appendChild(style);
-}
+
 
 
 
