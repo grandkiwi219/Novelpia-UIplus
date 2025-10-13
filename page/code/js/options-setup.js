@@ -80,7 +80,6 @@ function toolBox(key, name, { icon = '🥝', icon_svg = null } = {}, settings = 
 
             try {
                 fold_data = JSON.parse(localStorage['fold']);
-                console.log(fold_data)
             } catch (error) {}
 
             if (!Array.isArray(fold_data)) fold_data = [];

@@ -695,6 +695,7 @@ toast alert
 
 .npup-alert-box {
     --npup-alert-el-bgc: var(--novelpia-color);
+    --npup-alert-el-transition-speed: .4s; 
 
     box-sizing: border-box;
     width: 300px;
@@ -711,7 +712,7 @@ toast alert
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    transition: width 0.4s;
+    transition: width var(--npup-alert-el-transition-speed), opacity var(--npup-alert-el-transition-speed);
 
     &.active {
         opacity: 80%;

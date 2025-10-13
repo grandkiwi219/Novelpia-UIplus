@@ -29,7 +29,10 @@ STRUCTURE.PRE_COMMON.ENGINE.setAdditionalExecution(() => {
         }   
     }
     
-    if (books_dark_result) html.classList.add(books_dark.id);
+    if (books_dark_result) {
+        html.classList.add(books_dark.id);
+        setBooksDarkTheme('#000');
+    }
 
     removeEventForEngine(() => {
         let books_dark_result;
@@ -52,5 +55,6 @@ STRUCTURE.PRE_COMMON.ENGINE.setAdditionalExecution(() => {
         if (books_dark_result) return;
         
         html.classList.remove(books_dark.id);
+        setBooksDarkTheme('#fff');
     });
 });

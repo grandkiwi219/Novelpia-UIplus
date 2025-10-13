@@ -62,11 +62,6 @@ keyMappingCa['books-move-mb'].system = keyMappingBase(async r => {
     window.dispatchEvent(new PopStateEvent('popstate'));
 });
 
-
-let books_dark = {
-    id: `${npup.project.prefix.css}books-dark`
-}
-
 keyMappingCa['books-page-dark'].system = keyMappingBase(r => {
     const result = setBooksDark('페이지', 'npup_books_page_dark');
     if (!engineChecker('페이지')) toastAlert({ title: '다크모드', msg: `다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
@@ -76,27 +71,3 @@ keyMappingCa['books-viewer-dark'].system = keyMappingBase(r => {
     const result = setBooksDark('뷰어', 'npup_books_viewer_dark');
     if (!engineChecker('뷰어')) toastAlert({ title: '뷰어 다크모드', msg: `뷰어 다크모드가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
 });
-
-
-function setBooksDark(engine_name, local_key) {
-    let result;
-
-    try {
-        result = JSON.parse(localStorage.getItem(local_key));
-    } catch (e) {
-        result = false;
-    }
-
-    if (result) {
-        if (engineChecker(engine_name)) {
-            html.classList.remove(books_dark.id);
-        }
-        localStorage.removeItem(local_key);
-    }
-    else {
-        if (engineChecker(engine_name)) html.classList.add(books_dark.id);
-        localStorage.setItem(local_key, JSON.stringify(!result));
-    }
-
-    return !result;
-}

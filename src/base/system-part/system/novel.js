@@ -37,69 +37,72 @@ novelCa['novel-page'].system = function(r) {
 
         handler();
     }).observe(document.body, observer_setup);
-}
 
 
-function novelPageItem(findTarget = () => undefined) {
-    const target = findTarget();
 
-    if (!target) return npup.error('페이지 아이템을 표시할 위치를 확인할 수 없습니다.');
+    const novelPageItem = (findTarget = () => undefined) => {
+        const target = findTarget();
 
-    const page_items_tmp = document.querySelectorAll('div.d-flex.align-items-center.justify-content-center');
-    const page_items = page_items_tmp[page_items_tmp.length - 1].cloneNode(true);
-    page_items.style = 'border-top: 1px solid #EFEFEF; height: 80px';
-    page_items.classList.add(`${npup.project.prefix.css}${this.key}`);
+        if (!target) return npup.error('페이지 아이템을 표시할 위치를 확인할 수 없습니다.');
 
-    const remained_page_item = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}`)[0];
+        const page_items_tmp = document.querySelectorAll('div.d-flex.align-items-center.justify-content-center');
+        const page_items = page_items_tmp[page_items_tmp.length - 1].cloneNode(true);
+        page_items.style = 'border-top: 1px solid #EFEFEF; height: 80px';
+        page_items.classList.add(`${npup.project.prefix.css}${this.key}`);
 
-    if (remained_page_item) remained_page_item.replaceWith(page_items);
-    else target.insertAdjacentElement('beforebegin', page_items);
+        const remained_page_item = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}`)[0];
 
-    const page_selector_tmp = document.getElementsByClassName('select_episode_box');
-    if (page_selector_tmp[0]) {
-        const page_selector = page_selector_tmp[page_selector_tmp.length - 1].cloneNode(true);
-        page_selector.style = 'margin-bottom: 20px;';
-    
-        //const remained_page_selector = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}-selector`)[0];
+        if (remained_page_item) remained_page_item.replaceWith(page_items);
+        else target.insertAdjacentElement('beforebegin', page_items);
 
-        //if (remained_page_selector) remained_page_selector.replaceWith(page_selector); else
-        target.insertAdjacentElement('beforebegin', page_selector);
-    }
+        const page_selector_tmp = document.getElementsByClassName('select_episode_box');
+        if (page_selector_tmp[0]) {
+            const page_selector = page_selector_tmp[page_selector_tmp.length - 1].cloneNode(true);
+            page_selector.style = 'margin-bottom: 20px;';
 
-    function novelPageItemEsc(e) {
-        if (e.key == 'Escape') {
-            const target = document.getElementsByClassName(`select_episode_box`);
-            for (let i = 0; i < target.length; i++)
-                target[i].style.display = 'none';
+            //const remained_page_selector = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}-selector`)[0];
+
+            //if (remained_page_selector) remained_page_selector.replaceWith(page_selector); else
+            target.insertAdjacentElement('beforebegin', page_selector);
         }
+
+        function novelPageItemEsc(e) {
+            if (e.key == 'Escape') {
+                const target = document.getElementsByClassName(`select_episode_box`);
+                for (let i = 0; i < target.length; i++)
+                    target[i].style.display = 'none';
+            }
+        }
+
+        document.addEventListener('keydown', novelPageItemEsc);
+
+        removeEvent(() => {
+            document.removeEventListener('keydown', novelPageItemEsc);
+        });
     }
 
-    document.addEventListener('keydown', novelPageItemEsc);
+    function dynamicNovelPageItem(findTarget = () => undefined) {
+        const target = document.getElementById('episode_list');
 
-    removeEvent(() => {
-        document.removeEventListener('keydown', novelPageItemEsc);
-    });
-}
-    
-function dynamicNovelPageItem(findTarget = () => undefined) {
-    const target = document.getElementById('episode_list');
+        const obs = new MutationObserver((mus, ob) => {
+            if (mus[0].target.classList.contains('episode_count_view')) return;
 
-    const obs = new MutationObserver((mus, ob) => {
-        if (mus[0].target.classList.contains('episode_count_view')) return;
+            ob.disconnect();
 
-        ob.disconnect();
+            novelPageItem(findTarget);
 
-        novelPageItem(findTarget);
+            obs.observe(target, observer_setup);
+        });
 
         obs.observe(target, observer_setup);
-    });
 
-    obs.observe(target, observer_setup);
-
-    removeEvent(() => {
-        obs.disconnect();
-    });
+        removeEvent(() => {
+            obs.disconnect();
+        });
+    }
 }
+
+
 
 novelCa['novel-notice-close'].system = function(r) {
     if (!pathChecker(['/novel/', '/collect_novel/'])) return;
