@@ -9,38 +9,55 @@ novelCa['novel-page'].system = function(r) {
 
         if (pathChecker('/novel/')) {
             target = () => document.getElementById('episode_table');
-            attachTarget = () => document.getElementById('episode_table');
+            attachTarget = target;
         }
         else if (pathChecker('/collect_novel/')) {
             target = () => document.querySelector('div.d-flex.align-items-center.justify-content-center');
             attachTarget = () => document.getElementById('episode_list');
         }
-        else return;
+        else
+            return;
 
         handler = () => {
             novelPageItem(attachTarget);
-            dynamicNovelPageItem(attachTarget);
+            dynamicNovelPageItem(
+                () => document.getElementById('episode_list'),
+                attachTarget
+            );
         }
     }
-    /* else if (engineChecker('뷰어')) {
-        target = () => document.getElementById('list_box');
+    else if (engineChecker('뷰어') && location.hash == '#lists') {
+        target = () => document.getElementById('episode_table');
         handler = () => {
-            console.log('hi')
+            novelPageItem(target);
+            dynamicNovelPageItem(
+                () => document.getElementById('episode_list_viewer'),
+                () => document.getElementById('episode_table')
+            );
         }
-    } */
-    else return;
+    }
+    else
+        return;
 
-    new MutationObserver((mus, ob) => {
-        if (!target()) return;
+    const np_key = `${npup.project.prefix.css}${this.key}`;
 
-        ob.disconnect();
+    let select_episode = undefined;
 
-        handler();
-    }).observe(document.body, observer_setup);
+    targetHandler(
+        target,
+        () => {
+            handler();
+            select_episode = scriptInjection('src/base/file/select-episode.js');
+        },
+        {
+            redetect: 2,
+            duration: 1.2 * 1000
+        }
+    );
 
 
 
-    const novelPageItem = (findTarget = () => undefined) => {
+    function novelPageItem(findTarget = () => undefined) {
         const target = findTarget();
 
         if (!target) return npup.error('페이지 아이템을 표시할 위치를 확인할 수 없습니다.');
@@ -48,42 +65,36 @@ novelCa['novel-page'].system = function(r) {
         const page_items_tmp = document.querySelectorAll('div.d-flex.align-items-center.justify-content-center');
         const page_items = page_items_tmp[page_items_tmp.length - 1].cloneNode(true);
         page_items.style = 'border-top: 1px solid #EFEFEF; height: 80px';
-        page_items.classList.add(`${npup.project.prefix.css}${this.key}`);
+        page_items.classList.add(np_key);
 
-        const remained_page_item = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}`)[0];
+        const remained_page_item = document.getElementsByClassName(np_key)[0];
 
         if (remained_page_item) remained_page_item.replaceWith(page_items);
         else target.insertAdjacentElement('beforebegin', page_items);
 
         const page_selector_tmp = document.getElementsByClassName('select_episode_box');
         if (page_selector_tmp[0]) {
-            const page_selector = page_selector_tmp[page_selector_tmp.length - 1].cloneNode(true);
-            page_selector.style = 'margin-bottom: 20px;';
-
-            //const remained_page_selector = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}-selector`)[0];
-
-            //if (remained_page_selector) remained_page_selector.replaceWith(page_selector); else
-            target.insertAdjacentElement('beforebegin', page_selector);
-        }
-
-        function novelPageItemEsc(e) {
-            if (e.key == 'Escape') {
-                const target = document.getElementsByClassName(`select_episode_box`);
-                for (let i = 0; i < target.length; i++)
-                    target[i].style.display = 'none';
+            function reFunc(el) {
+                el.outerHTML = el.outerHTML.replace('select_episode()', 'npupSelectEpisode(this.parentElement)');
             }
+
+            const origin = page_selector_tmp[page_selector_tmp.length - 1];
+            reFunc(origin);
+
+            const page_selector = origin.cloneNode(true);
+            page_selector.style = 'margin-bottom: 20px;';
+            page_selector.classList.add(`${np_key}-selector`);
+
+            const remained_page_selector = document.getElementsByClassName(`${np_key}-selector`)[0];
+
+            if (remained_page_selector) remained_page_selector.replaceWith(page_selector);
+            else target.insertAdjacentElement('beforebegin', page_selector);
+
+            reFunc(page_selector);
         }
-
-        document.addEventListener('keydown', novelPageItemEsc);
-
-        removeEvent(() => {
-            document.removeEventListener('keydown', novelPageItemEsc);
-        });
     }
 
-    function dynamicNovelPageItem(findTarget = () => undefined) {
-        const target = document.getElementById('episode_list');
-
+    function dynamicNovelPageItem(obTarget = () => undefined, findTarget = () => undefined) {
         const obs = new MutationObserver((mus, ob) => {
             if (mus[0].target.classList.contains('episode_count_view')) return;
 
@@ -91,15 +102,33 @@ novelCa['novel-page'].system = function(r) {
 
             novelPageItem(findTarget);
 
-            obs.observe(target, observer_setup);
+            obs.observe(obTarget(), observer_setup);
         });
 
-        obs.observe(target, observer_setup);
+        obs.observe(obTarget(), observer_setup);
 
         removeEvent(() => {
             obs.disconnect();
         });
     }
+
+
+    function novelPageItemEsc(e) {
+        if (e.key == 'Escape') {
+            const target = document.getElementsByClassName(`select_episode_box`);
+            for (let i = 0; i < target.length; i++)
+                target[i].style.display = 'none';
+        }
+    }
+
+    document.addEventListener('keydown', novelPageItemEsc);
+
+    removeEvent(() => {
+        document.removeEventListener('keydown', novelPageItemEsc);
+        try {
+            select_episode.remove();
+        } catch (error) {}
+    });
 }
 
 
@@ -143,7 +172,7 @@ novelCa['novel-notice-close'].system = function(r) {
 
     targetHandler(
         () => document.getElementsByClassName('notice_table')[0] || document.querySelector('table[style*=width]:has(> * > .ep_style4)'),
-        (t) => addCloseFunction(t)
+        (t) => addCloseFunction(t),
     );
 
     const close_script = scriptInjection(`/src/base/file/${this.key}.js`);

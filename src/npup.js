@@ -32,9 +32,33 @@ const npup = {
     },
 
     func: {
+        resolvePath({ hash = false, search = false } = {}) {
+            let current_path = window.location.pathname;
+            if (!current_path.endsWith('/')) current_path += '/';
+            if (hash) current_path += window.location.hash;
+            if (search) current_path += window.location.search;
+
+            return current_path;
+        },
+
+        // resolvePath({ hash = false, search = false } = {}) {
+        //     let current = {
+        //         path: window.location.pathname,
+        //         hash: hash ? window.location.hash : undefined,
+        //         search: search ? window.location.search : undefined,
+        //     }
+
+        //     if (!current.path.endsWith('/')) current_path += '/';
+
+        //     return current;
+        // },
+
         /**
          * 현 주소가 적힌 path인지 확인하는 함수
-         * @param {any} paths string 혹은 Array 타입의 path(s)를 적어주세요.
+         * @param {string | array} paths string 혹은 Array 타입의 path(s)를 적어주세요.
+         * @param {Object} [options={}]
+         * @param {string} [options.target] 비교 대상 변경
+         * @param {boolean} [options.strict=false] 동일한 path인지 확인
          * @returns {boolean}
          */
         pathChecker() {},
@@ -59,15 +83,17 @@ const npup = {
 
         /**
          * 간단한 현재 시스템 엔진 이름 확인 함수
-         * @param {*} name 엔진 이름
+         * @param {string} name 엔진 이름
          * @returns {boolean}
          */
         engineChecker() {},
 
         /**
          * 간단한 알림
-         * @param {string} title 제목
-         * @param {string} msg 메세지
+         * @param {object} [options]
+         * @param {string} [options.title] 제목
+         * @param {string} [options.msg] 메세지
+         * @param {string} [options.type] 알림 타입
          */
         toastAlert() {},
     },
@@ -86,20 +112,14 @@ const npup = {
         return console.log(`%c${this.project.prefix.console}`, style, ...content);
     },
 
-    etc: {
-        hf: 'high-performance',
-        laze_check_time: 100
-    },
-    
+    path: null,
+
+    //location: null,
 }
 
 npup.event = {
     load: `${npup.project.name}LoadSuccess`,
     router: `${npup.project.name}RouterEnd`,
-    dbl_vote: {
-        send: `${npup.project.name}DblVoteSend`,
-        answer: `${npup.project.name}DblVoteAnswer`   
-    }
 }
 
 
@@ -111,18 +131,12 @@ npup.event = {
 
 
 
-let path = window.location.pathname;
-
-if (!path.endsWith('/')) path += '/';
+npup.path = npup.func.resolvePath({ hash: true, search: true });
 
 const html = document.documentElement;
 
 window.addEventListener(npup.event.router, () => {
-    let current_path = window.location.pathname;
-    if (!current_path.endsWith('/')) current_path += '/';
-
-    if (path == current_path);
-    else path = current_path;
+    npup.path = npup.func.resolvePath({ hash: true, search: true });
 });
 
 
@@ -136,14 +150,14 @@ window.addEventListener(npup.event.router, () => {
 
 
 // Base Functions
-npup.func.pathChecker = (paths, target = path) => {
+npup.func.pathChecker = (paths, { target = npup.path, strict = false } = {}) => {
     if (typeof paths == 'string')
-        return target.startsWith(paths);
+        return strict ? target == paths : target.startsWith(paths);
     else if (Array.isArray(paths) && paths.length) {
-        var path_check = false;
+        let path_check = false;
 
-        for (var i = 0; i < paths.length && !path_check; i++) {
-            path_check = target.startsWith(paths[i]);
+        for (let i = 0; i < paths.length && !path_check; i++) {
+            path_check = strict ? (target == paths[i]) : target.startsWith(paths[i]);
         }
         return path_check;
     } else {
@@ -310,7 +324,7 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined } = {}) => {
         alert_content.appendChild(alert_title);
     }
 
-    msg.split('\n').forEach(m => {
+    if (typeof msg == 'string') msg.split('\n').forEach(m => {
         const alert_msg = document.createElement('div');
         //alert_msg.classList.add(`${npup.project.prefix.css}alert-msg`);
         alert_msg.textContent = m;

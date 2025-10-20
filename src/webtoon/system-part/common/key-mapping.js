@@ -21,31 +21,19 @@ keyMappingCa['wt-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, c
 
 keyMappingCa['wt-after-ep'].system = keyMappingBase(r => {
     document.querySelector('#bottomMenu > * > * > *:nth-child(2) > *:nth-child(3)').click(); 
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+}, isViewer);
 
 keyMappingCa['wt-before-ep'].system = keyMappingBase(r => {
     document.querySelector('#bottomMenu > * > * > *:nth-child(2) > *:nth-child(1)').click(); 
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+}, isViewer);
 
 keyMappingCa['wt-ep-home'].system = keyMappingBase(r => {
     document.querySelector('#topMenu > * > a').click(); 
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+}, isViewer);
 
 keyMappingCa['wt-ep-scroll'].system = keyMappingBase(r => {
     document.getElementById('autoScrollButton').click();
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+}, isViewer);
 
 keyMappingCa['wt-ep-list'].system = keyMappingBase(r => {
     if (document.getElementById('episodeListMenu').classList.contains('menu-hidden')) {
@@ -56,10 +44,7 @@ keyMappingCa['wt-ep-list'].system = keyMappingBase(r => {
         document.getElementById('closeEpisodeListButton').click();
     }
 
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+}, isViewer);
 
 keyMappingCa['wt-move-mb'].system = keyMappingBase(async r => {
     location.href ='/main/library';

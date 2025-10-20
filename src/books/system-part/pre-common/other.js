@@ -23,7 +23,7 @@ otherCa['books-web-title'].system = function (r) {
 
     document.title = tc;
 
-    if (!routing) {
+    if (1) {
         const titleInterval = setInterval(() => {
             if (document.title == tc) return;
             document.title = tc;

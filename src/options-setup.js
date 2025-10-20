@@ -1,4 +1,4 @@
-changeEngine({ path });
+changeEngine({ path: npup.path });
 
 optionsSetup();
 

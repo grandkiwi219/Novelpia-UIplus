@@ -24,7 +24,8 @@ keyMappingCa['books-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu
         });
 
         function appendMenu() {
-            document.getElementsByClassName('viewer-bottom-wrapper')[0].appendChild(menu);
+            const bottom = document.getElementsByClassName('viewer-bottom-wrapper')[0]
+            if (bottom) bottom.appendChild(menu);
         }
     }
     else if (!r[`${this.key}-page`])
@@ -38,26 +39,19 @@ keyMappingCa['books-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu
 
 keyMappingCa['books-after-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-next')[0].click();
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+}, isViewer);
 
 keyMappingCa['books-before-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-prev')[0].click();
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+}, isViewer);
 
 keyMappingCa['books-ep-home'].system = keyMappingBase(r => {
     document.getElementsByClassName('viewer-btn-back')[0].click();
-},
-{
-    condition: () => engineChecker('뷰어')
-});
+}, isViewer);
 
 keyMappingCa['books-move-mb'].system = keyMappingBase(async r => {
+    if (pathChecker('/mybook/', { strict: true })) return;
+
     window.history.pushState({}, '', '/mybook');
     window.dispatchEvent(new PopStateEvent('popstate'));
 });

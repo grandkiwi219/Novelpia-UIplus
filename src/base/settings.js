@@ -131,7 +131,7 @@ npup.options = {
         options: {
             'novel-page': {
                 desc: '페이지 이동 상단 추가',
-                /* engine: 'all', */
+                engine: 'all',
                 type: {
                     option: 'switch',
                     structure: ['system']
@@ -165,9 +165,9 @@ npup.options = {
                     option: 'switch',
                     structure: ['switch', 'system']
                 },
-                structure: {
+                /* structure: {
                     router: true,
-                },
+                }, */
             },
 
             'click-alert': {
@@ -176,9 +176,9 @@ npup.options = {
                     option: 'switch',
                     structure: ['system']
                 },
-                structure: {
+                /* structure: {
                     router: true,
-                },
+                }, */
             },
 
             'dbl-vote': {
@@ -194,6 +194,9 @@ npup.options = {
                             option: 'switch',
                             structure: ['system']
                         },
+                        /* structure: {
+                            router: true
+                        } */
                     }
                 }
             },
@@ -204,9 +207,9 @@ npup.options = {
                     option: 'switch',
                     structure: ['system']
                 },
-                structure: {
+                /* structure: {
                     router: true,
-                },
+                }, */
             },
         }
     },

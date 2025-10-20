@@ -49,9 +49,7 @@ otherCa['notice'].system = function(r) {
 otherCa['new-alarm'].system = function(r) {
     if (!pathChecker('/alarm/')) return;
 
-    targetHandler(() => document.querySelector('.menu_alarm td.active .menu-counter'), (target) => newAlarmSystem(target));
-
-    function newAlarmSystem(target) {
+    const newAlarmSystem = (target) => {
         const active_counter = Number(target?.textContent);
 
         npup.dev('active_counter:', active_counter);
@@ -73,6 +71,11 @@ otherCa['new-alarm'].system = function(r) {
             new_alarm_style.remove();
         });
     }
+
+    targetHandler(
+        () => document.querySelector('.menu_alarm td.active .menu-counter'),
+        (target) => newAlarmSystem(target)
+    );
 }
 
 

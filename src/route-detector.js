@@ -1,48 +1,72 @@
 (() => {
-    let is_possible = undefined;
+    let osc = undefined;
 
     for (let i = 0; i < options_category.length; i++) {
         if (domainChecker(options_category[i].type)) {
-            is_possible = options_category[i];
+            osc = options_category[i];
             break;
         }
     }
 
-    if (!is_possible) return;
+    if (!osc || !osc.routes) return;
 
-    if (!is_possible.routes || !pathChecker(is_possible.routes)) return;
+    const osc_routes_path = osc.routes.map(r => r.path);
+
+    if (!pathChecker(osc_routes_path)) return;
+
+    const ob_all_setup = { ...observer_setup, attributes: true };
 
     window.addEventListener('DOMContentLoaded', () => {
-        let c_path = window.location.pathname;
-        if (!c_path.endsWith('/')) c_path += '/';
-        const routerObserver = new MutationObserver(() => {
-            let current_path = window.location.pathname;
-            if (!current_path.endsWith('/')) current_path += '/';
+        const c_about_path = searchAboutPath();
+        let c_path = npup.func.resolvePath(c_about_path.options);
 
-            if (c_path == current_path) { 0 }
-            else {
+        const routerObserver = new MutationObserver((mu, ob) => {
+            let current_path = npup.func.resolvePath({ hash: true, search: true });
+            const current_about_path = searchAboutPath(current_path);
+            current_path = npup.func.resolvePath(current_about_path.options);
+
+            if (!pathChecker(osc_routes_path, { target: current_path }))
+                return ob.disconnect(), npup.dev('route detector 연결 끊김');
+
+            if (c_path != current_path) {
                 routing = true;
                 performance_standard = performance.now();
                 c_path = current_path;
                 routeDetector({ path: c_path });
             }
     
-            routerObserver.disconnect();
-            routerObserver.observe(document.body, observer_setup);
+            ob.disconnect();
+            onOb(ob, current_about_path);
         });
-    
-        routerObserver.observe(document.body, observer_setup);
+
+        onOb(routerObserver, c_about_path);
     });
+
+
+    function onOb(ob, about_path) {
+        const auto_decide_setup = about_path.options?.hash ? ob_all_setup : observer_setup;
+        ob.observe(document.body, about_path.observer || auto_decide_setup);
+    }
+
+    function searchAboutPath(target_path = undefined) {
+        let route_path = { path: '', options: undefined, observer: undefined };
+        osc.routes.forEach(r => {
+            if (pathChecker(r.path, { target: target_path }) && r.path.length > route_path.path.length)
+                route_path = r;
+        });
+
+        return route_path;
+    }
 })();
 
 // -----------------------------------------------------------------------------
 
-function routeDetector({ path = path } = {}) {
+function routeDetector({ path = npup.path } = {}) {
     const result = changeEngine({ path });
 
     const data = {
         path: path,
-        pathChecker: (paths) => { return pathChecker(paths, path) },
+        pathChecker: (paths) => { return pathChecker(paths, { target: path }) },
         engine_is_changed: result
     }
     
@@ -87,7 +111,7 @@ function changeEngine(settings) {
     let engine_exist = false;
 
     for (let i = 0; i < engine.length; i++) {
-        if (pathChecker(engine[i]?.matches, settings.path) && !pathChecker(engine[i]?.excludes, settings.path)) {
+        if (pathChecker(engine[i]?.matches, { target: settings.path }) && !pathChecker(engine[i]?.excludes, { target: settings.path })) {
             STRUCTURE.SYSTEM.ENGINE.name = engine[i]?.name || '';
 
             engine_exist = true;

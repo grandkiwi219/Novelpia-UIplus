@@ -1,13 +1,24 @@
-window.addEventListener("DOMContentLoaded", () => {
+(() => {
     const searchForm = document.getElementById(`${npup.project.prefix.css}search-form`);
 
-    if (!searchForm) return;
+    if (searchForm)
+        searchFormEvent();
+    else 
+        window.addEventListener("DOMContentLoaded", () => {
+            const searchForm = document.getElementById(`${npup.project.prefix.css}search-form`);
 
-    searchForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        npupPcSearch();
-    });
-});
+            if (!searchForm) return;
+
+            searchFormEvent();
+        });
+
+    function searchFormEvent() {
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            npupPcSearch();
+        });
+    }
+})();
 
 function npupPcSearch() {
     let value = document.getElementById('search_input').value.replace(/[\/%?,]/g, '');

@@ -1,6 +1,6 @@
 (() => {
     if (localStorage['viewer_paging'] == '1') {
-        this_page = max_page;
+        this_page = max_page - 1;
         page_next();
         return;
     }

@@ -18,7 +18,7 @@ keyMappingCa['quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, comi
 });
 
 
-const isViewer = { condition: () => engineChecker('뷰어') }
+
 
 keyMappingCa['after-ep'].system = keyMappingBase(r => {
     document.getElementsByClassName('menu-next-item')[0].click();

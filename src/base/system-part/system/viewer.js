@@ -2,7 +2,8 @@ const viewerCa = npup.options.viewer.options;
 
 
 viewerCa['old-icon'].system = function(r) {
-    window.addEventListener('DOMContentLoaded', iconSetup);
+    /* if (dom_loaded) iconSetup();
+    else */ window.addEventListener('DOMContentLoaded', iconSetup);
 
     /* route detector? */
 }
@@ -105,6 +106,16 @@ viewerCa['click-alert'].system = function(r) {
 
 
 viewerCa['dbl-vote'].system = function(r) {
+    let last = {
+        time: 0,
+        pos: { x: 0, y: 0 },
+        clickTimer: undefined
+    }
+
+    const cooltime = 180;
+    const pos_error = 100;
+
+
     let enhanced = {
         key: `${this.key}-plus`,
         func: () => {}
@@ -117,35 +128,29 @@ viewerCa['dbl-vote'].system = function(r) {
                 (target) => targetFunction(target),
                 {
                     method: 1,
-                    redetect: true
+                    redetect: 1
                 }
             );
-        })
+        });
 
-        const targetFunction = (target) => {
+        function targetFunction(target) {
             target.outerHTML = target.outerHTML.replace('onclick', '');
-        }
 
-        enhanced.func = (target) => {
-            if (document.getElementById('novel_box') == target) return;
+            enhanced.func = (target) => {
+                if (document.getElementById('novel_box') == target) return;
 
-            clearTimeout(last.clickTimer);
-            last.clickTimer = setTimeout(() => {
-                naviView();
-            }, cooltime);
+                clearTimeout(last.clickTimer);
+                last.clickTimer = setTimeout(() => {
+                    naviView();
+                }, cooltime);
+            }
         }
     }
 
-    let last = {
-        time: 0,
-        pos: { x: 0, y: 0 },
-        clickTimer: undefined
-    }
-
-    const cooltime = 180;
-    const pos_error = 100;
     
     const dblVoteEvent = (e) => {
+        if (!document.getElementById('novel_box')) return;
+        
         if (
             document.getElementById('novel_drawing_right') == e.target ||
             document.getElementById('novel_drawing_right').contains(e.target) ||

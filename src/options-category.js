@@ -3,13 +3,19 @@ const options_category = [
         type: 'base',
         name: '웹소설',
         path: 'options',
-        routes: ['/search/'],
+        routes: [
+            { path: '/search/', options: { search: true } },
+            { path: '/viewer/', options: { hash: true } }
+        ],
     },
     {
         type: 'books',
         name: '북스',
         path: 'options-books',
-        routes: ['/'],
+        routes: [
+            { path: '/' },
+            { path: '/mybook/', options: { search: true }, observer: undefined }
+        ],
     },
     {
         type: 'webtoon',

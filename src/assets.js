@@ -3,13 +3,20 @@
  * @param {function} target 감지할 요소
  * @param {function} handler 실행할 함수
  * @param {Object} [setup={}] 
- * @param {boolean} [setup.redetect=false] 재탐지
- * @param {number} [setup.method=0] 0 = 기본적으로 작동, * = 기본적으로 탐지함
+ * @param {number} [setup.redetect] 재탐지할 횟수
+ * @param {number} [setup.duration] 탐지할 시간
+ * @param {*} [setup.method] 0 = 기본적으로 작동, * = 기본적으로 탐지함
  */
 function targetHandler(targetFinder, handler, {
-    redetect = false,
+    redetect = 0,
+    duration = NaN,
     method = 0
 } = {}) {
+    const standard_duration = 8 * 1000;
+
+    if (!duration && duration !== 0)
+        duration = standard_duration;
+
     let target = targetFinder();
     if (target && method == 0) {
         tryChecker(() => handler(target), 'targetHandler -> handler', false);
@@ -29,15 +36,18 @@ function targetHandler(targetFinder, handler, {
         setTimeout(() => {
             if (!target_found) {
                 targetOb.disconnect();
-                if (redetect) {
-                    targetHandler(targetFinder, handler);
+                if (redetect > 0) {
+                    targetHandler(targetFinder, handler, {
+                        redetect: redetect - 1,
+                        duration: Math.min(duration + 1 * 1000, standard_duration)
+                    });
                     npup.dev('타겟을 찾지 못하였습니다. 재탐지를 시작합니다.');
                 }
                 else { 
                     npup.dev(`타겟을 찾는 데에 시간이 오래 걸려 함수 실행을 취소했습니다.`);
                 }
             }
-        }, 8 * 1000);
+        }, duration);
     }
 }
 
@@ -45,13 +55,17 @@ function targetHandler(targetFinder, handler, {
  * 입력한 파일 위치를 사이트 페이지에 삽입합니다
  * @param {string} path 파일 위치
  */
-function scriptInjection(path) {
+async function scriptInjection(path) {
     if (!path) return;
 
     const id = `${npup.project.prefix.css}${path.split('/').pop()}`;
 
     const script = document.createElement('script');
-    script.src = chrome.runtime.getURL(path);
+    try {
+        script.src = chrome.runtime.getURL(path);
+    } catch (error) {
+        toastAlert({ title: '새로고침 필요', msg: '확장프로그램과의 연결이 끊겼습니다.\n새로고침이 필요합니다.', type: 'error' });
+    }
     script.id = id;
 
     if (document.getElementById(id))
@@ -91,7 +105,7 @@ let basic_use_system = {
 /**
  * basically use system about key
  * @param {string} key system key
- * @param {string} r 
+ * @param {string} r chrome storage result
  */
 function basicUseSystem(key, r, ...settings) {
     if (!r[key] && !basic_use_system.base[key] && !basic_use_system.router[key]) {
@@ -133,12 +147,21 @@ function searchSystem(key, engine = 'system') {
 
 
 /**
+ * keyMappingBase의 뷰어 조건
+ */
+const isViewer = { condition: () => engineChecker('뷰어') }
+
+
+
+/**
  * '키 맵핑을 위한 기본적인 토대가 되는 함수'를 뱉어내는 함수
  * @param {function} callback 특정 키 입력시 작동되게 하는 함수
- * @param {Object} param1 { condition, execution }
+ * @param {Object} [options]
+ * @param {function} [options.condition] 설정한 조건에 만족해야만 작동
+ * @param {function} [options.execution] 함수가 로드될 때 실행될 함수
  * @returns {function} 키 맵핑을 위한 기본적인 토대가 되는 함수
  */
-function keyMappingBase(callback, { condition = () => { return true; }, execution = () => {} } = {}) {
+function keyMappingBase(callback, { condition = () => true, execution = () => undefined } = {}) {
     return async function(r, settings = { quick_mapping_menu: false }) {
         if (settings.quick_mapping_menu) {
             if (!condition()) return;
@@ -196,29 +219,6 @@ function keyMappingBase(callback, { condition = () => { return true; }, executio
         });
 
         execution();
-    }
-}
-
-
-
-/**
- * custom css system 함수를 출력
- * @returns customCssSystem
- */
-function customCssAsset() {
-    return function (r) {
-        const id = `${npup.project.prefix.css}${this.key}`;
-
-        const style = document.createElement('style');
-        style.id = id;
-        style.textContent = r[this.key];
-
-        if (document.getElementById(id))
-            document.getElementById(id).remove();
-
-        tryChecker(() => {
-            document.head.appendChild(style);
-        }, '커스텀', 'css', style);
     }
 }
 
@@ -468,6 +468,29 @@ function quickMappingMenuAsset(engineCallback = () => false) {
 
 
 /**
+ * custom css system 함수를 출력
+ * @returns customCssSystem
+ */
+function customCssAsset() {
+    return function (r) {
+        const id = `${npup.project.prefix.css}${this.key}`;
+
+        const style = document.createElement('style');
+        style.id = id;
+        style.textContent = r[this.key];
+
+        if (document.getElementById(id))
+            document.getElementById(id).remove();
+
+        tryChecker(() => {
+            document.head.appendChild(style);
+        }, '커스텀', 'css', style);
+    }
+}
+
+
+
+/**
  * 상단에서부터 살짝 내려온 뒤 위로 튕기는 애니메이션을 지닌 아이콘을 보이는 함수
  * @param {function(on: boolean)} iconFunc 꺼져 있는 아이콘과 켜져 있는 아이콘을 출력시킬 수 있는 함수
  * @param {boolean} already 아이콘의 상태가 켜져있어야 하는가
@@ -477,7 +500,7 @@ async function showIcon(
     already = false
 ) {
     const vote = document.createElement('div');
-    vote.classList.add('content_memo');
+    //vote.classList.add('content_memo');
 
     const vote_icon = document.createElement('img');
     vote_icon.src = already ? iconFunc(true) : iconFunc();
