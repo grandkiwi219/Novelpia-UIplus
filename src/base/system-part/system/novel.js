@@ -31,6 +31,8 @@ novelCa['novel-page'].system = function(r) {
     }
     else if (engineChecker('뷰어') && location.hash == '#lists') {
         target = () => document.getElementById('episode_table');
+        tHOption = { redetect: 3, duration: 1 * 1000 }
+        
         handler = () => {
             novelPageItem(target);
             dynamicNovelPageItem(
@@ -38,7 +40,6 @@ novelCa['novel-page'].system = function(r) {
                 target
             );
         }
-        tHOption = { redetect: 3, duration: 1 * 1000 }
     }
     else
         return;
