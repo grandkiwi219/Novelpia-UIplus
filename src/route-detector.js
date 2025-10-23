@@ -34,7 +34,7 @@
                 c_path = current_path;
                 routeDetector({ path: c_path });
             }
-    
+
             ob.disconnect();
             onOb(ob, current_about_path);
         });
@@ -69,9 +69,10 @@ function routeDetector({ path = npup.path } = {}) {
         pathChecker: (paths) => { return pathChecker(paths, { target: path }) },
         engine_is_changed: result
     }
-    
-    window.dispatchEvent(new CustomEvent(npup.event.router, { detail: data })); // 페이지 -> 뷰어 이동 시 엔진 체크 한다면 뷰어로 뜬다는 점 유의할 것
-    
+
+    // 페이지 -> 뷰어 이동 시 엔진 체크 한다면 뷰어로 뜬다는 점 유의할 것
+    window.dispatchEvent(new CustomEvent(npup.event.router, { detail: data }));
+
     const path_content = `| 위치: ${path} ${domainChecker('base') ? '' : `| 도메인: ${location.hostname}`}`;
 
     if (result == 0) {
@@ -111,7 +112,10 @@ function changeEngine(settings) {
     let engine_exist = false;
 
     for (let i = 0; i < engine.length; i++) {
-        if (pathChecker(engine[i]?.matches, { target: settings.path }) && !pathChecker(engine[i]?.excludes, { target: settings.path })) {
+        if (
+            pathChecker(engine[i]?.matches, { target: settings.path })
+            && !pathChecker(engine[i]?.excludes, { target: settings.path })
+        ) {
             STRUCTURE.SYSTEM.ENGINE.name = engine[i]?.name || '';
 
             engine_exist = true;
@@ -133,7 +137,7 @@ function changeEngine(settings) {
     else if (!engine_exist) {
         return -2; // null
     }
-    else 
+    else
         return 1; // changed
 }
 

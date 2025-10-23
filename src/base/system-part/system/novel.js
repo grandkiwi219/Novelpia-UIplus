@@ -3,6 +3,7 @@ const novelCa = npup.options.novel.options;
 novelCa['novel-page'].system = function(r) {
     let target = () => undefined;
     let handler = () => undefined;
+    let tHOption = {};
 
     if (engineChecker('페이지')) {
         let attachTarget = () =>  undefined;
@@ -10,10 +11,12 @@ novelCa['novel-page'].system = function(r) {
         if (pathChecker('/novel/')) {
             target = () => document.getElementById('episode_table');
             attachTarget = target;
+            tHOption = { redetect: 1 }
         }
         else if (pathChecker('/collect_novel/')) {
             target = () => document.querySelector('div.d-flex.align-items-center.justify-content-center');
             attachTarget = () => document.getElementById('episode_list');
+            tHOption = { redetect: 2, duration: 1.4 * 1000 }
         }
         else
             return;
@@ -32,9 +35,10 @@ novelCa['novel-page'].system = function(r) {
             novelPageItem(target);
             dynamicNovelPageItem(
                 () => document.getElementById('episode_list_viewer'),
-                () => document.getElementById('episode_table')
+                target
             );
         }
+        tHOption = { redetect: 3, duration: 1 * 1000 }
     }
     else
         return;
@@ -49,10 +53,7 @@ novelCa['novel-page'].system = function(r) {
             handler();
             select_episode = scriptInjection('src/base/file/select-episode.js');
         },
-        {
-            redetect: 2,
-            duration: 1.2 * 1000
-        }
+        tHOption
     );
 
 
@@ -167,12 +168,11 @@ novelCa['novel-notice-close'].system = function(r) {
                 .replace('더보기', '접기')
                 .replace('down', 'up');
         }
-        else npup.dev('공지를 담는 요소를 찾지 못했습니다.');
     }
 
     targetHandler(
         () => document.getElementsByClassName('notice_table')[0] || document.querySelector('table[style*=width]:has(> * > .ep_style4)'),
-        (t) => addCloseFunction(t),
+        (t) => addCloseFunction(t)
     );
 
     const close_script = scriptInjection(`/src/base/file/${this.key}.js`);
