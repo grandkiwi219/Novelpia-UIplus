@@ -1,9 +1,26 @@
 const sync_key = 'extension-sync';
 const update_key = 'extension-update';
+
+const route_detect = 'route-detect';
+
 const mybook_key = 'quick-mybook';
 const popup_location = '/page/popup.html';
 
 let qm = false;
+
+
+/**
+ * 노벨피아 url 변경 감지
+ */
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.url) {
+        chrome.tabs.sendMessage(tabId, {
+            message: route_detect
+        })
+        .catch(() => {});
+    }
+});
+
 
 
 /**

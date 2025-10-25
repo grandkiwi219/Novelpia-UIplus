@@ -1,3 +1,68 @@
+// 2.0 route detector (url change detector)
+(() => {
+    let osc = undefined;
+
+    for (let i = 0; i < options_category.length; i++) {
+        if (domainChecker(options_category[i].type)) {
+            osc = options_category[i];
+            break;
+        }
+    }
+
+    if (!osc || !osc.routes) return;
+
+    const osc_routes_path = osc.routes.map(r => r.path);
+
+    if (!pathChecker(osc_routes_path)) return;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const c_about_path = searchAboutPath();
+        let c_path = npup.func.resolvePath(c_about_path.options.method);
+
+        chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+            if (request.message != 'route-detect') return; 
+
+            routeDetectorProcess();
+        });
+
+        function routeDetectorProcess() {
+            let current_path = npup.func.resolvePath({ hash: true, search: true });
+            const current_about_path = searchAboutPath(current_path);
+            current_path = npup.func.resolvePath(current_about_path.options.method);
+
+            if (
+                !pathChecker(osc_routes_path, { target: current_path })
+                || c_path == current_path
+            ) return;
+                        
+            routing = true;
+            performance_standard = performance.now();
+            c_path = current_path;
+            routeDetector({ path: c_path });
+        }
+
+
+        function searchAboutPath(target_path = undefined) {
+            let route_setup = {
+                path: '',
+                options: {
+                    method: undefined,
+                    defender: false,
+                }
+            }
+            osc.routes.forEach(r => {
+                if (pathChecker(r.path, { target: target_path }) && r.path.length > route_setup.path.length) {
+                    route_setup.path = r.path;
+                    Object.assign(route_setup.options, r.options);
+                }
+            });
+
+            return route_setup;
+        }
+    });
+})();
+
+/* // v1.0 route-detector
 (() => {
     let osc = undefined;
 
@@ -139,7 +204,7 @@
     });
 
 
-})();
+})(); */
 
 // -----------------------------------------------------------------------------
 

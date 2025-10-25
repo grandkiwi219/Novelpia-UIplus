@@ -9,7 +9,7 @@ novelCa['novel-page'].system = function(r) {
                     wrapperTarget,
                     pageTarget: () => document.getElementById('episode_list'),
                     attachTarget: wrapperTarget,
-                    tHOption: { redetect: 1, duration: 4 * 1000 }
+                    tHOption: { redetect: 2, duration: 1.2 * 1000 }
                 }
             }
             else if (pathChecker('/collect_novel/')) {

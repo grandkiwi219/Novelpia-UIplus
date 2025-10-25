@@ -7,8 +7,7 @@ const options_category = [
         routes: [
             {
                 path: '/search/',
-                options: { method: { search: true } },
-                observer: { target: '#search_content' }
+                options: { method: { search: true } }
             },
             {
                 path: '/viewer/',

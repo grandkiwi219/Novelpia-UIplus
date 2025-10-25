@@ -366,7 +366,7 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined } = {}) => {
         alert_box.addEventListener('mouseout', () => {
             alert_time = setTime();
         });
-    }, 100);
+    }, dom_loaded ? 100 : 400);
 
     
     function setTime(once = false) {
