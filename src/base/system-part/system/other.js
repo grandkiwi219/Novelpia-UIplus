@@ -22,19 +22,7 @@ otherCa['notice'].system = function(r) {
         notice_list_btn.classList.add('align-items-center');
         notice_list_btn.classList.add('s_inv');
         notice_list_btn.href = `/notice/list/1`;
-
-        const list_color = '#000';
-        notice_list_btn.innerHTML = ``
-        + `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">`
-            + `<circle cx="4" cy="6" r="1.5" fill="${list_color}" />`
-            + `<rect x="7" y="5" width="13" height="2" rx="1" fill="${list_color}" />`
-
-            + `<circle cx="4" cy="12" r="1.5" fill="${list_color}" />`
-            + `<rect x="7" y="11" width="13" height="2" rx="1" fill="${list_color}" />`
-
-            + `<circle cx="4" cy="18" r="1.5" fill="${list_color}" />`
-            + `<rect x="7" y="17" width="13" height="2" rx="1" fill="${list_color}" />`
-        + `</svg>`;
+        setListIcon(notice_list_btn, { color: '#000' });
 
         notice_bar.firstElementChild.firstElementChild.appendChild(notice_list_btn);
     
@@ -100,7 +88,8 @@ otherCa['last-ep'].system = async function(r) {
 
     const off = document.createElement('div');
     off.classList.add('last-ep-off');
-    off.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="20" height="20" stroke-width="2" stroke="#000" fill="none" stroke-linecap="round">'
+    off.innerHTML = ''
+        + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="20" height="20" stroke-width="2" stroke="#000" fill="none" stroke-linecap="round">'
             + '<path d="M5 5 L25 25 M5 25 L25 5" />'
         + '</svg>';
 
@@ -120,21 +109,10 @@ otherCa['last-ep'].system = async function(r) {
     const redirect_content = document.createElement('div');
     setRedirectEpContent();
 
-    const list_color = '#fff';
-
     const redirect_list = document.createElement('a');
-    ['last-ep-redirect', 'last-ep-list'].forEach(cl => redirect_list.classList.add(cl));
-    redirect_list.innerHTML = ``
-        + `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">`
-            + `<circle cx="4" cy="6" r="1.5" fill="${list_color}" />`
-            + `<rect x="7" y="5" width="13" height="2" rx="1" fill="${list_color}" />`
-
-            + `<circle cx="4" cy="12" r="1.5" fill="${list_color}" />`
-            + `<rect x="7" y="11" width="13" height="2" rx="1" fill="${list_color}" />`
-
-            + `<circle cx="4" cy="18" r="1.5" fill="${list_color}" />`
-            + `<rect x="7" y="17" width="13" height="2" rx="1" fill="${list_color}" />`
-        + `</svg>`;
+    redirect_list.classList.add('last-ep-redirect');
+    redirect_list.classList.add('last-ep-list');
+    setListIcon(redirect_list);
     setRedirectNovel();
 
 
@@ -145,9 +123,8 @@ otherCa['last-ep'].system = async function(r) {
     redirect_wrap.appendChild(redirect_list);
     redirect_wrap.appendChild(redirect);
 
-    [content, redirect_wrap].forEach(el => {
-        last_ep_alarm.appendChild(el);
-    });
+    last_ep_alarm.appendChild(content);
+    last_ep_alarm.appendChild(redirect_wrap);
 
     document.body.appendChild(last_ep_alarm);
 
@@ -172,7 +149,7 @@ otherCa['last-ep'].system = async function(r) {
         updateCooltime();
 
         if (data && !freeze) {
-            if (r['last-ep-home']) {
+            if (r[`last-ep-home`]) {
                 if (location.pathname == '/' || document.getElementsByClassName('new-top-header2')[0]) onEvent();
                 else offEvent();
             } else onEvent();

@@ -1,11 +1,15 @@
+// comfortable asset
+
+
+
 /**
  * 불러올 요소가 없을 수도 있을 떄 불러오는 걸 감지해서 핸들을 실행시켜주는 함수
  * @param {function} target 감지할 요소
  * @param {function} handler 실행할 함수
  * @param {Object} [setup={}] 
- * @param {number} [setup.redetect] 재탐지할 횟수
- * @param {number} [setup.duration] 탐지할 시간
- * @param {*} [setup.method] 0 = 기본적으로 작동, * = 기본적으로 탐지함
+ * @param {number} setup.redetect 재탐지할 횟수
+ * @param {number} setup.duration 탐지할 시간
+ * @param {*} setup.method 0 = 기본적으로 작동, * = 기본적으로 탐지함
  */
 function targetHandler(targetFinder, handler, {
     redetect = 0,
@@ -51,6 +55,8 @@ function targetHandler(targetFinder, handler, {
     }
 }
 
+
+
 /**
  * 입력한 파일 위치를 사이트 페이지에 삽입합니다
  * @param {string} path 파일 위치
@@ -76,6 +82,8 @@ async function scriptInjection(path) {
     return script;
 }
 
+
+
 /**
  * 헤드에 스타일 태그를 삽입합니다.
  * @param {string} id 스타일 태그르 정의할 아이디
@@ -96,6 +104,87 @@ function styleInjection(id, content) {
 
     return style;
 }
+
+
+
+/**
+ * 함수 내에서 지연하기 위한 간단한 함수
+ * @param {number} time 지연 시간
+ */
+async function setDelay(time) {
+    return await new Promise(r => setTimeout(r, time));
+}
+
+
+
+/**
+ * 상단에서부터 살짝 내려온 뒤 위로 튕기는 애니메이션을 지닌 아이콘을 보이는 함수
+ * @param {function(on: boolean)} iconFunc 꺼져 있는 아이콘과 켜져 있는 아이콘을 출력시킬 수 있는 함수
+ * @param {boolean} already 아이콘의 상태가 켜져있어야 하는가
+ */
+async function showIcon(
+    iconFunc = (on = false) => '//images.novelpia.com/img/new/header/icon_alert.svg',
+    already = false
+) {
+    const vote = document.createElement('div');
+    //vote.classList.add('content_memo');
+
+    const vote_icon = document.createElement('img');
+    vote_icon.src = already ? iconFunc(true) : iconFunc();
+    vote_icon.classList.add('npup-show-icon');
+
+    vote.appendChild(vote_icon);
+    document.body.appendChild(vote);
+
+    await setDelay(100);
+    vote_icon.classList.add('show');
+    vote_icon.classList.add('down');
+    await setDelay(400);
+    if (!already) vote_icon.src = iconFunc(true);
+    vote_icon.classList.add('up');
+    await setDelay(400);
+    vote_icon.classList.remove('show');
+    await setDelay(200);
+    vote.remove();
+
+    return true;
+}
+
+
+
+/**
+ * 
+ * @param {HTMLElement} el 목록 아이콘을 삽입할 HTML 요소
+ * @param {Object} [options] 
+ * @param {string} [options.width] 길이 
+ * @param {string} [options.height] 높이
+ * @param {string} [options.viewBox] 뷰박스 
+ * @param {string} [options.color] 색상
+ */
+function setListIcon(el, {
+    width = '24',
+    height = '24',
+    viewBox = '0 0 24 24',
+    color = 'currentColor'
+} = {}) {
+    el.innerHTML = ``
+        + `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0${viewBox}">`
+            + `<circle cx="4" cy="6" r="1.5" fill="${color}" />`
+            + `<rect x="7" y="5" width="13" height="2" rx="1" fill="${color}" />`
+
+            + `<circle cx="4" cy="12" r="1.5" fill="${color}" />`
+            + `<rect x="7" y="11" width="13" height="2" rx="1" fill="${color}" />`
+
+            + `<circle cx="4" cy="18" r="1.5" fill="${color}" />`
+            + `<rect x="7" y="17" width="13" height="2" rx="1" fill="${color}" />`
+        + `</svg>`;
+}
+
+
+
+// system duple usage asset
+
+
 
 let basic_use_system = {
     base: {},
@@ -119,7 +208,7 @@ function basicUseSystem(key, r, ...settings) {
 /**
  * search system about key
  * @param {string} key system key
- * @param {string} engine engine
+ * @param {string} [engine] engine
  */
 function searchSystem(key, engine = 'system') {
     if (!key || typeof key != 'string') {
@@ -143,6 +232,10 @@ function searchSystem(key, engine = 'system') {
     }
     return data;
 }
+
+
+
+// system asset
 
 
 
@@ -491,44 +584,31 @@ function customCssAsset() {
 
 
 /**
- * 상단에서부터 살짝 내려온 뒤 위로 튕기는 애니메이션을 지닌 아이콘을 보이는 함수
- * @param {function(on: boolean)} iconFunc 꺼져 있는 아이콘과 켜져 있는 아이콘을 출력시킬 수 있는 함수
- * @param {boolean} already 아이콘의 상태가 켜져있어야 하는가
+ * 페이지 제목 가공
+ * @param {*} result chrome storage 결과값에 키 값을 대입한 결과
+ * @returns {string} 페이지 제목 가공값
  */
-async function showIcon(
-    iconFunc = (on = false) => '//images.novelpia.com/img/new/header/icon_alert.svg',
-    already = false
-) {
-    const vote = document.createElement('div');
-    //vote.classList.add('content_memo');
+function webTitleAsset(result) {
+    //노벨피아 - 웹소설로 꿈꾸는 세상! - PAGE
+    let title_result = document.title;
+    let tc = document.title.split('-').map(t => t);
+    let tc2af = tc.slice(2).join('-').trim();
 
-    const vote_icon = document.createElement('img');
-    vote_icon.src = already ? iconFunc(true) : iconFunc();
-    vote_icon.classList.add('npup-show-icon');
+    //normal/short/reverse-short/single/reverse-normal
+    switch (result) {
+        case 'short':
+            title_result = tc[0].trim() + (tc2af ? ` - ${tc2af}` : '');
+            break;
+        case 'reverse-short':
+            title_result = (tc2af ? `${tc2af} - ` : '') + tc[0].trim();
+            break;
+        case 'single':
+            title_result = tc2af ? tc2af : tc[0].trim();
+            break;
+        case 'reverse-normal':
+            title_result = (tc2af ? `${tc2af} - ` : '') + tc[0].trim() + ' - ' + tc[1].trim();
+            break;
+    }
 
-    vote.appendChild(vote_icon);
-    document.body.appendChild(vote);
-
-    await setDelay(100);
-    vote_icon.classList.add('show');
-    vote_icon.classList.add('down');
-    await setDelay(400);
-    if (!already) vote_icon.src = iconFunc(true);
-    vote_icon.classList.add('up');
-    await setDelay(400);
-    vote_icon.classList.remove('show');
-    await setDelay(200);
-    vote.remove();
-
-    return true;
-}
-
-
-
-/**
- * 함수 내에서 지연하기 위한 간단한 함수
- * @param {number} time 지연 시간
- */
-async function setDelay(time) {
-    return await new Promise(r => setTimeout(r, time));
+    return title_result;
 }

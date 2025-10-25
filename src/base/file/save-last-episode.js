@@ -14,7 +14,11 @@
         href: {
             novel: window.location.pathname,
 
-            list: '/novel/' + document.querySelector('input#novel_no')?.value,
+            next: document.getElementById('next_epi_auto_url')?.value,
+
+            back: document.getElementById('back_epi_auto_url')?.value,
+
+            list: '/novel/' + document.getElementById('novel_no')?.value,
         },
 
         thumbnail: document.querySelector('meta[property="og:image"]')?.content,

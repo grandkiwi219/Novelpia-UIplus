@@ -1,60 +1,59 @@
 const novelCa = npup.options.novel.options;
 
 novelCa['novel-page'].system = function(r) {
-    let target = () => undefined;
-    let handler = () => undefined;
-    let tHOption = {};
-
-    if (engineChecker('페이지')) {
-        let attachTarget = () =>  undefined;
-
-        if (pathChecker('/novel/')) {
-            target = () => document.getElementById('episode_table');
-            attachTarget = target;
-            tHOption = { redetect: 1 }
+    let phs = (() => {
+        if (engineChecker('페이지')) {
+            if (pathChecker('/novel/')) {
+                const wrapperTarget = () => document.getElementById('episode_table')
+                return {
+                    wrapperTarget,
+                    pageTarget: () => document.getElementById('episode_list'),
+                    attachTarget: wrapperTarget,
+                    tHOption: { redetect: 1, duration: 4 * 1000 }
+                }
+            }
+            else if (pathChecker('/collect_novel/')) {
+                const pageTarget = () => document.getElementById('episode_list')
+                return {
+                    wrapperTarget: () => document.querySelector('div.d-flex.align-items-center.justify-content-center'),
+                    pageTarget,
+                    attachTarget: pageTarget,
+                    tHOption: { redetect: 2, duration: 1.4 * 1000 }
+                }
+            }
+            else
+                return null;
         }
-        else if (pathChecker('/collect_novel/')) {
-            target = () => document.querySelector('div.d-flex.align-items-center.justify-content-center');
-            attachTarget = () => document.getElementById('episode_list');
-            tHOption = { redetect: 2, duration: 1.4 * 1000 }
+        else if (engineChecker('뷰어') && location.hash == '#lists') {
+            const wrapperTarget = () => document.getElementById('episode_table')
+            return {
+                wrapperTarget,
+                pageTarget: () => document.getElementById('episode_list_viewer'),
+                attachTarget: wrapperTarget,
+                tHOption: { redetect: 3, duration: 1 * 1000 }
+            }
         }
         else
-            return;
+            return null;
+    })();
 
-        handler = () => {
-            novelPageItem(attachTarget);
-            dynamicNovelPageItem(
-                () => document.getElementById('episode_list'),
-                attachTarget
-            );
-        }
-    }
-    else if (engineChecker('뷰어') && location.hash == '#lists') {
-        target = () => document.getElementById('episode_table');
-        tHOption = { redetect: 3, duration: 1 * 1000 }
-        
-        handler = () => {
-            novelPageItem(target);
-            dynamicNovelPageItem(
-                () => document.getElementById('episode_list_viewer'),
-                target
-            );
-        }
-    }
-    else
-        return;
+    if (!phs) return;
 
     const np_key = `${npup.project.prefix.css}${this.key}`;
 
     let select_episode = undefined;
 
     targetHandler(
-        target,
+        phs.wrapperTarget,
         () => {
-            handler();
+            novelPageItem(phs.attachTarget);
+            dynamicNovelPageItem(
+                phs.pageTarget,
+                phs.attachTarget
+            );
             select_episode = scriptInjection('src/base/file/select-episode.js');
         },
-        tHOption
+        phs.tHOption
     );
 
 

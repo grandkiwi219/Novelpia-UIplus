@@ -18,45 +18,127 @@
 
     window.addEventListener('DOMContentLoaded', () => {
         const c_about_path = searchAboutPath();
-        let c_path = npup.func.resolvePath(c_about_path.options);
+        let c_path = npup.func.resolvePath(c_about_path.options.method);
+
 
         const routerObserver = new MutationObserver((mu, ob) => {
+            ob.disconnect();
+
+            routeDetectorProcess(ob);
+        });
+        onOb(routerObserver, c_about_path);
+
+
+        function routeDetectorProcess(ob, { defender_pass = false } = {}) {
             let current_path = npup.func.resolvePath({ hash: true, search: true });
             const current_about_path = searchAboutPath(current_path);
-            current_path = npup.func.resolvePath(current_about_path.options);
+            current_path = npup.func.resolvePath(current_about_path.options.method);
 
-            if (!pathChecker(osc_routes_path, { target: current_path }))
-                return ob.disconnect(), npup.dev('route detector 연결 끊김');
-
+            if (!pathChecker(osc_routes_path, { target: current_path })) {
+                ob.disconnect();
+                npup.dev('route detector 연결 끊김');
+                return;
+            }
+            
+            
             if (c_path != current_path) {
+                if (!defender_pass && current_about_path.options.defender && processDefender(ob))
+                    return;
                 routing = true;
                 performance_standard = performance.now();
                 c_path = current_path;
                 routeDetector({ path: c_path });
             }
 
-            ob.disconnect();
             onOb(ob, current_about_path);
-        });
+        }
 
-        onOb(routerObserver, c_about_path);
+
+
+
+        function onOb(ob, about_path) {
+            const auto_decide_setup = about_path?.options?.method?.hash ? ob_all_setup : observer_setup;
+            ob.disconnect();
+            ob.observe(
+                about_path?.observer?.target ? document.querySelector(about_path?.observer?.target) : document.body,
+                about_path?.observer?.setup || auto_decide_setup
+            );
+        }
+
+        function searchAboutPath(target_path = undefined) {
+            let route_setup = {
+                path: '',
+                options: {
+                    method: undefined,
+                    defender: false,
+                },
+                observer: {
+                    target: undefined,
+                    setups: undefined,
+                }
+            }
+            osc.routes.forEach(r => {
+                if (pathChecker(r.path, { target: target_path }) && r.path.length > route_setup.path.length) {
+                    route_setup.path = r.path;
+                    Object.assign(route_setup.options, r.options);
+                    Object.assign(route_setup.observer, r.observer);
+                }
+            });
+
+            return route_setup;
+        }
+
+
+
+
+        let processing = {
+            count: 0,
+            clear: undefined,
+            timeout: undefined
+        }
+
+        const std_process_defender = {
+            count: 2,
+            clear: 0.22 * 1000,
+            stop: 1.6 * 1000
+        }
+
+        function processDefender(ob) {
+            if (processing.count >= std_process_defender.count) {
+                ob.disconnect();
+                npup.uwu('route detector 강제 연결 종료');
+                if (!processing.stop) {
+                    if (processing.clear)
+                        clearTimeout(processing.clear);
+                    processing.stop = setTimeout(() => {
+                        processing = {
+                            count: 0,
+                            clear: undefined,
+                            timeout: undefined
+                        }
+                        routeDetectorProcess(ob, { defender_pass: true });
+                        npup.owo('route detector 재연결');
+                    }, std_process_defender.stop);
+                }
+                return true;
+            } else if (processing.count > 0) {
+                processing.count++;
+                return false;
+            }
+            if (processing.clear)
+                clearTimeout(processing.clear);
+            processing.count++;
+            processing.clear = setTimeout(() => {
+                if (!processing.stop) {
+                    processing.count = 0;
+                    processing.clear = undefined;
+                }
+            }, std_process_defender.clear);
+            return false;
+        }
     });
 
 
-    function onOb(ob, about_path) {
-        const auto_decide_setup = about_path.options?.hash ? ob_all_setup : observer_setup;
-        ob.observe(document.body, about_path.observer || auto_decide_setup);
-    }
-
-    function searchAboutPath(target_path = undefined) {
-        let route_path = { path: '', options: undefined, observer: undefined };
-        osc.routes.forEach(r => {
-            if (pathChecker(r.path, { target: target_path }) && r.path.length > route_path.path.length)
-                route_path = r;
-        });
-
-        return route_path;
-    }
 })();
 
 // -----------------------------------------------------------------------------
@@ -73,16 +155,17 @@ function routeDetector({ path = npup.path } = {}) {
     // 페이지 -> 뷰어 이동 시 엔진 체크 한다면 뷰어로 뜬다는 점 유의할 것
     window.dispatchEvent(new CustomEvent(npup.event.router, { detail: data }));
 
-    const path_content = `| 위치: ${path} ${domainChecker('base') ? '' : `| 도메인: ${location.hostname}`}`;
+    const path_content = ` | 위치: ${path} ${domainChecker('base') ? '' : `| 도메인: ${location.hostname}`}`;
+    const insert_content = npup.debug?.locate ? path_content : '';
 
     if (result == 0) {
-        npup.dev(`엔진에 변화가 없습니다. ${path_content}`);
+        npup.dev(`엔진에 변화가 없습니다.${insert_content}`);
         ready({ router: true });
         basic_use_system.router = {};
     }
     else {
-        if (result == 1) npup.dev(`엔진이 변경되었습니다. ${path_content}`);
-        else npup.dev(`엔진이 존재하지 않습니다. ${path_content}`);
+        if (result == 1) npup.dev(`엔진이 변경되었습니다.${insert_content}`);
+        else npup.dev(`엔진이 존재하지 않습니다.${insert_content}`);
         resetAttribute();
         optionsReset();
         ready();

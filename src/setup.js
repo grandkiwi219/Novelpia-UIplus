@@ -25,15 +25,19 @@ local.get([npup.keys.debug, npup.keys.log]).then(r => {
     npup.debug = r[npup.keys.debug];
     /* 
     {
-        alert: true,   
-        key: true,
-        performance: true
+        alert: boolean,   
+        key: boolean,
+        performance: boolean,
+        locate: boolean,
     }
     */
 
     if (r[npup.keys.log]) { 
         npup.log = function() { return; }
         npup.dev = function() { return; }
+        npup.owo = function() { return; }
+        npup.owu = function() { return; }
+        npup.uwu = function() { return; }
     }
 });
 
