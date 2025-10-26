@@ -153,9 +153,9 @@ viewerCa['dbl-vote'].system = function(r) {
         
         if (
             document.getElementById('novel_drawing_right') == e.target ||
-            document.getElementById('novel_drawing_right').contains(e.target) ||
+            document.getElementById('novel_drawing_right')?.contains(e.target) ||
             document.getElementById('novel_drawing_left') == e.target ||
-            document.getElementById('novel_drawing_left').contains(e.target)
+            document.getElementById('novel_drawing_left')?.contains(e.target)
         ) return;
 
         if (!document.getElementById('novel_box').contains(e.target)) return;
