@@ -112,7 +112,7 @@ const npup = {
         return console.log(`%c${this.project.prefix.console}`, style, ...content);
     },
     owo(...content) {
-        const style = `color: #02d360ff;`;
+        const style = `color: #02c21cff;`;
         return console.log(`%c${this.project.prefix.console}`, style, ...content);
     },
     owu(...content) {
