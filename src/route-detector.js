@@ -34,6 +34,7 @@
 
             if (!pathChecker(osc_routes_path, { target: current_path })) {
                 chrome.runtime.onMessage.removeListener(urlChangeProcess);
+                npup.owo('route detector가 종료 상태에 들어섰습니다.');
                 return;
             }
 
