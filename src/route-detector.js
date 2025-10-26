@@ -16,29 +16,33 @@
     if (!pathChecker(osc_routes_path)) return;
 
     window.addEventListener('DOMContentLoaded', () => {
-        const c_about_path = searchAboutPath();
-        let c_path = npup.func.resolvePath(c_about_path.options.method);
+        const loaded_about_path = searchAboutPath();
+        let loaded_path = npup.func.resolvePath(loaded_about_path.options.method);
 
-        chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        const urlChangeProcess = (request, sender, sendResponse) => {
             if (request.message != 'route-detect') return; 
 
             routeDetectorProcess();
-        });
+        }
+
+        chrome.runtime.onMessage.addListener(urlChangeProcess);
 
         function routeDetectorProcess() {
             let current_path = npup.func.resolvePath({ hash: true, search: true });
             const current_about_path = searchAboutPath(current_path);
             current_path = npup.func.resolvePath(current_about_path.options.method);
 
-            if (
-                !pathChecker(osc_routes_path, { target: current_path })
-                || c_path == current_path
-            ) return;
+            if (!pathChecker(osc_routes_path, { target: current_path })) {
+                chrome.runtime.onMessage.removeListener(urlChangeProcess);
+                return;
+            }
+
+            if (loaded_path == current_path) return;
                         
             routing = true;
             performance_standard = performance.now();
-            c_path = current_path;
-            routeDetector({ path: c_path });
+            loaded_path = current_path;
+            routeDetector({ path: loaded_path });
         }
 
 
