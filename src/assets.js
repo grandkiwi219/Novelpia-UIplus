@@ -119,12 +119,15 @@ HTMLElement.prototype.esrender = function(where, element, { exclude_class = [] }
         element = where;
         where = 'beforeend';
     }
-    else if (typeof where != 'string')
+    else if (typeof where != 'string') {
         throw new Error('지명할 방식은 문자열 타입이여야 합니다.');
-    else if (!['beforebegin', 'afterbegin', 'beforeend', 'afterend'].includes(where))
+    }
+    else if (!['beforebegin', 'afterbegin', 'beforeend', 'afterend'].includes(where)) {
         throw new Error('지명할 방식이 알맞지 않습니다.');
-    else if (!element)
+    }
+    else if (!element) {
         throw new Error('위치 지정시 요소가 존재하여야 합니다.');
+    }
 
     const is_HTMLElement = (element instanceof HTMLElement);
     const is_string = (typeof element == 'string');

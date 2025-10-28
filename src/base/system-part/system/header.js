@@ -54,7 +54,7 @@ headerCa['search-result'].system = function(r, generate) {
     if (routing && !generate) { // 뒤로가기시 바로 업데이트가 되지 않는 문제
         return tryChecker(() => {
             // 혹시 모를 중복 생성으로 인한 검색 결과 미반영 해결책
-            let search_result = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}-wrap`)[0];
+            const search_result = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}-wrap`)[0];
 
             if (!search_result/* [0] */ && !document.getElementsByClassName(`${npup.project.prefix.css}${this.key}`)[0]) {
                 /* l.nav, 다른 것들도 반영하는 것은 각 시스템별로 바디 부분에 npup- 를 삽입함으로써 이미 존재함을 증명시키게 할 것 */
@@ -314,7 +314,7 @@ headerCa['writer-room'].system = async function(r) {
         () => {
             const target = document.getElementsByClassName('header-gift');
             for (let i = 0; i < target.length; i++)
-                target[i].insertAdjacentElement("afterend", generateWriterIcon());
+                target[i].esrender("afterend", generateWriterIcon());
         }
     );
 }

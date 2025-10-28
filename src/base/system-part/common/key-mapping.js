@@ -3,12 +3,12 @@ const keyMappingCa = npup.options.mapping.options;
 
 keyMappingCa['quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, comic_viewer) => {
     if ((engineChecker('뷰어') || pathChecker('/viewer_collect/')) && !r[`${this.key}-viewer`])
-        window.addEventListener('DOMContentLoaded', () => document.getElementById('footer_bar').appendChild(menu)),
+        window.addEventListener('DOMContentLoaded', () => document.getElementById('footer_bar').esrender(menu)),
         getCookie('DARKMODE') ? menu.style.filter = 'invert(1)' : 0;
     else if (comic_viewer && !r[`${this.key}-viewer`])
-        window.addEventListener('DOMContentLoaded', () => document.getElementsByClassName('viewer_bottom')[0].appendChild(menu));
+        window.addEventListener('DOMContentLoaded', () => document.getElementsByClassName('viewer_bottom')[0].esrender(menu));
     else if (!r[`${this.key}-page`])
-        menu.classList.add(`s_inv`), document.body.appendChild(menu);
+        menu.classList.add(`s_inv`), document.body.esrender(menu);
     else
         return false;
 
