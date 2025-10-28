@@ -22,7 +22,7 @@ local.get([npup.keys.sync]).then(async r => {
 });
 
 local.get([npup.keys.debug, npup.keys.log]).then(r => {
-    npup.debug = r[npup.keys.debug];
+    Object.assign(npup.debug, r[npup.keys.debug]);
     /* 
     {
         alert: boolean,   

@@ -1,5 +1,5 @@
 const npup = {
-    debug: undefined,
+    debug: {},
 
     options: {},
 
