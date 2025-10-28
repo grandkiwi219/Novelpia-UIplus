@@ -139,6 +139,9 @@ otherCa['last-ep'].system = async function(r) {
     const routerEvent = (e) => {
         if (e.detail.engine_is_changed) return;
 
+        if (!document.body.contains(last_ep_alarm))
+            document.body.appendChild(last_ep_alarm);
+
         if (updateData()) {
             setAlarmState(e.detail.pathChecker);
             setContinueContent();
