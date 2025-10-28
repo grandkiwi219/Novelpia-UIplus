@@ -8,7 +8,7 @@
  * @param {function} handler 실행할 함수
  * @param {Object} [setup={}] 
  * @param {number} setup.redetect 재탐지할 횟수
- * @param {number} setup.duration 탐지할 시간, 이때 재탐지 횟수가 1회 이하일시 8초로 고정
+ * @param {number} setup.duration 탐지할 시간, 이때 재탐지 횟수가 1회 이하일시 standard_duration[=8*1000]으로 고정
  * @param {*} setup.method 0 = 기본적으로 작동, * = 기본적으로 탐지함
  */
 function targetHandler(targetFinder, handler, {

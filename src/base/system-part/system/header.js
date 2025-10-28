@@ -35,7 +35,8 @@ headerCa['search'].system = function(r) {
 
     targetHandler(
         () => document.getElementById('btn_alram'),
-        (target) => target.esrender("beforebegin", search_icon)
+        (target) => target.esrender("beforebegin", search_icon),
+        { redetect: 1 }
     );
 }
 
@@ -117,7 +118,8 @@ headerCa['search-result'].system = function(r, generate) {
             
                 result_box.classList.add(`${presr}-newtype`);
                 target.esrender(result_box);
-            }
+            },
+            { redetect: 1 }
         );
     }
 

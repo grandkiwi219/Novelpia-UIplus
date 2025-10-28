@@ -140,7 +140,8 @@ mobileCa['origin-header'].system = function(r) {
 
         targetHandler(
             () => document.getElementsByClassName('header-icon-menu')[0],
-            (target) => target.esrender("afterbegin", m_search_icon)
+            (target) => target.esrender("afterbegin", m_search_icon),
+            { redetect: 1 }
         );
     }
 
@@ -197,7 +198,8 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
     if (pathChecker('/novel/')) {
         targetHandler(
             target,
-            (continue_ep) => checkStyleSetup(continue_ep)
+            (continue_ep) => checkStyleSetup(continue_ep),
+            { redetect: 1 }
         );
     }
     else if (pathChecker('/comic_episode/')) {
@@ -422,6 +424,7 @@ mobileCa['top-ep'].system = function(r) {
             const final_target = document.querySelector('.epnew-mobile-btn-area-relative');
 
             final_target.insertAdjacentElement('beforebegin', top_ep);
-        }
+        },
+        { redetect: 1 }
     );
 }
