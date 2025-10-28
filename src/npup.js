@@ -28,6 +28,11 @@ const npup = {
         observer: {
             childList: true,
             subtree: true
+        },
+        console: {
+            style: {
+                std: `color: black; font-weight: 300;`
+            }
         }
     },
 
@@ -110,6 +115,12 @@ const npup = {
     dev(...content) {
         const style = `color: ${this.project.color};`;
         return console.log(`%c${this.project.prefix.console}`, style, ...content);
+    },
+    trace(content = '노벨피아 UI+ 콘솔 메세지 출력', { titles = [], contents = [] } = {}) {
+        const style = `color: ${this.project.color}; font-weight: 300;`;
+        console.groupCollapsed(`%c${this.project.prefix.console} %c${content}`, style, this.settings.console.style.std, ...titles );
+        console.trace(...contents);
+        return console.groupEnd();
     },
     owo(...content) {
         const style = `color: #02c21cff;`;

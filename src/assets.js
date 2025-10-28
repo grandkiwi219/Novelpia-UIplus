@@ -8,7 +8,7 @@
  * @param {function} handler 실행할 함수
  * @param {Object} [setup={}] 
  * @param {number} setup.redetect 재탐지할 횟수
- * @param {number} setup.duration 탐지할 시간
+ * @param {number} setup.duration 탐지할 시간, 이때 재탐지 횟수가 1회 이하일시 8초로 고정
  * @param {*} setup.method 0 = 기본적으로 작동, * = 기본적으로 탐지함
  */
 function targetHandler(targetFinder, handler, {
@@ -35,7 +35,7 @@ function targetHandler(targetFinder, handler, {
             tryChecker(() => handler(target), 'targetHandler -> handler', false);
             ob.disconnect();
         });
-        targetOb.observe(html, { childList: true });
+        targetOb.observe(document.documentElement, { childList: true, subtree: true });
 
         setTimeout(() => {
             if (!target_found) {
@@ -43,12 +43,12 @@ function targetHandler(targetFinder, handler, {
                 if (redetect > 0) {
                     targetHandler(targetFinder, handler, {
                         redetect: redetect - 1,
-                        duration: Math.min(duration + 1 * 1000, standard_duration)
+                        duration: redetect < 2 ? standard_duration : Math.min(duration + 1 * 1000, standard_duration)
                     });
-                    npup.dev('타겟을 찾지 못하였습니다. 재탐지를 시작합니다.');
+                    npup.trace(`타겟을 찾지 못하였습니다. 재탐지를 시작합니다.`);
                 }
-                else { 
-                    npup.dev(`타겟을 찾는 데에 시간이 오래 걸려 함수 실행을 취소했습니다.`);
+                else {
+                    npup.trace(`타겟을 찾는 데에 시간이 오래 걸려 함수 실행을 취소했습니다.`);
                 }
             }
         }, duration);

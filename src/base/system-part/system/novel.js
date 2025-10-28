@@ -9,7 +9,7 @@ novelCa['novel-page'].system = function(r) {
                     wrapperTarget,
                     pageTarget: () => document.getElementById('episode_list'),
                     attachTarget: wrapperTarget,
-                    tHOption: { redetect: 4, duration: 1.2 * 1000 }
+                    tHOption: { redetect: 1 }
                 }
             }
             else if (pathChecker('/collect_novel/')) {
@@ -18,7 +18,7 @@ novelCa['novel-page'].system = function(r) {
                     wrapperTarget: () => document.querySelector('div.d-flex.align-items-center.justify-content-center'),
                     pageTarget,
                     attachTarget: pageTarget,
-                    tHOption: { redetect: 4, duration: 1.4 * 1000 }
+                    tHOption: { redetect: 1 }
                 }
             }
             else
@@ -30,7 +30,7 @@ novelCa['novel-page'].system = function(r) {
                 wrapperTarget,
                 pageTarget: () => document.getElementById('episode_list_viewer'),
                 attachTarget: wrapperTarget,
-                tHOption: { redetect: 4, duration: 1 * 1000 }
+                tHOption: { redetect: 1 }
             }
         }
         else

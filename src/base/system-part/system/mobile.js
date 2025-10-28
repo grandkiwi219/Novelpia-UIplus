@@ -201,49 +201,38 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
         );
     }
     else if (pathChecker('/comic_episode/')) {
-        /* targetHandler(
+        targetHandler(
             target,
-            (continue_ep) => checkStyleSetup(continue_ep),
-            {
-                redetect: 3,
-                duration: 1 * 1000
-            }
-        ); */
-        /* THINKING */
-        new MutationObserver((mus, ob) => {
-            const continue_ep = target();
+            (continue_ep) => {
+                checkStyleSetup(continue_ep, true);
 
-            if (!continue_ep) return;
+                let is_changed = false;
 
-            ob.disconnect();
-            
-            checkStyleSetup(continue_ep, true);
+                const continueObserver = new MutationObserver((mus2, ob2) => {
+                    is_changed = true;
 
-            let is_changed = false;
+                    ob2.disconnect();
 
-            const continueObserver = new MutationObserver((mus2, ob2) => {
-                is_changed = true;
+                    checkStyleSetup(target(), true);
+                });
 
-                ob2.disconnect();
+                continueObserver.observe(target(), observer_setup);
 
-                checkStyleSetup(target(), true);
-            });
-            
-            continueObserver.observe(target(), observer_setup);
+                const continueInterval = setInterval(() => {
+                    if (document.querySelector('.loads').style.display != 'none') return;
 
-            const continueInterval = setInterval(() => {
-                if (document.querySelector('.loads').style.display != 'none') return;
+                    continueObserver.disconnect();
 
-                continueObserver.disconnect();
-                
-                // 인터넷 속도가 느려 로딩 페이지가 오랫동안 보이고 continueObserver가 변화를 감지하기 전에 로딩 페이지를 닫는 버튼을 눌러버린다면
-                // 이어보기에 추가 변화가 없다고 감지할 수 있음.
-                if (!is_changed) npup.log('이어보기에 추가 변화가 없습니다.');
-                else npup.log('이어보기에 변화가 있었습니다.');
+                    // 인터넷 속도가 느려 로딩 페이지가 오랫동안 보이고 continueObserver가 변화를 감지하기 전에 로딩 페이지를 닫는 버튼을 눌러버린다면
+                    // 이어보기에 추가 변화가 없다고 감지할 수 있음.
+                    if (!is_changed) npup.log('이어보기에 추가 변화가 없습니다.');
+                    else npup.log('이어보기에 변화가 있었습니다.');
 
-                clearInterval(continueInterval);
-            }, 1.5 * 1000);
-        }).observe(document.body, observer_setup);
+                    clearInterval(continueInterval);
+                }, 1.5 * 1000);
+            },
+            { redetect: 1 }
+        );
     }
     else
         return;
