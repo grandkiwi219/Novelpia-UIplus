@@ -108,6 +108,72 @@ function styleInjection(id, content) {
 
 
 /**
+ * Element Substitution Render
+ * @param {InsertPosition | HTMLElement} where 
+ * @param {HTMLElement | string} [element] 
+ * @param {object} [options]
+ * @param {string[]} [options.exclude_class]
+ */
+HTMLElement.prototype.esrender = function(where, element, { exclude_class = [] } = {}) {
+    if (where instanceof HTMLElement) {
+        element = where;
+        where = 'beforeend';
+    }
+    else if (typeof where != 'string')
+        throw new Error('지명할 방식은 문자열 타입이여야 합니다.');
+    else if (!['beforebegin', 'afterbegin', 'beforeend', 'afterend'].includes(where))
+        throw new Error('지명할 방식이 알맞지 않습니다.');
+    else if (!element)
+        throw new Error('위치 지정시 요소가 존재하여야 합니다.');
+
+    const is_HTMLElement = (element instanceof HTMLElement);
+    const is_string = (typeof element == 'string');
+
+    if (!is_HTMLElement && !is_string) 
+        throw new Error('요소는 HTMLElement 혹은 문자열이여야 합니다.');
+
+    let early_exist_el = null;
+
+    if (is_HTMLElement) {
+        early_exist_el = document.getElementById(element.id);
+        if (!early_exist_el && element.classList.length > 0) {
+            const doc = (where == 'beforeend' || where == 'afterbegin')
+                ? this
+                : this.parentElement;
+            if (doc) {
+                if (!Array.isArray(exclude_class)) {
+                    exclude_class = typeof exclude_class == 'string'
+                        ? [exclude_class]
+                        : [];
+                }
+
+                const exclude_class_set = new Set(exclude_class);
+
+                const filtered_class = [...element.classList].filter(cl => !exclude_class_set.has(cl));
+
+                if (filtered_class.length > 0) {
+                    early_exist_el = doc.querySelector('.' + filtered_class.join('.'));
+                }
+            }
+        }
+    }
+
+    if (early_exist_el && early_exist_el !== element) {
+        early_exist_el.replaceWith(element);
+    }
+    else {
+        if (is_HTMLElement) {
+            this.insertAdjacentElement(where, element);
+        }
+        else {
+            this.insertAdjacentHTML(where, element);
+        }
+    }
+}
+
+
+
+/**
  * 함수 내에서 지연하기 위한 간단한 함수
  * @param {number} time 지연 시간
  */

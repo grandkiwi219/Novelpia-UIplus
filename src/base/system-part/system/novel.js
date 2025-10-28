@@ -68,10 +68,7 @@ novelCa['novel-page'].system = function(r) {
         page_items.style = 'border-top: 1px solid #EFEFEF; height: 80px';
         page_items.classList.add(np_key);
 
-        const remained_page_item = document.getElementsByClassName(np_key)[0];
-
-        if (remained_page_item) remained_page_item.replaceWith(page_items);
-        else target.insertAdjacentElement('beforebegin', page_items);
+        target.esrender('beforebegin', page_items);
 
         const page_selector_tmp = document.getElementsByClassName('select_episode_box');
         if (page_selector_tmp[0]) {
@@ -86,10 +83,7 @@ novelCa['novel-page'].system = function(r) {
             page_selector.style = 'margin-bottom: 20px;';
             page_selector.classList.add(`${np_key}-selector`);
 
-            const remained_page_selector = document.getElementsByClassName(`${np_key}-selector`)[0];
-
-            if (remained_page_selector) remained_page_selector.replaceWith(page_selector);
-            else target.insertAdjacentElement('beforebegin', page_selector);
+           target.esrender('beforebegin', page_selector);
 
             reFunc(page_selector);
         }
