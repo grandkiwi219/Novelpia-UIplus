@@ -4,13 +4,15 @@
     if (searchForm)
         searchFormEvent();
     else 
-        window.addEventListener("DOMContentLoaded", () => {
+        new MutationObserver((mu, ob) => {
             const searchForm = document.getElementById(`${npup.project.prefix.css}search-form`);
 
             if (!searchForm) return;
 
+            ob.disconnect();
+
             searchFormEvent();
-        });
+        }).observe(document.body, npup.settings.observer);
 
     function searchFormEvent() {
         searchForm.addEventListener('submit', (e) => {

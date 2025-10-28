@@ -34,23 +34,22 @@ navigationCa['nav-mybook'].system = function(r, get_data) {
     })
 
     // mobile area
-    new MutationObserver((mus, ob) => {
-        if (!document.getElementsByClassName('bt-nv-menu')[0]) return;
-        
-        ob.disconnect();
+    targetHandler(
+        () => document.getElementsByClassName('bt-nv-menu')[0],
+        () => {
+            let m_menu = document.getElementsByClassName('bt-nv-menu');
 
-        let m_menu = document.getElementsByClassName('bt-nv-menu');
+            let m_mybook = m_menu[m_menu.length - 1].outerHTML;
 
-        let m_mybook =  m_menu[m_menu.length - 1].outerHTML;
-            
-        m_mybook = m_mybook
-            .replace(/div/g, 'a').replace('a', `a href="/mybook${where_href}" style="color: black;"`)
-            .replace('최근기록', where_name);
+            m_mybook = m_mybook
+                .replace(/div/g, 'a').replace('a', `a href="/mybook${where_href}" style="color: black;"`)
+                .replace('최근기록', where_name);
 
-        if (where_name != '최근기록') m_mybook = m_mybook.replace('recent', 'mybook');
+            if (where_name != '최근기록') m_mybook = m_mybook.replace('recent', 'mybook');
 
-        m_menu[m_menu.length - 1].outerHTML = m_mybook
-    }).observe(document.body, observer_setup);
+            m_menu[m_menu.length - 1].outerHTML = m_mybook
+        }
+    );
 }   
 
 

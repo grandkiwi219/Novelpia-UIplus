@@ -6,9 +6,9 @@ otherCa['notice'].system = function(r) {
     targetHandler(() => document.getElementById('copyright_bar'), () => setNotice());
 
     function setNotice() {
-        let notice_bar = document.getElementById('copyright_bar').cloneNode(true);
+        const notice_bar = document.getElementById('copyright_bar').cloneNode(true);
         notice_bar.id = `${npup.project.prefix.css}${notice_bar.id}`;
-        let main = document.getElementById('vue_main_wrapper');
+        const main = document.getElementById('vue_main_wrapper');
 
         // system-content.css => notice css
         notice_bar.classList.add(`${npup.project.prefix.css}notice`);
@@ -17,7 +17,7 @@ otherCa['notice'].system = function(r) {
         notice_bar.firstElementChild.firstElementChild.classList.remove('justify-content-start');
         notice_bar.firstElementChild.firstElementChild.classList.add('justify-content-between');
 
-        let notice_list_btn = document.createElement('a');
+        const notice_list_btn = document.createElement('a');
         notice_list_btn.classList.add('d-flex');
         notice_list_btn.classList.add('align-items-center');
         notice_list_btn.classList.add('s_inv');
@@ -26,7 +26,7 @@ otherCa['notice'].system = function(r) {
 
         notice_bar.firstElementChild.firstElementChild.appendChild(notice_list_btn);
     
-        main.insertAdjacentElement("beforebegin", notice_bar);
+        main.esrender("beforebegin", notice_bar);
     }
 }
 
@@ -126,7 +126,7 @@ otherCa['last-ep'].system = async function(r) {
     last_ep_alarm.appendChild(content);
     last_ep_alarm.appendChild(redirect_wrap);
 
-    document.body.appendChild(last_ep_alarm);
+    document.body.esrender(last_ep_alarm);
 
     if (data && !freeze) {
         if (r['last-ep-home']) {
@@ -140,7 +140,7 @@ otherCa['last-ep'].system = async function(r) {
         if (e.detail.engine_is_changed) return;
 
         if (!document.body.contains(last_ep_alarm))
-            document.body.appendChild(last_ep_alarm);
+            document.body.esrender(last_ep_alarm);
 
         if (updateData()) {
             setAlarmState(e.detail.pathChecker);

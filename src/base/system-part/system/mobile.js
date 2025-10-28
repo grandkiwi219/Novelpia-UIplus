@@ -128,20 +128,20 @@ mobileCa['origin-header'].system = function(r) {
     basicUseSystem('bottom-heart-alarm', r);
 
     if (!r['search']) {
-        let m_search_icon = ``
-            + `<a href="/search" class="header-mobile-search">`
-                + `<img src="//images.novelpia.com/img/new/navi/sbm_icon_search.svg" alt="모바일 검색">`
-            + `</a>`;
+        const m_search_icon = document.createElement('a');
+        m_search_icon.href = '/search';
+        m_search_icon.classList.add('header-mobile-search');
 
-        new MutationObserver((mus, ob) => {
-            const main = document.getElementsByClassName('header-icon-menu')[0];
+        const m_search_img = document.createElement('img');
+        m_search_img.src = '//images.novelpia.com/img/new/navi/sbm_icon_search.svg';
+        m_search_img.alt = '모바일 검색';
 
-            if (!main) return;
+        m_search_icon.appendChild(m_search_img);
 
-            main.insertAdjacentHTML("afterbegin", m_search_icon);
-            
-            ob.disconnect();
-        }).observe(document.body, observer_setup);
+        targetHandler(
+            () => document.getElementsByClassName('header-icon-menu')[0],
+            (target) => target.esrender("afterbegin", m_search_icon)
+        );
     }
 
     document.querySelectorAll('#toggle-menu').forEach(b => {
@@ -195,17 +195,21 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
     const target = () => document.querySelector('.btn-view-episode');
 
     if (pathChecker('/novel/')) {
-        new MutationObserver((mus, ob) => {
-            const continue_ep = target();
-        
-            if (!continue_ep) return;
-
-            ob.disconnect();
-
-            checkStyleSetup(continue_ep);
-        }).observe(document.body, observer_setup);
+        targetHandler(
+            target,
+            (continue_ep) => checkStyleSetup(continue_ep)
+        );
     }
-    else if (pathChecker('/comic_episode/'))
+    else if (pathChecker('/comic_episode/')) {
+        /* targetHandler(
+            target,
+            (continue_ep) => checkStyleSetup(continue_ep),
+            {
+                redetect: 3,
+                duration: 1 * 1000
+            }
+        ); */
+        /* THINKING */
         new MutationObserver((mus, ob) => {
             const continue_ep = target();
 
@@ -240,6 +244,7 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
                 clearInterval(continueInterval);
             }, 1.5 * 1000);
         }).observe(document.body, observer_setup);
+    }
     else
         return;
 
@@ -417,16 +422,17 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
 mobileCa['top-ep'].system = function(r) {
     if (!pathChecker('/novel/')) return;
 
-    targetHandler(() => document.getElementsByClassName('btn-view-run')[0], (t) => setTopEp(t));
+    targetHandler(
+        () => document.getElementsByClassName('btn-view-run')[0],
+        (target) => {
+            let top_ep = target.parentElement.cloneNode(true);
+            top_ep.style = 'justify-content: center;';
+            top_ep.firstElementChild.style = 'max-width: 585px; width: 100%; margin-top: 20px;';
+            if (top_ep.children.length > 1) top_ep.lastElementChild.style.display = 'none';
 
-    function setTopEp(target) {
-        let top_ep = target.parentElement.cloneNode(true);
-        top_ep.style = 'justify-content: center;';
-        top_ep.firstElementChild.style = 'max-width: 585px; width: 100%; margin-top: 20px;';
-        if (top_ep.children.length > 1) top_ep.lastElementChild.style.display = 'none';
+            const final_target = document.querySelector('.epnew-mobile-btn-area-relative');
 
-        const final_target = document.querySelector('.epnew-mobile-btn-area-relative');
-
-        final_target.insertAdjacentElement('beforebegin', top_ep);
-    }
+            final_target.insertAdjacentElement('beforebegin', top_ep);
+        }
+    );
 }

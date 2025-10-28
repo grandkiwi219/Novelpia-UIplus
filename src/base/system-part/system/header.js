@@ -1,21 +1,17 @@
 const headerCa = npup.options.header.options;
 
-headerCa['adult'].system = async function(r) {
+headerCa['adult'].system = function(r) {
+    targetHandler(
+        () => document.querySelector('.switch-adult'),
+        (target) => {
+            document.querySelectorAll('.s-logo').forEach(re => {
+                let adult_button = target.cloneNode(true);
+                adult_button.style = 'cursor: pointer;';
 
-    new MutationObserver((mus, ob) => {
-        let switch_adult = document.querySelector('.switch-adult');
-
-        if (!switch_adult) return;
-
-        document.querySelectorAll('.s-logo').forEach(re => {
-            let adult_button = switch_adult.cloneNode(true);
-            adult_button.style = 'cursor: pointer;';
-            
-            re.insertAdjacentElement('afterend', adult_button);
-        });
-
-        ob.disconnect();
-    }).observe(document.body, observer_setup);
+                re.esrender('afterend', adult_button);
+            });
+        }
+    );
 }
 
 
@@ -26,25 +22,21 @@ headerCa['search'].system = function(r) {
     
     document.getElementsByClassName('header-search')[0]?.remove();
 
-    let search_icon = ''
-        + `<div class="${npup.project.prefix.css}search-base">`
-            + `<form id="${npup.project.prefix.css}search-form" class="${npup.project.prefix.css}search-header" autocomplete="off">`
-                    + `<input id="search_input" class="${npup.project.prefix.css}search-box" type="text" name="search_box" placeholder="제목, 작가를 입력하세요." maxlength="50" autocomplete="off" value form="${npup.project.prefix.css}search-form">`
-            + '</form>'
-            + `<button type="button" class="${npup.project.prefix.css}search-align" onclick="javascript:npupPcSearch()">`
-                +`<img src="//images.novelpia.com/img/new/header/icon_in_search.svg" alt="검색" class="${npup.project.prefix.css}search-icon">`
-            + '</button>'
-        + '</div>'
+    const search_icon = document.createElement('div');
+    search_icon.classList.add(`${npup.project.prefix.css}search-base`);
 
-    new MutationObserver((mus, ob) => {
-        let main = document.getElementById('btn_alram');
+    search_icon.innerHTML = ''
+        + `<form id="${npup.project.prefix.css}search-form" class="${npup.project.prefix.css}search-header" autocomplete="off">`
+                + `<input id="search_input" class="${npup.project.prefix.css}search-box" type="text" name="search_box" placeholder="제목, 작가를 입력하세요." maxlength="50" autocomplete="off" value form="${npup.project.prefix.css}search-form">`
+        + '</form>'
+        + `<button type="button" class="${npup.project.prefix.css}search-align" onclick="javascript:npupPcSearch()">`
+            +`<img src="//images.novelpia.com/img/new/header/icon_in_search.svg" alt="검색" class="${npup.project.prefix.css}search-icon">`
+        + '</button>';
 
-        if (!main) return;
-
-        main.insertAdjacentHTML("beforebegin", search_icon); 
-        
-        ob.disconnect();
-    }).observe(document.body, observer_setup);
+    targetHandler(
+        () => document.getElementById('btn_alram'),
+        (target) => target.esrender("beforebegin", search_icon)
+    );
 }
 
 
@@ -52,7 +44,7 @@ headerCa['search'].system = function(r) {
 let sr;
 let presr;
 
-let delete_all = document.createElement('div');
+const delete_all = document.createElement('div');
 delete_all.innerHTML = '잔체삭제';
 
 
@@ -62,15 +54,15 @@ headerCa['search-result'].system = function(r, generate) {
     if (routing && !generate) { // 뒤로가기시 바로 업데이트가 되지 않는 문제
         return tryChecker(() => {
             // 혹시 모를 중복 생성으로 인한 검색 결과 미반영 해결책
-            let search_result = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}-wrap`);
+            let search_result = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}-wrap`)[0];
 
-            if (!search_result[0] && !document.getElementsByClassName(`${npup.project.prefix.css}${this.key}`)[0]) {
+            if (!search_result/* [0] */ && !document.getElementsByClassName(`${npup.project.prefix.css}${this.key}`)[0]) {
                 /* l.nav, 다른 것들도 반영하는 것은 각 시스템별로 바디 부분에 npup- 를 삽입함으로써 이미 존재함을 증명시키게 할 것 */
                 /* 그렇다해도 searchResultSystem 내부에 resultBoxContent가 삽입되어 있으니 이 부분은 삭제하지 말 것 */
                 this.system(r, true);
             }
             else
-                search_result[search_result.length - 1].innerHTML = searchResultBoxContent();
+                search_result/* [search_result.length - 1] */.innerHTML = searchResultBoxContent();
         }, '동적 검색 결과', '파츠'/* , mus */);
     }
     
@@ -90,11 +82,11 @@ headerCa['search-result'].system = function(r, generate) {
 
     // 검색바 최소화 선택이 '안'되어 있을 시
     if (!r['nav'] && !r['search']) {
-        let searcher = document.querySelector('div.header-top-wrapper > div.header-top > div:has(div.header-search)');
+        const searcher = document.querySelector('div.header-top-wrapper > div.header-top > div:has(div.header-search)');
         // css 로 위치 변경
         //searcher.style = 'position: relative; width: 420px; height: 50px;';
 
-        searcher.appendChild(result_box);
+        searcher.esrender(result_box);
 
         document.addEventListener('click', (e) => {
             let is_click = false;
@@ -118,18 +110,15 @@ headerCa['search-result'].system = function(r, generate) {
 
         // 검색바 최소화 선택이 되어 있을 시
     } else if (r['nav'] || r['search']) {
-        new MutationObserver((mus, ob) => {
-            let searcher = document.getElementById(`${npup.project.prefix.css}search-form`);
-
-            if (!searcher) return;
-
-            searcher.classList.add(`${presr}-form`);
+        targetHandler(
+            () => document.getElementById(`${npup.project.prefix.css}search-form`),
+            (target) => {
+                target.classList.add(`${presr}-form`);
             
-            result_box.classList.add(`${presr}-newtype`);
-            searcher.appendChild(result_box);
-            
-            ob.disconnect();
-        }).observe(document.body, observer_setup);
+                result_box.classList.add(`${presr}-newtype`);
+                target.esrender(result_box);
+            }
+        );
     }
 
     searchResultRedirect();
@@ -156,7 +145,6 @@ function searchResultRedirect() {
 
         location.href = '/search/' + search_type + '//1/' + target.firstChild.innerHTML.replace(/[\/%?,]/g, '') + '?page=1&rows=30&novel_type=&start_count_book=&end_count_book=&novel_age=&start_days=&sort_col=last_viewdate&novel_genre=&block_out=0&block_stop=0&is_contest=0&list_display=list';
     });
-
 }
 
 /**
@@ -286,27 +274,19 @@ headerCa['alarm'].system = function(r) {
             where_href = '';
     }
 
-    new MutationObserver((mus, ob) => {
-        const header_alert = document.getElementsByClassName('header-alert')[0];
-
-        if (!header_alert) return;
-
-        header_alert.href += where_href;
-        
-        ob.disconnect();
-    }).observe(document.body, observer_setup);
-
+    targetHandler(
+        () => document.getElementsByClassName('header-alert')[0],
+        (target) => target.href += where_href
+    );
 
     // mobile area
-    new MutationObserver((mus, ob) => {
-        if (!document.getElementById('btn_m_alram')) return;
-
-        let m_alarm = document.querySelector('.bt-nv-menu:has(#btn_m_alram)');
-        
-        m_alarm.outerHTML = m_alarm.outerHTML.replace(/div/g, 'a').replace('a', `a href="/alarm${where_href}" style="color: black;"`);
-        
-        ob.disconnect();
-    }).observe(document.body, observer_setup);
+    targetHandler(
+        () => document.getElementById('btn_m_alram'),
+        () => {
+            const m_alarm = document.querySelector('.bt-nv-menu:has(#btn_m_alram)');
+            m_alarm.outerHTML = m_alarm.outerHTML.replace(/div/g, 'a').replace('a', `a href="/alarm${where_href}" style="color: black;"`);
+        }
+    );
 } 
 
 
