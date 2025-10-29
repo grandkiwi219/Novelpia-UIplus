@@ -65,7 +65,7 @@ navigationCa['nav'].system = function(r) {
     if (window.innerWidth > 891)
         headerLocation(r['nav-align'], nav), header_position = true;
 
-    const delay = npup.etc.laze_check_time;
+    const delay = npup.etc?.laze_check_time || 100;
     let timer = null;
 
     function resizeEvent() {

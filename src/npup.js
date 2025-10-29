@@ -135,6 +135,10 @@ const npup = {
         return console.log(`%c${this.project.prefix.console}`, style, ...content);
     },
 
+    etc: {
+        laze_check_time: 100
+    },
+
     path: null,
 
     //location: null,
