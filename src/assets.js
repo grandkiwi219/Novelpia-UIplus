@@ -164,7 +164,7 @@ HTMLElement.prototype.esrender = function(where, element, { exclude_class = [] }
     if (early_exist_el && early_exist_el !== element) {
         early_exist_el.replaceWith(element);
     }
-    else {
+    else if (!early_exist_el) {
         if (is_HTMLElement) {
             this.insertAdjacentElement(where, element);
         }
