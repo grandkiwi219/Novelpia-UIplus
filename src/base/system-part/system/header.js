@@ -10,7 +10,8 @@ headerCa['adult'].system = function(r) {
 
                 re.esrender('afterend', adult_button);
             });
-        }
+        },
+        { redetect: 1 }
     );
 }
 
@@ -287,7 +288,8 @@ headerCa['alarm'].system = function(r) {
         () => {
             const m_alarm = document.querySelector('.bt-nv-menu:has(#btn_m_alram)');
             m_alarm.outerHTML = m_alarm.outerHTML.replace(/div/g, 'a').replace('a', `a href="/alarm${where_href}" style="color: black;"`);
-        }
+        },
+        { redetect: 1 }
     );
 } 
 

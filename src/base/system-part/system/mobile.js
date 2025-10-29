@@ -421,9 +421,10 @@ mobileCa['top-ep'].system = function(r) {
             top_ep.firstElementChild.style = 'max-width: 585px; width: 100%; margin-top: 20px;';
             if (top_ep.children.length > 1) top_ep.lastElementChild.style.display = 'none';
 
-            const final_target = document.querySelector('.epnew-mobile-btn-area-relative');
-
-            final_target.insertAdjacentElement('beforebegin', top_ep);
+            targetHandler(
+                () => document.getElementsByClassName('epnew-mobile-btn-area-relative')[0],
+                (ft) => ft.esrender('beforebegin', top_ep)
+            );
         },
         { redetect: 1 }
     );

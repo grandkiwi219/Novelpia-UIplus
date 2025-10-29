@@ -35,7 +35,7 @@ function targetHandler(targetFinder, handler, {
             tryChecker(() => handler(target), 'targetHandler -> handler', false);
             ob.disconnect();
         });
-        targetOb.observe(document.documentElement, { childList: true, subtree: true });
+        targetOb.observe(document.body, { childList: true, subtree: true });
 
         setTimeout(() => {
             if (!target_found) {

@@ -48,7 +48,8 @@ navigationCa['nav-mybook'].system = function(r, get_data) {
             if (where_name != '최근기록') m_mybook = m_mybook.replace('recent', 'mybook');
 
             m_menu[m_menu.length - 1].outerHTML = m_mybook
-        }
+        },
+        { redetect: 1 }
     );
 }   
 

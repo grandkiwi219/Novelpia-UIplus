@@ -131,11 +131,7 @@ novelCa['novel-page'].system = function(r) {
 novelCa['novel-notice-close'].system = function(r) {
     if (!pathChecker(['/novel/', '/collect_novel/'])) return;
 
-    const addCloseFunction = (notice_table) => {
-        const more_btn = document.getElementsByClassName('notice_toggle_btn')[0];
-
-        if (!more_btn) return npup.log('공지 더보기 버튼이 없습니다.');
-
+    const addCloseFunction = async (more_btn) => {
         const more_btn_display = more_btn.style.display == 'none';
 
         if (more_btn_display) {
@@ -146,27 +142,39 @@ novelCa['novel-notice-close'].system = function(r) {
 
         more_btn.outerHTML = more_btn.outerHTML.replace('notice_toggle()', 'npupNoticeToggle()');
 
-        if (notice_table.getElementsByClassName('ep_style4').length > 7) {
+        await setDelay(100);
+
+        let match_count;
+        try {
+            match_count = Number(more_btn.textContent.match(/\((\d+)\)/)[1]);
+        } catch (error) {}
+
+        if (match_count > 4) {
+            const notice_table = document.getElementsByClassName('notice_table')[0] || document.querySelector('table[style*=width]:has(> * > .ep_style4)');
             const more_btn_long = more_btn.cloneNode(true);
 
+            more_btn_long.id = `${npup.project.prefix.css}${this.key}`;
             more_btn_long.style.height = 'fit-content';
-            if (more_btn_display) more_btn_long.style.display = '';
-            else more_btn_long.style.display = 'none';
+            more_btn_long.style.display = more_btn_display ? '' : 'none';
 
             more_btn_long.classList.add('ep_style4');
 
-            notice_table.children[0].appendChild(more_btn_long);
+            notice_table.children[0].esrender(more_btn_long);
 
             more_btn_long.outerHTML = more_btn_long.outerHTML
                 .replace('notice_toggle()', 'npupNoticeToggleLong()')
                 .replace('더보기', '접기')
                 .replace('down', 'up');
         }
+        else {
+            npup.dev('추가 접기 버튼을 담을 정도로 크기가 크지 않습니다.');
+        }
     }
 
     targetHandler(
-        () => document.getElementsByClassName('notice_table')[0] || document.querySelector('table[style*=width]:has(> * > .ep_style4)'),
-        (t) => addCloseFunction(t)
+        () => document.getElementsByClassName('notice_toggle_btn')[0],
+        (t) => addCloseFunction(t),
+        { redetect: 1 }
     );
 
     const close_script = scriptInjection(`/src/base/file/${this.key}.js`);
