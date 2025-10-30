@@ -193,52 +193,53 @@ mobileCa['origin-header'].system = function(r) {
 
 
 mobileCa['bottom-heart-alarm'].system = function(r) {
-    const target = () => document.querySelector('.btn-view-episode');
+    // 왜 novel-page 처럼 같은 처리를 하는가?
+    // => Firefox: Referenceerror: can't access lexical declaration 'el_data' before initialization
+    let bha = (() => {
+        if (pathChecker('/novel/')) {
+            return {
+                handler: (continue_ep) => checkStyleSetup(continue_ep),
+                tHOption: { redetect: 1 }
+            }
+        }
+        else if (pathChecker('/comic_episode/')) {
+            return {
+                handler: (continue_ep) => {
+                    checkStyleSetup(continue_ep, true);
 
-    if (pathChecker('/novel/')) {
-        targetHandler(
-            target,
-            (continue_ep) => checkStyleSetup(continue_ep),
-            { redetect: 1 }
-        );
-    }
-    else if (pathChecker('/comic_episode/')) {
-        targetHandler(
-            target,
-            (continue_ep) => {
-                checkStyleSetup(continue_ep, true);
+                    let is_changed = false;
 
-                let is_changed = false;
+                    const continueObserver = new MutationObserver((mus2, ob2) => {
+                        is_changed = true;
 
-                const continueObserver = new MutationObserver((mus2, ob2) => {
-                    is_changed = true;
+                        ob2.disconnect();
 
-                    ob2.disconnect();
+                        checkStyleSetup(target(), true);
+                    });
 
-                    checkStyleSetup(target(), true);
-                });
+                    continueObserver.observe(target(), observer_setup);
 
-                continueObserver.observe(target(), observer_setup);
+                    const continueInterval = setInterval(() => {
+                        if (document.querySelector('.loads').style.display != 'none') return;
 
-                const continueInterval = setInterval(() => {
-                    if (document.querySelector('.loads').style.display != 'none') return;
+                        continueObserver.disconnect();
 
-                    continueObserver.disconnect();
+                        // 인터넷 속도가 느려 로딩 페이지가 오랫동안 보이고 continueObserver가 변화를 감지하기 전에 로딩 페이지를 닫는 버튼을 눌러버린다면
+                        // 이어보기에 추가 변화가 없다고 감지할 수 있음.
+                        if (!is_changed) npup.log('이어보기에 추가 변화가 없습니다.');
+                        else npup.log('이어보기에 변화가 있었습니다.');
 
-                    // 인터넷 속도가 느려 로딩 페이지가 오랫동안 보이고 continueObserver가 변화를 감지하기 전에 로딩 페이지를 닫는 버튼을 눌러버린다면
-                    // 이어보기에 추가 변화가 없다고 감지할 수 있음.
-                    if (!is_changed) npup.log('이어보기에 추가 변화가 없습니다.');
-                    else npup.log('이어보기에 변화가 있었습니다.');
+                        clearInterval(continueInterval);
+                    }, 1.5 * 1000);
+                },
+                tHOption: { redetect: 1 }
+            }
+        }
+        else
+            return null;
+    })();
 
-                    clearInterval(continueInterval);
-                }, 1.5 * 1000);
-            },
-            { redetect: 1 }
-        );
-    }
-    else
-        return;
-
+    if (!bha) return;
 
     const style_id = `${npup.project.prefix.css}${this.key}`;
 
@@ -251,6 +252,12 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
         size: 0,
         border: 0,
     }
+
+    targetHandler(
+        () => document.querySelector('.btn-view-episode'),
+        bha.handler,
+        bha.tHOption
+    );
 
     /**
      * bottom-heart-alarm system 함수 이전 스타일 함수
@@ -280,8 +287,10 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
         const inner_size = el_data.size - (2 * el_data.border);
         const inner_style = `width: ${inner_size}px; height: ${inner_size}px; padding: ${(inner_size - icon.size) / 2}px 0;`;
 
-        let like = document.getElementsByClassName('sbm_icon_heart')[0].parentElement.cloneNode(true);
-        let alarm = document.getElementsByClassName('sbm_icon_alert')[0].parentElement.cloneNode(true);
+        const like = document.getElementsByClassName('sbm_icon_heart')[0].parentElement.cloneNode(true);
+        like.id = `${npup.project.prefix.css}like-btn`;
+        const alarm = document.getElementsByClassName('sbm_icon_alert')[0].parentElement.cloneNode(true);
+        alarm.id = `${npup.project.prefix.css}alarm-btn`;
 
         [like, alarm].forEach(el => {
             el.classList.add(bottom_button);
@@ -290,7 +299,7 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
             el.firstElementChild.classList.remove('s_inv'); // novelpia dark class 없애서 다크모드에서 화이트가 되는 현상 제거
             el.firstElementChild.style = inner_style;
 
-            continue_ep.insertAdjacentElement('afterend', el);
+            continue_ep.esrender('afterend', el, { validate_class: false });
         });
     }
 
