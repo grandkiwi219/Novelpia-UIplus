@@ -112,9 +112,10 @@ function styleInjection(id, content) {
  * @param {InsertPosition | HTMLElement} where 
  * @param {HTMLElement | string} [element] 
  * @param {object} [options]
+ * @param {boolean} [options.validate_class]
  * @param {string[]} [options.exclude_class]
  */
-HTMLElement.prototype.esrender = function(where, element, { exclude_class = [] } = {}) {
+HTMLElement.prototype.esrender = function(where, element, { validate_class = true, exclude_class = [] } = {}) {
     if (where instanceof HTMLElement) {
         element = where;
         where = 'beforeend';
@@ -139,7 +140,7 @@ HTMLElement.prototype.esrender = function(where, element, { exclude_class = [] }
 
     if (is_HTMLElement) {
         early_exist_el = document.getElementById(element.id);
-        if (!early_exist_el && element.classList.length > 0) {
+        if (validate_class && !early_exist_el && element.classList.length > 0) {
             const doc = (where == 'beforeend' || where == 'afterbegin')
                 ? this
                 : this.parentElement;
