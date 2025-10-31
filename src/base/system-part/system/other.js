@@ -137,13 +137,13 @@ otherCa['last-ep'].system = async function(r) {
     off.addEventListener('click', offClickEvent);
 
     const routerEvent = (e) => {
-        if (e.detail.engine_is_changed) return;
+        if (e.detail?.engine_is_changed) return;
 
         if (!document.body.contains(last_ep_alarm))
             document.body.esrender(last_ep_alarm);
 
         if (updateData()) {
-            setAlarmState(e.detail.pathChecker);
+            setAlarmState(e.detail?.pathChecker || pathChecker);
             setContinueContent();
             setRedirectEp();
             setRedirectEpContent();

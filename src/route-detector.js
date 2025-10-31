@@ -228,7 +228,10 @@ function routeDetector({ path = npup.path } = {}) {
     const path_content = ` | 위치: ${path} ${domainChecker('base') ? '' : `| 도메인: ${location.hostname}`}`;
     const insert_content = npup.debug?.locate ? path_content : '';
 
-    if (result == 0) {
+    if (typeof result != 'number') {
+        npup.uwu(`문제가 발생했습니다. 엔진 변경 결과 타입이 숫자가 아닙니다.${insert_content}`);
+    }
+    else if (result == 0) {
         npup.dev(`엔진에 변화가 없습니다.${insert_content}`);
         ready({ router: true });
         basic_use_system.router = {};
@@ -302,7 +305,7 @@ function removeEvent(func) {
 
 function removeEventForEngine(func) {
     function routerEvent(data) {
-        if (data.detail.engine_is_changed == 0) return;
+        if (data.detail?.engine_is_changed == 0) return;
 
         func();
         window.removeEventListener(npup.event.router, routerEvent);
