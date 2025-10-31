@@ -43,42 +43,40 @@ headerCa['search'].system = function(r) {
 
 
 
-let sr;
-let presr;
-
-const delete_all = document.createElement('div');
-delete_all.innerHTML = '잔체삭제';
 
 
 headerCa['search-result'].system = function(r, generate) {
     if (pathChecker('/comic_search/')) return;
 
-    if (routing && !generate) { // 뒤로가기시 바로 업데이트가 되지 않는 문제
+    const presr = npup.project.prefix.css + this.key;
+
+    const result_box_wrap_key = `${presr}-wrap`;
+
+
+    if (routing && !generate) { // 뒤로가기시 바로 업데이트가 되지 않는 문제 => 는 어쩔 수 없음
         return tryChecker(() => {
             // 혹시 모를 중복 생성으로 인한 검색 결과 미반영 해결책
-            const search_result = document.getElementsByClassName(`${npup.project.prefix.css}${this.key}-wrap`)[0];
+            const result_box_wrap = document.getElementsByClassName(result_box_wrap_key)[0];
 
-            if (!search_result/* [0] */ && !document.getElementsByClassName(`${npup.project.prefix.css}${this.key}`)[0]) {
+            if (!result_box_wrap/* [0] */ && !document.getElementsByClassName(presr)[0]) {
                 /* l.nav, 다른 것들도 반영하는 것은 각 시스템별로 바디 부분에 npup- 를 삽입함으로써 이미 존재함을 증명시키게 할 것 */
                 /* 그렇다해도 searchResultSystem 내부에 resultBoxContent가 삽입되어 있으니 이 부분은 삭제하지 말 것 */
                 this.system(r, true);
             }
-            else
-                search_result/* [search_result.length - 1] */.innerHTML = searchResultBoxContent();
+            else {
+                searchResultBoxContent(result_box_wrap/* [result_box_wrap.length - 1] */);
+            }
         }, '동적 검색 결과', '파츠'/* , mus */);
     }
-    
-    sr = this.key;
-    presr = npup.project.prefix.css + this.key;
-    delete_all.id = `${presr}-delete-all`;
 
-    let result_box = document.createElement('div');
-    result_box.classList.add(`${presr}`);
 
-    let result_box_wrap = document.createElement('div');
-    result_box_wrap.classList.add(`${presr}-wrap`);
+    const result_box = document.createElement('div');
+    result_box.classList.add(presr);
 
-    result_box_wrap.innerHTML = searchResultBoxContent();
+    const result_box_wrap = document.createElement('div');
+    result_box_wrap.classList.add(result_box_wrap_key);
+
+    searchResultBoxContent(result_box_wrap);
 
     result_box.appendChild(result_box_wrap);
 
@@ -97,17 +95,17 @@ headerCa['search-result'].system = function(r, generate) {
             for (let i = 0; i < header_search.length; i++)
                 if (header_search[i].contains(e.target)) is_click = true;
 
-            const search_result = document.getElementsByClassName(`${presr}`);
+            const search_result = document.getElementsByClassName(presr);
             for (let i = 0; i < search_result.length; i++)
                 if (search_result[i].contains(e.target)) is_click = true;
 
-            if (!is_click) return document.getElementsByClassName(`${presr}`)[0].classList.remove(`${presr}-active`);
+            if (!is_click) return document.getElementsByClassName(presr)[0].classList.remove(`${presr}-active`);
 
-            document.getElementsByClassName(`${presr}`)[0].classList.add(`${presr}-active`);
+            document.getElementsByClassName(presr)[0].classList.add(`${presr}-active`);
         });
 
         document.addEventListener('keydown', (e) => {
-            if (e.key == 'Escape') document.getElementsByClassName(`${presr}`)[0].classList.remove(`${presr}-active`);
+            if (e.key == 'Escape') document.getElementsByClassName(presr)[0].classList.remove(`${presr}-active`);
         });
 
         // 검색바 최소화 선택이 되어 있을 시
@@ -126,132 +124,155 @@ headerCa['search-result'].system = function(r, generate) {
 
     searchResultRedirect();
     searchResultRemove();
-}
 
 
 
+    /**
+     * 검색 결과 클릭 시 리다이렉트 함수
+     * 동적 처리
+     */
+    function searchResultRedirect() {
+        document.addEventListener('click', (e) => {
+            const target = e.target.closest(`.${presr}-word-wrap`);
+            if (!target) return;
 
+            let search_type = 'all';
+            if (pathChecker('/search/novel_name/')) search_type = 'novel_name';
+            else if (pathChecker('/search/writer_nick/')) search_type = 'writer_nick';
+            else if (pathChecker('/search/novel_genre/')) search_type = 'novel_genre';
 
-/**
- * 검색 결과 클릭 시 리다이렉트 함수
- * 동적 처리
- */
-function searchResultRedirect() {
-    document.addEventListener('click', (e) => {
-        const target = e.target.closest(`.${presr}-word-wrap`);
-        if (!target) return;
-
-        let search_type = 'all';
-        if (pathChecker('/search/novel_name/')) search_type = 'novel_name';
-        else if (pathChecker('/search/writer_nick/')) search_type = 'writer_nick';
-        else if (pathChecker('/search/novel_genre/')) search_type = 'novel_genre';
-
-        location.href = '/search/' + search_type + '//1/' + target.firstChild.innerHTML.replace(/[\/%?,]/g, '') + '?page=1&rows=30&novel_type=&start_count_book=&end_count_book=&novel_age=&start_days=&sort_col=last_viewdate&novel_genre=&block_out=0&block_stop=0&is_contest=0&list_display=list';
-    });
-}
-
-/**
- * result box wrap에 넣을 내용 값
- * @returns {string} result box wrap에 넣을 내용 값
- */
-function searchResultBoxContent() {
-    let words = JSON.parse(localStorage.search_novel_word || `[]`);
-
-    let items = '';
-    if (words[0]) {
-        words.forEach(b => {
-            let word_wrap = document.createElement('div');
-            word_wrap.classList.add(`${presr}-item`);
-
-            let word = document.createElement('div');
-            word.classList.add(`${presr}-word-wrap`);
-
-            let word_p = document.createElement('p');
-            word_p.classList.add(`${presr}-word`)
-            word_p.innerHTML = b;
-
-            word.appendChild(word_p);
-
-            let delete_one = document.createElement('div');
-            delete_one.classList.add(`${presr}-delete`);
-            delete_one.innerHTML = '<img src="//images.novelpia.com/img/new/menu/novel/btn_remove_tag_3.svg">';
-
-            word_wrap.appendChild(word);
-            word_wrap.appendChild(delete_one);
-
-            items += word_wrap.outerHTML;
+            location.href = '/search/' + search_type + '//1/' + target.firstChild.innerHTML.replace(/[\/%?,]/g, '') + '?page=1&rows=30&novel_type=&start_count_book=&end_count_book=&novel_age=&start_days=&sort_col=last_viewdate&novel_genre=&block_out=0&block_stop=0&is_contest=0&list_display=list';
         });
     }
-    let items_wrap = `<div class="${presr}-items">`
-        + items
-        + `</div>`;
 
-    let nothing = `<div style="padding: 20px 0; width: 100%; text-align: center;">최근 검색어가 없습니다.</div>`
+    /**
+     * result box wrap에 값을 넣는 함수
+     * @param {HTMLElement} result_box_wrap 값이 들어갈 result box wrap
+     */
+    function searchResultBoxContent(result_box_wrap) {
+        let words = JSON.parse(localStorage.search_novel_word || `[]`);
 
-    return ''
-        + `<div class="${presr}-header">`
-            + `<div style="font-weight: bold; font-size: 18px; color: black;">최근 검색</div>`
-            + (words[0] ? delete_all.outerHTML : '')
-        + `</div>`
-        + (words[0] ? items_wrap : nothing);
-}
+        const header = document.createElement('div');
+        header.classList.add(`${presr}-header`);
 
-/**
- * 검색 결과 창에서 검색 결과 제거
- */
-function searchResultRemove() {
-    const nothing = document.createElement('div');
-    nothing.style = 'padding: 20px 0; width: 100%; text-align: center;';
-    nothing.textContent = '최근 검색어가 없습니다.';
-
-    const deleteBtn = (e) => {
-        let target;
-
-        document.querySelectorAll(`.${presr}-delete`).forEach(r => {
-            if (r.contains(e.target))
-                target = r;
+        const header_title = document.createElement('div');
+        Object.assign(header_title.style, {
+            fontWeight: 'bold',
+            fontSize: '18px',
+            color: 'black'
         });
+        header_title.textContent = '최근검색';
 
-        if (!target) return;
+        header.appendChild(header_title);
 
-        localStorage.search_novel_word = JSON.stringify(JSON.parse(localStorage.search_novel_word)
-            .filter(k => k != target.parentElement.firstChild.textContent));
 
-        if (!JSON.parse(localStorage.search_novel_word)[0]) {
-            const items = target.parentElement.parentElement;
-            const wrap = items.parentElement;
+        const items_wrap = document.createElement('div');
+        items_wrap.classList.add(`${presr}-items`);
 
-            wrap.appendChild(nothing);
-            wrap.firstChild.children[1].remove();
-            items.remove();
-            return;
+        if (words[0]) {
+            const delete_all = document.createElement('div');
+            delete_all.innerHTML = '잔체삭제';
+            delete_all.id = `${presr}-delete-all`;
+
+            header.appendChild(delete_all);
+
+
+            words.forEach(b => {
+                let word_wrap = document.createElement('div');
+                word_wrap.classList.add(`${presr}-item`);
+
+                let word = document.createElement('div');
+                word.classList.add(`${presr}-word-wrap`);
+
+                let word_p = document.createElement('p');
+                word_p.classList.add(`${presr}-word`)
+                word_p.innerHTML = b;
+
+                word.appendChild(word_p);
+
+                let delete_one = document.createElement('div');
+                delete_one.classList.add(`${presr}-delete`);
+                delete_one.innerHTML = '<img src="//images.novelpia.com/img/new/menu/novel/btn_remove_tag_3.svg">';
+
+                word_wrap.appendChild(word);
+                word_wrap.appendChild(delete_one);
+
+                items_wrap.appendChild(word_wrap);
+            });
+        }
+        else {
+            const nothing = document.createElement('div');
+            Object.assign(nothing.style, {
+                padding: '20px 0',
+                width: '100%',
+                textAlign: 'center'
+            });
+            nothing.textContent = '최근 검색어가 없습니다.';
+            items_wrap.appendChild(nothing);
         }
 
-        target.parentElement.remove();
+        result_box_wrap.esrender(header);
+        result_box_wrap.esrender(items_wrap);
     }
 
-    const deleteAllBtn = (e) => {
-        let target = document.getElementById(`${presr}-delete-all`);
+    /**
+     * 검색 결과 창에서 검색 결과 제거
+     */
+    function searchResultRemove() {
+        const nothing = document.createElement('div');
+        nothing.style = 'padding: 20px 0; width: 100%; text-align: center;';
+        nothing.textContent = '최근 검색어가 없습니다.';
 
-        if (!target || !target.contains(e.target)) return;
+        const deleteBtn = (e) => {
+            let target;
 
-        localStorage.search_novel_word = JSON.stringify([]);
+            document.querySelectorAll(`.${presr}-delete`).forEach(r => {
+                if (r.contains(e.target))
+                    target = r;
+            });
 
-        const wrap = target.parentElement.parentElement;
+            if (!target) return;
 
-        wrap.appendChild(nothing);
-        wrap.children[1].remove();
-        target.remove();
+            localStorage.search_novel_word = JSON.stringify(JSON.parse(localStorage.search_novel_word)
+                .filter(k => k != target.parentElement.firstChild.textContent));
+
+            if (!JSON.parse(localStorage.search_novel_word)[0]) {
+                const items = target.parentElement.parentElement;
+                const wrap = items.parentElement;
+
+                searchResultBoxContent(wrap);
+
+                items.remove();
+                return;
+            }
+
+            target.parentElement.remove();
+        }
+
+        const deleteAllBtn = (e) => {
+            let target = document.getElementById(`${presr}-delete-all`);
+
+            if (!target || !target.contains(e.target)) return;
+
+            localStorage.search_novel_word = JSON.stringify([]);
+
+            const wrap = target.parentElement.parentElement;
+
+            searchResultBoxContent(wrap);
+
+            target.remove();
+        }
+
+        document.addEventListener('click', deleteBtn);
+        document.addEventListener('click', deleteAllBtn);
+
+        removeEventForEngine(() => {
+            document.removeEventListener('click', deleteBtn);
+            document.removeEventListener('click', deleteAllBtn);
+        });
     }
-
-    document.addEventListener('click', deleteBtn);
-    document.addEventListener('click', deleteAllBtn);
-
-    removeEventForEngine(() => {
-        document.removeEventListener('click', deleteBtn);
-        document.removeEventListener('click', deleteAllBtn);
-    });
 }
+
 
 
 

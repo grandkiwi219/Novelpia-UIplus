@@ -97,7 +97,7 @@ novelCa['novel-page'].system = function(r) {
 
             novelPageItem(findTarget);
 
-            obs.observe(obTarget(), observer_setup);
+            Promise.resolve().then(() => obs.observe(obTarget(), observer_setup));
         });
 
         obs.observe(obTarget(), observer_setup);

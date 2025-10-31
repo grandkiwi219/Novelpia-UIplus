@@ -26,16 +26,18 @@ function targetHandler(targetFinder, handler, {
         tryChecker(() => handler(target), 'targetHandler -> handler', false);
     }
     else {
+        const observe_setup = { childList: true, subtree: true }
+
         let target_found = false;
 
         const targetOb = new MutationObserver((mus, ob) => {
+            ob.disconnect();
             let target = targetFinder();
-            if (!target) return; 
+            if (!target) return Promise.resolve().then(() => ob.observe(document.body, observe_setup));
             target_found = true;
             tryChecker(() => handler(target), 'targetHandler -> handler', false);
-            ob.disconnect();
         });
-        targetOb.observe(document.body, { childList: true, subtree: true });
+        targetOb.observe(document.body, observe_setup);
 
         setTimeout(() => {
             if (!target_found) {
