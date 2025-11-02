@@ -72,7 +72,7 @@ async function scriptInjection(path) {
     try {
         script.src = chrome.runtime.getURL(path);
     } catch (error) {
-        toastAlert({ title: '새로고침 필요', msg: '확장프로그램과의 연결이 끊겼습니다.\n새로고침이 필요합니다.', type: 'error' });
+        setIsDisconnected();
     }
     script.id = id;
 
@@ -164,17 +164,21 @@ HTMLElement.prototype.esrender = function(where, element, { validate_class = tru
         }
     }
 
-    if (early_exist_el && early_exist_el !== element) {
+    if (early_exist_el && early_exist_el.outerHTML !== element.outerHTML) {
         early_exist_el.replaceWith(element);
+        return true;
     }
     else if (!early_exist_el) {
         if (is_HTMLElement) {
             this.insertAdjacentElement(where, element);
+            return true;
         }
         else {
             this.insertAdjacentHTML(where, element);
+            return true;
         }
     }
+    else return false;
 }
 
 
@@ -186,6 +190,13 @@ HTMLElement.prototype.esrender = function(where, element, { validate_class = tru
 async function setDelay(time) {
     return await new Promise(r => setTimeout(r, time));
 }
+
+
+
+
+
+
+// display asset
 
 
 
@@ -254,6 +265,66 @@ function setListIcon(el, {
 
 
 
+function setIsDisconnected() {
+    const title = '연결 끊김';
+    const msg = '일부 기능이 정상 작동하지 않을 수 있습니다.\n새로고침이 필요할 수 있습니다.';
+
+    const alert_box = document.createElement('div');
+    alert_box.id = `${npup.project.prefix.css}is-disconnected`;
+    Object.assign(alert_box.style, {
+        position: 'fixed',
+        top: '10px',
+        left: '10px',
+        zIndex: '10000'
+    });
+    alert_box.classList.add(`${npup.project.prefix.css}alert-box`);
+    alert_box.classList.add('active');
+    alert_box.classList.add('error');
+
+    const alert_icon = document.createElement('div');
+    alert_icon.classList.add(`${npup.project.prefix.css}alert-icon`);
+
+    const alert_icon_head = document.createElement('div');
+    alert_icon_head.classList.add(`${npup.project.prefix.css}alert-icon-head`);
+    const alert_icon_foot = document.createElement('div');
+    alert_icon_foot.classList.add(`${npup.project.prefix.css}alert-icon-foot`);
+
+    alert_icon.appendChild(alert_icon_head);
+    alert_icon.appendChild(alert_icon_foot);
+
+    const alert_content = document.createElement('div');
+    alert_content.classList.add(`${npup.project.prefix.css}alert-content`);
+
+    const alert_title = document.createElement('div');
+    alert_title.classList.add(`${npup.project.prefix.css}alert-title`);
+    alert_title.textContent = title;
+    alert_content.appendChild(alert_title);
+
+    msg.split('\n').forEach(m => {
+        const alert_msg = document.createElement('div');
+        alert_msg.textContent = m;
+        alert_content.appendChild(alert_msg);
+    });
+
+    alert_box.appendChild(alert_icon);
+    alert_box.appendChild(alert_content);
+
+    const result = document.body.esrender(alert_box);
+
+    if (result) {
+        alert_box.addEventListener('click', async function () {
+            this.classList.remove('active');
+            await setDelay(400);
+            this.remove();
+        }, { once: true });
+    }
+}
+
+
+
+
+
+
 // system duple usage asset
 
 
@@ -304,6 +375,9 @@ function searchSystem(key, engine = 'system') {
     }
     return data;
 }
+
+
+
 
 
 
