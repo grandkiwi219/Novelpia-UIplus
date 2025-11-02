@@ -178,7 +178,9 @@ HTMLElement.prototype.esrender = function(where, element, { validate_class = tru
             return true;
         }
     }
-    else return false;
+    else {
+        return false;
+    }
 }
 
 

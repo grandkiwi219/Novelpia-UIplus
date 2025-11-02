@@ -83,9 +83,9 @@ novelCa['novel-page'].system = function(r) {
             page_selector.style = 'margin-bottom: 20px;';
             page_selector.classList.add(`${np_key}-selector`);
 
-           target.esrender('beforebegin', page_selector);
+           const render_result = target.esrender('beforebegin', page_selector);
 
-            reFunc(page_selector);
+            if (render_result) reFunc(page_selector);
         }
     }
 
