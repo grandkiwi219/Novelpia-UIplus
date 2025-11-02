@@ -193,8 +193,6 @@ mobileCa['origin-header'].system = function(r) {
 
 
 mobileCa['bottom-heart-alarm'].system = function(r) {
-    // 왜 novel-page 처럼 같은 처리를 하는가?
-    // => Firefox: Referenceerror: can't access lexical declaration 'el_data' before initialization
     let bha = (() => {
         if (pathChecker('/novel/')) {
             return {
@@ -214,10 +212,10 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
 
                         ob2.disconnect();
 
-                        checkStyleSetup(target(), true);
+                        checkStyleSetup(continue_ep, true);
                     });
 
-                    continueObserver.observe(target(), observer_setup);
+                    continueObserver.observe(continue_ep, observer_setup);
 
                     const continueInterval = setInterval(() => {
                         if (document.querySelector('.loads').style.display != 'none') return;
