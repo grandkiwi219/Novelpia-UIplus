@@ -5,7 +5,7 @@ const npup = {
 
     project: {
         name: 'NPup',
-        version: '3.10.3.0',
+        version: '3.10.3.1',
         get prefix() {
             return {
                 css: this.name.toLowerCase() + '-',
