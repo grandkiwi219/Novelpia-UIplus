@@ -102,3 +102,20 @@ navigation
         }
     }
 }
+
+
+
+/*
+novel
+*/
+html[npup-hide-review]:not([npup-dynamic-hide-review]) .eplist-novel-review {
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+html[npup-dynamic-hide-review][npup-hide-review] .eplist-novel-review:has(.review-none) {
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+}

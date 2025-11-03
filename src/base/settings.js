@@ -150,7 +150,24 @@ npup.options = {
                 structure: {
                     router: true,
                 },   
-            }
+            },
+
+            'hide-review': {
+                desc: '리뷰 숨기기',
+                type: {
+                    option: 'switch',
+                    structure: ['switch']
+                },
+                options: {
+                    'dynamic-hide-review': {
+                        desc: '리뷰가 존재하면 숨기지 않음',
+                        type: {
+                            option: 'switch',
+                            structure: ['switch']
+                        }
+                    }
+                }
+            },
         }
     },
 
