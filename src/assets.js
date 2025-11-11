@@ -119,6 +119,8 @@ function styleInjection(id, content) {
  */
 HTMLElement.prototype.esrender = function(where, element, { validate_class = true, exclude_class = [] } = {}) {
     if (where instanceof HTMLElement) {
+        validate_class = element?.validate_class ?? validate_class;
+        exclude_class = element?.exclude_class || exclude_class;
         element = where;
         where = 'beforeend';
     }
