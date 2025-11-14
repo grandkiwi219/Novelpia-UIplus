@@ -115,7 +115,7 @@ npup.options = {
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '다음화로 가기 (뷰어)',
+                desc: '(뷰어) 다음화로 가기',
                 type: {
                     option: 'mapping'
                 },
@@ -124,7 +124,7 @@ npup.options = {
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '이전화로 가기 (뷰어)',
+                desc: '(뷰어) 이전화로 가기',
                 type: {
                     option: 'mapping'
                 },
@@ -133,7 +133,7 @@ npup.options = {
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '웹툰 목록으로 이동 (뷰어)',
+                desc: '(뷰어) 웹툰 목록으로 이동',
                 type: {
                     option: 'mapping'
                 },
@@ -142,7 +142,7 @@ npup.options = {
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '자동 스크롤 (뷰어)',
+                desc: '(뷰어) 자동 스크롤',
                 type: {
                     option: 'mapping'
                 },
@@ -151,7 +151,7 @@ npup.options = {
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '웹툰 목록 열기 (뷰어)',
+                desc: '(뷰어) 웹툰 목록 열기',
                 type: {
                     option: 'mapping'
                 },

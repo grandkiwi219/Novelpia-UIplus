@@ -112,7 +112,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '다음화로 가기 (뷰어)',
+                desc: '(뷰어) 다음화로 가기',
                 type: {
                     option: 'mapping'
                 },
@@ -121,7 +121,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '이전화로 가기 (뷰어)',
+                desc: '(뷰어) 이전화로 가기',
                 type: {
                     option: 'mapping'
                 },
@@ -130,7 +130,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                 tag: {
                     quick_mapping_menu: false
                 },
-                desc: '소설 페이지로 이동 (뷰어)',
+                desc: '(뷰어) 소설 페이지로 이동',
                 type: {
                     option: 'mapping'
                 },
