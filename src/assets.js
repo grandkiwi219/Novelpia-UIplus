@@ -471,10 +471,17 @@ function keyMappingBase(callback, { condition = () => true, execution = () => un
 /**
  * quick mapping menu system 함수를 출력
  * @param {function} engineCallback 각 엔진 별 취할 액션
+ * @param {Object} [options] 
+ * @param {Array | string} [options.additional_categories] 추가로 끌어올 조작 설정 카테고리 설정, 이때 보임 여부는 (카테고리 키)-use-qmm 옵션으로 컨트롤한다
  * @returns quickMappingMenuSystem
  */
-function quickMappingMenuAsset(engineCallback = () => false) {
+function quickMappingMenuAsset(
+    engineCallback = () => false,
+    { additional_categories = [] } = {}
+) {
     return async function (r) {
+        const keyMappingCa = npup.options.mapping.options;
+
         const qmm = `${npup.project.prefix.css}qmm`;
 
         const menu_base = document.createElement('div');
@@ -513,26 +520,47 @@ function quickMappingMenuAsset(engineCallback = () => false) {
             + '<path d="M5 5 L25 25 M5 25 L25 5" />'
             + '</svg>';
 
-        Object.values(keyMappingCa).forEach(async op => {
-            if (!op.tag?.quick_mapping_menu) return;
+        addOptions('mapping');
 
-            /* if (op.key == 'move-mb' && engineChecker('페이지')) {
-                if (storage_type = 'sync') {
-                    const ob = await storage.get(['origin-header', 'bottom-nav']);
-                    if (ob['origin-header'] || ob['bottom-nav'])
+        if (Array.isArray(additional_categories) && additional_categories[0]) {
+            additional_categories.forEach(cs => {
+                const use_this_category_key = `${cs}-use-qmm`;
+                storage.get([use_this_category_key]).then(result => {
+                    if (!result[use_this_category_key]) return;
+                    addOptions(cs);
+                });
+            });
+        } else if (typeof additional_categories == 'string') {
+            const use_this_category_key = `${additional_categories}-use-qmm`;
+            storage.get([use_this_category_key]).then(result => {
+                if (!result[use_this_category_key]) return;
+                addOptions(additional_categories);
+            });
+        }
+
+        async function addOptions(category) {
+            Object.values(npup.options[category].options).forEach(async op => {
+                if (!op.tag?.quick_mapping_menu) return;
+                if (op.key?.includes('use-qmm')) return;
+
+                /* if (op.key == 'move-mb' && engineChecker('페이지')) {
+                    if (storage_type = 'sync') {
+                        const ob = await storage.get(['origin-header', 'bottom-nav']);
+                        if (ob['origin-header'] || ob['bottom-nav'])
+                            return;
+                    }
+                    else if (r['origin-header'] || r['bottom-nav'])
                         return;
-                }
-                else if (r['origin-header'] || r['bottom-nav'])
-                    return;
-            } */
+                } */
 
-            const menu_touch = document.createElement('div');
-            menu_touch.classList.add(`${qmm}-touch`);
-            menu_touch.classList.add(`${qmm}-icon`);
-            menu_touch.textContent = op.desc;
-            menu_touch.setAttribute('value', op.key);
-            menu_content.appendChild(menu_touch);
-        });
+                const menu_touch = document.createElement('div');
+                menu_touch.classList.add(`${qmm}-touch`);
+                menu_touch.classList.add(`${qmm}-icon`);
+                menu_touch.textContent = op.desc;
+                menu_touch.setAttribute('value', op.key);
+                menu_content.appendChild(menu_touch);
+            });
+        }
 
         menu_menu.innerHTML = '' +
             `<div class="npup-selector">

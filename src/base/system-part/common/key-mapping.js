@@ -15,6 +15,9 @@ keyMappingCa['quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, comi
     // need detect route
 
     return true;
+},
+{
+    additional_categories: 'move'
 });
 
 
@@ -68,6 +71,20 @@ keyMappingCa['move-mb'].system = keyMappingBase(async r => {
     });
 
     location.href ='/mybook' + where_href;
+});
+
+keyMappingCa['move-alarm'].system = keyMappingBase(async r => {
+    let where_href;
+
+    await storage.get(['alarm']).then(r1 => {
+        where_href = npup.options.header.options['alarm'].system(r1, true)?.href || '/';
+    });
+
+    location.href ='/alarm' + where_href;
+});
+
+keyMappingCa['move-search'].system = keyMappingBase(r => {
+    location.href ='/search';
 });
 
 keyMappingCa['page-dark'].system = keyMappingBase(r => {

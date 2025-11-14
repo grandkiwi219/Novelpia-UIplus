@@ -831,7 +831,7 @@ quick mapping menu
     --npup-qmm-menu-top: var(--npup-qmm-wrap-top);
     --npup-qmm-menu-bottom: var(--npup-qmm-wrap-bottom);
     --npup-qmm-menu-width: calc(100vw - (var(--npup-qmm-wrap-right-left) * 2));
-    --npup-qmm-menu-height: 300px;
+    --npup-qmm-menu-height: 270px;
     --npup-qmm-menu-hide: calc(-1 * (var(--npup-qmm-wrap-right-left) + var(--npup-qmm-btn-size) + var(--npup-qmm-menu-width)));
     --npup-qmm-menu-padding-top: 45px;
     --npup-qmm-menu-padding: 12px;

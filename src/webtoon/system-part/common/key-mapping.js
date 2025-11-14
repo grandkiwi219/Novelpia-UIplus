@@ -16,6 +16,9 @@ keyMappingCa['wt-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, c
         return false;
 
     return true;
+},
+{
+    additional_categories: 'move'
 });
 
 
@@ -46,6 +49,10 @@ keyMappingCa['wt-ep-list'].system = keyMappingBase(r => {
 
 }, isViewer);
 
-keyMappingCa['wt-move-mb'].system = keyMappingBase(async r => {
+keyMappingCa['wt-move-mb'].system = keyMappingBase(r => {
     location.href ='/main/library';
+});
+
+keyMappingCa['wt-move-search'].system = keyMappingBase(r => {
+    location.href ='/main/search';
 });

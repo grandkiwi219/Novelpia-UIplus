@@ -1,6 +1,6 @@
 const navigationCa = npup.options.nav.options;
 
-navigationCa['nav-mybook'].system = function(r, get_data) {
+navigationCa['nav-mybook'].system = function(r, get_data = false) {
 
     let where_href = '/';
     let where_name;

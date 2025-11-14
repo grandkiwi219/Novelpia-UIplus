@@ -650,9 +650,111 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                     option: 'mapping'
                 },
             },
+            'move-alarm': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '알림으로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'move-search': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '검색창으로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
         },
         setups: {
             length: 3
+        }
+    },
+
+    move: {
+        icon: '🧭',
+        name: '이동',
+        engine: 'all',
+        options: {
+            'move-use-qmm': {
+                desc: '조작 퀵 메뉴에서 사용',
+                type: {
+                    option: 'switch',
+                },
+                engine: 'null', 
+            },
+
+            'move-freestory': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '자유 소설로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'move-plus': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '플러스 소설로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'move-ranking': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '랭킹으로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            
+            'move-writer': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '작품 관리로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
+
+            'move-base': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '노벨파아 홈으로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'move-books': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '북스로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'move-webtoon': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '웹툰으로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            }
+        },
+        setups: {
+            length: 2
         }
     },
 

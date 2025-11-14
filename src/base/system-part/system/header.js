@@ -277,7 +277,7 @@ headerCa['search-result'].system = function(r, generate) {
 
 
 
-headerCa['alarm'].system = function(r) {
+headerCa['alarm'].system = function(r, get_data = false) {
 
     let where_href = '/';
 
@@ -297,6 +297,8 @@ headerCa['alarm'].system = function(r) {
         default:
             where_href = '';
     }
+
+    if (get_data) return { href: where_href };
 
     targetHandler(
         () => document.getElementsByClassName('header-alert')[0],

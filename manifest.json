@@ -104,6 +104,7 @@
                 "./src/base/system-part/system/viewer.js",
                 
                 "./src/base/system-part/common/key-mapping.js",
+                "./src/base/system-part/common/move.js",
                 
                 "./src/base/system-part/custom/custom-css.js",
 
@@ -137,6 +138,7 @@
                 "./src/books/assets.js",
 
                 "./src/books/system-part/common/key-mapping.js",
+                "./src/books/system-part/common/move.js",
                 
                 "./src/books/system-part/custom/custom-css.js",
 
@@ -168,6 +170,7 @@
                 "./src/webtoon/settings.js",
 
                 "./src/webtoon/system-part/common/key-mapping.js",
+                "./src/webtoon/system-part/common/move.js",
                 
                 "./src/webtoon/system-part/custom/custom-css.js"
             ],

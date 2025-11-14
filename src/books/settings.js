@@ -162,10 +162,62 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                     option: 'mapping'
                 },
             },
+            'books-move-search': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '검색창으로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
         },
         setups: {
             length: 2
         }
+    },
+
+    move: {
+        icon: '🧭',
+        name: '이동',
+        engine: 'all',
+        options: {
+            'move-use-qmm': {
+                desc: '조작 퀵 메뉴에서 사용',
+                type: {
+                    option: 'switch',
+                },
+                engine: 'null', 
+            },
+
+            'move-base': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '노벨파아 홈으로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'move-books': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '북스로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'move-webtoon': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '웹툰으로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            }
+        },
     },
 
     ...npup.options,

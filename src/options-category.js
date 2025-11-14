@@ -23,6 +23,7 @@ const options_category = [
         routes: [
             { path: '/', observer: { target: '#__nuxt' } },
             { path: '/mybook/', options: { method: { search: true } } },
+            { path: '/search/', options: { method: { search: true } } },
         ],
     },
     {

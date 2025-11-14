@@ -34,6 +34,9 @@ keyMappingCa['books-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu
         return false;
 
     return true;
+},
+{
+    additional_categories: 'move'
 });
 
 
@@ -53,6 +56,13 @@ keyMappingCa['books-move-mb'].system = keyMappingBase(async r => {
     if (pathChecker('/mybook/', { strict: true })) return;
 
     window.history.pushState({}, '', '/mybook');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+});
+
+keyMappingCa['books-move-search'].system = keyMappingBase(r => {
+    if (pathChecker('/search/', { strict: true })) return;
+
+    window.history.pushState({}, '', '/search');
     window.dispatchEvent(new PopStateEvent('popstate'));
 });
 
