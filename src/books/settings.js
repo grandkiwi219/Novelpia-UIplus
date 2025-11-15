@@ -183,7 +183,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
         engine: 'all',
         options: {
             'move-use-qmm': {
-                desc: '조작 퀵 메뉴에서 사용',
+                desc: '(공통) 조작 퀵 메뉴에서 사용',
                 type: {
                     option: 'switch',
                 },

@@ -680,7 +680,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
         engine: 'all',
         options: {
             'move-use-qmm': {
-                desc: '조작 퀵 메뉴에서 사용',
+                desc: '(공통) 조작 퀵 메뉴에서 사용',
                 type: {
                     option: 'switch',
                 },
