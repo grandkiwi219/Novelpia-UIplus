@@ -194,7 +194,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '노벨파아 홈으로 이동',
+                desc: '(공통) 노벨파아 홈으로 이동',
                 type: {
                     option: 'mapping'
                 },
@@ -203,7 +203,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '북스로 이동',
+                desc: '(공통) 북스로 이동',
                 type: {
                     option: 'mapping'
                 },
@@ -212,7 +212,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '웹툰으로 이동',
+                desc: '(공통) 웹툰으로 이동',
                 type: {
                     option: 'mapping'
                 },

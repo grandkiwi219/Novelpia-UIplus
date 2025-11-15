@@ -729,7 +729,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '노벨파아 홈으로 이동',
+                desc: '(공통) 노벨파아 홈으로 이동',
                 type: {
                     option: 'mapping'
                 },
@@ -738,7 +738,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '북스로 이동',
+                desc: '(공통) 북스로 이동',
                 type: {
                     option: 'mapping'
                 },
@@ -747,7 +747,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '웹툰으로 이동',
+                desc: '(공통) 웹툰으로 이동',
                 type: {
                     option: 'mapping'
                 },
