@@ -541,7 +541,7 @@ function quickMappingMenuAsset(
         async function addOptions(category) {
             Object.values(npup.options[category].options).forEach(async op => {
                 if (!op.tag?.quick_mapping_menu) return;
-                if (op.key?.includes('use-qmm')) return;
+                if (op.key?.endsWith('use-qmm')) return;
 
                 /* if (op.key == 'move-mb' && engineChecker('페이지')) {
                     if (storage_type = 'sync') {
