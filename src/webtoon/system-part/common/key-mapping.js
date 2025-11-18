@@ -2,16 +2,18 @@ const keyMappingCa = npup.options.mapping.options;
 
 
 keyMappingCa['wt-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, comic_viewer) => {
+    const option = { exclude_class: 'focus' }
+
     if ((engineChecker('뷰어')) && !r[`${this.key}-viewer`]) {
         const bottom_menu = document.getElementById('bottomMenu');
 
         if (bottom_menu) // 파이어폭스에 의해
-            bottom_menu.appendChild(menu);
+            bottom_menu.esrender(menu, option);
         else
-            window.addEventListener('DOMContentLoaded', () => document.getElementById('bottomMenu').appendChild(menu));
+            window.addEventListener('DOMContentLoaded', () => document.getElementById('bottomMenu').esrender(menu, option));
     }
     else if (!r[`${this.key}-page`])
-        document.body.appendChild(menu);
+        document.body.esrender(menu, option);
     else 
         return false;
 

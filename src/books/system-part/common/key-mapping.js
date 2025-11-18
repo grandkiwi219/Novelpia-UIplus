@@ -2,6 +2,8 @@ const keyMappingCa = npup.options.mapping.options;
 
 
 keyMappingCa['books-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, comic_viewer) => {
+    const option = { exclude_class: 'focus' }
+    
     if ((engineChecker('뷰어')) && !r[`${this.key}-viewer`]) {
         let menu_exist = false;
 
@@ -25,11 +27,11 @@ keyMappingCa['books-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu
 
         function appendMenu() {
             const bottom = document.getElementsByClassName('viewer-bottom-wrapper')[0]
-            if (bottom) bottom.appendChild(menu);
+            if (bottom) bottom.esrender(menu, option);
         }
     }
     else if (!r[`${this.key}-page`])
-        document.body.appendChild(menu);
+        document.body.esrender(menu, option);
     else 
         return false;
 

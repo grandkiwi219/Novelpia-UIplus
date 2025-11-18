@@ -126,7 +126,7 @@ otherCa['last-ep'].system = async function(r) {
     last_ep_alarm.appendChild(content);
     last_ep_alarm.appendChild(redirect_wrap);
 
-    document.body.esrender(last_ep_alarm);
+    document.body.esrender(last_ep_alarm, { exclude_class: 'active' });
 
     if (data && !freeze) {
         if (r['last-ep-home']) {
