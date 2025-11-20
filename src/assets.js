@@ -160,7 +160,7 @@ HTMLElement.prototype.esrender = function(where, element, { validate_class = tru
                 const filtered_class = [...element.classList].filter(cl => !exclude_class_set.has(cl));
 
                 if (filtered_class.length > 0) {
-                    early_exist_el = doc.querySelector('.' + filtered_class.join('.'));
+                    early_exist_el = doc.querySelector(':scope > .' + filtered_class.join('.'));
                 }
             }
         }
@@ -484,8 +484,8 @@ function quickMappingMenuAsset(
 
         const qmm = `${npup.project.prefix.css}qmm`;
 
-        const menu_base = document.createElement('div');
-        menu_base.classList.add(`${qmm}-base`);
+        const menu_base = document.createElement(qmm);
+        // menu_base.classList.add(`${qmm}-base`);
 
         const menu_wrap = document.createElement('div');
         menu_wrap.classList.add(`${qmm}-wrap`);

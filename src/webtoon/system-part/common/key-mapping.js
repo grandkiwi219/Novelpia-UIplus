@@ -13,7 +13,7 @@ keyMappingCa['wt-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, c
             window.addEventListener('DOMContentLoaded', () => document.getElementById('bottomMenu').esrender(menu, option));
     }
     else if (!r[`${this.key}-page`])
-        document.body.esrender(menu, option);
+        html.esrender(menu, option);
     else 
         return false;
 

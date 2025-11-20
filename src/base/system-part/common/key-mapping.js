@@ -10,7 +10,7 @@ keyMappingCa['quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, comi
     else if (comic_viewer && !r[`${this.key}-viewer`])
         window.addEventListener('DOMContentLoaded', () => document.getElementsByClassName('viewer_bottom')[0].esrender(menu, option));
     else if (!r[`${this.key}-page`])
-        menu.classList.add(`s_inv`), document.body.esrender(menu, option);
+        menu.classList.add(`s_inv`), html.esrender(menu, option);
     else
         return false;
 

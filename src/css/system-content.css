@@ -818,7 +818,7 @@ toast alert
 quick mapping menu
 */
 
-.npup-qmm-base {
+npup-qmm {
     --npup-qmm-bgc: rgba(255, 255, 255, 0.7);
 
     --npup-qmm-wrap-top: 180px;
@@ -861,6 +861,7 @@ quick mapping menu
     bottom: 0;
 
     font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
 
     z-index: 999;
     user-select: none;

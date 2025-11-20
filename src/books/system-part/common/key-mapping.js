@@ -31,7 +31,7 @@ keyMappingCa['books-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu
         }
     }
     else if (!r[`${this.key}-page`])
-        document.body.esrender(menu, option);
+        html.esrender(menu, option);
     else 
         return false;
 
