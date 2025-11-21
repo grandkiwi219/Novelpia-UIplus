@@ -512,7 +512,7 @@ html[npup-old-icon] {
 last episode alarm
 */
 
-.last-ep-alarm {
+last-ep-alarm {
     --last-ep-padding: 15px;
 
     box-sizing: border-box;
@@ -530,6 +530,7 @@ last episode alarm
     background-color: #fff;
     text-align: center;
     font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
     user-select: none;
     display: flex;
     flex-flow: column wrap;
@@ -550,18 +551,19 @@ last episode alarm
     &.adult.active {
         opacity: 0.6;
     }
+
+    @media screen and (max-width: 891px) {
+    
+        &.novel-page {
+            bottom: 114px;
+
+            &.active {
+                bottom: 134px;
+            }
+        }
+    }
 }
 
-@media screen and (max-width: 891px) {
-
-    .last-ep-alarm.novel-page {
-        bottom: 114px;
-    }
-
-    .last-ep-alarm.novel-page.active {
-        bottom: 134px;
-    }
-}
 
 .last-ep-content {
     box-sizing: border-box;
@@ -591,17 +593,18 @@ last episode alarm
     top: 0;
     right: 0;
     cursor: pointer;
-}
 
-@media (hover: hover) and (pointer: fine) {
-    .last-ep-off:hover {
-        transform: scale(110%);
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            transform: scale(110%);
+        }
+    }
+    
+    &:active {
+        transform: scale(125%);
     }
 }
 
-.last-ep-off:active {
-    transform: scale(125%);
-}
 
 .last-ep-redirect-wrap {
     width: 100%;
@@ -633,25 +636,27 @@ last episode alarm
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-}
 
-.last-ep-redirect.last-ep-list {
-    width: 16%;
-}
+    &.last-ep-list {
+        width: 16%;
+    }
 
-@media (hover: hover) and (pointer: fine) {
-    .last-ep-redirect:hover {
-        filter: grayscale(30%);
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            filter: grayscale(30%);
+        }
+    }
+    
+    &:active {
+        filter: grayscale(45%);
     }
 }
 
-.last-ep-redirect:active {
-    filter: grayscale(45%);
-}
+
 
 @media screen and  (min-width: 892px) {
 
-    .last-ep-alarm {    
+    last-ep-alarm {    
         --last-ep-padding: 30px;
 
         width: 380px;

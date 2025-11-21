@@ -2,7 +2,7 @@ const keyMappingCa = npup.options.mapping.options;
 
 
 keyMappingCa['wt-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu, comic_viewer) => {
-    const option = { exclude_class: 'focus' }
+    const option = { ignore_class: 'focus' }
 
     if ((engineChecker('뷰어')) && !r[`${this.key}-viewer`]) {
         const bottom_menu = document.getElementById('bottomMenu');

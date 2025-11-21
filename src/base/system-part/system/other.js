@@ -80,8 +80,8 @@ otherCa['last-ep'].system = async function(r) {
     
     // system-content.css => last episode alarm
 
-    const last_ep_alarm = document.createElement('div');
-    last_ep_alarm.classList.add('last-ep-alarm'); 
+    const last_ep_alarm = document.createElement('last-ep-alarm');
+    // last_ep_alarm.classList.add('last-ep-alarm');
     last_ep_alarm.classList.add('s_inv'); // novelpia dark class
     last_ep_alarm.style.display = 'none';
     setAlarmState(pathChecker);
@@ -126,7 +126,7 @@ otherCa['last-ep'].system = async function(r) {
     last_ep_alarm.appendChild(content);
     last_ep_alarm.appendChild(redirect_wrap);
 
-    document.body.esrender(last_ep_alarm, { exclude_class: 'active' });
+    lastEpEsrender();
 
     if (data && !freeze) {
         if (r['last-ep-home']) {
@@ -139,8 +139,8 @@ otherCa['last-ep'].system = async function(r) {
     const routerEvent = (e) => {
         if (e.detail?.engine_is_changed) return;
 
-        if (!document.body.contains(last_ep_alarm))
-            document.body.esrender(last_ep_alarm);
+        if (!document.documentElement.contains(last_ep_alarm))
+            lastEpEsrender();
 
         if (updateData()) {
             setAlarmState(e.detail?.pathChecker || pathChecker);
@@ -166,6 +166,10 @@ otherCa['last-ep'].system = async function(r) {
         window.removeEventListener(npup.event.router, routerEvent);
     });
 
+
+    function lastEpEsrender() {
+        document.documentElement.esrender(last_ep_alarm, { ignore_class: 'active' });
+    }
 
     function updateData() {
         let current_data = data;

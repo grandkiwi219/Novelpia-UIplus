@@ -110,17 +110,17 @@ function styleInjection(id, content) {
 
 
 /**
- * Element Substitution Render
+ * Element Substitution Render (주의) 단일 요소에게만 사용해야합니다.
  * @param {InsertPosition | HTMLElement} where 
  * @param {HTMLElement | string} [element] 
  * @param {object} [options]
  * @param {boolean} [options.validate_class]
  * @param {string[]} [options.exclude_class]
  */
-HTMLElement.prototype.esrender = function(where, element, { validate_class = true, exclude_class = [] } = {}) {
+HTMLElement.prototype.esrender = function(where, element, { validate_class = true, ignore_class = [] } = {}) {
     if (where instanceof HTMLElement) {
         validate_class = element?.validate_class ?? validate_class;
-        exclude_class = element?.exclude_class || exclude_class;
+        ignore_class = element?.ignore_class || ignore_class;
         element = where;
         where = 'beforeend';
     }
@@ -143,24 +143,28 @@ HTMLElement.prototype.esrender = function(where, element, { validate_class = tru
     let early_exist_el = null;
 
     if (is_HTMLElement) {
+        if (element.tagName.includes('-') && document.getElementsByTagName(element.tagName).length < 2) {
+            
+        }
+
         early_exist_el = document.getElementById(element.id);
         if (validate_class && !early_exist_el && element.classList.length > 0) {
             const doc = (where == 'beforeend' || where == 'afterbegin')
                 ? this
                 : this.parentElement;
             if (doc) {
-                if (!Array.isArray(exclude_class)) {
-                    exclude_class = typeof exclude_class == 'string'
-                        ? [exclude_class]
+                if (!Array.isArray(ignore_class)) {
+                    ignore_class = typeof ignore_class == 'string'
+                        ? [ignore_class]
                         : [];
                 }
 
-                const exclude_class_set = new Set(exclude_class);
+                const ignore_class_set = new Set(ignore_class);
 
-                const filtered_class = [...element.classList].filter(cl => !exclude_class_set.has(cl));
+                const filtered_class = [...element.classList].filter(cl => !ignore_class_set.has(cl));
 
                 if (filtered_class.length > 0) {
-                    early_exist_el = doc.querySelector(':scope > .' + filtered_class.join('.'));
+                    early_exist_el = doc.querySelector(`:scope > ${element.tagName.toLowerCase()}.${filtered_class.join('.')}`);
                 }
             }
         }

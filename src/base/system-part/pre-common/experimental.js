@@ -12,7 +12,7 @@ experimentalCa['frosted-glass'].system = function (r) {
 header,
 #bottom-nav-bar,
 #header_bar, #footer_bar,
-.last-ep-alarm
+last-ep-alarm
 {
     background-color: rgba(255, 255, 255, 0.35) !important;
     backdrop-filter: blur(${blur_intensity}px);
