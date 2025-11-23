@@ -310,7 +310,7 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined } = {}) => {
             else if (npup.func.domainChecker('books')) {
                 alert_box.classList.add('s_inv');
             }
-            else if (npup.func.domainChecker('global')){
+            else if (npup.func.domainChecker('global')) {
                 if (document.body?.classList.contains('dark'))
                     Object.assign(alert_box.style, {
                         color: 'white',
