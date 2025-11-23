@@ -141,6 +141,8 @@ const npup = {
 
     path: null,
 
+    dom_loaded: false,
+
     //location: null,
 }
 
@@ -160,10 +162,14 @@ npup.event = {
 
 npup.path = npup.func.resolvePath({ hash: true, search: true });
 
+
 window.addEventListener(npup.event.router, () => {
     npup.path = npup.func.resolvePath({ hash: true, search: true });
 });
 
+
+// dom_loaded
+window.addEventListener('DOMContentLoaded', () => npc.dom_loaded = true);
 
 
 
