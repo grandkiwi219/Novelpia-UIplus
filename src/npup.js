@@ -169,7 +169,7 @@ window.addEventListener(npup.event.router, () => {
 
 
 // dom_loaded
-window.addEventListener('DOMContentLoaded', () => npc.dom_loaded = true);
+window.addEventListener('DOMContentLoaded', () => npup.dom_loaded = true);
 
 
 
