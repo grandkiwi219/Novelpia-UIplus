@@ -160,8 +160,6 @@ npup.event = {
 
 npup.path = npup.func.resolvePath({ hash: true, search: true });
 
-const html = document.documentElement;
-
 window.addEventListener(npup.event.router, () => {
     npup.path = npup.func.resolvePath({ hash: true, search: true });
 });
@@ -291,7 +289,7 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined } = {}) => {
     if (!alert_container) {
         alert_container = document.createElement('div');
         alert_container.id = `${npup.project.prefix.css}alert-container`;
-        html.appendChild(alert_container);
+        document.documentElement.appendChild(alert_container);
     }
 
     const alert_box = document.createElement('div');
@@ -463,9 +461,7 @@ function hasCookie(name) {
     return document.cookie.split('; ').some(cookie => cookie.startsWith(encodedName));
 }
 
-const base_domain = '.novelpia.com';
-
-function toggleCookie(name, domain = base_domain) {
+function toggleCookie(name, domain = '.novelpia.com') {
     if (getCookie(name)) {
         removeCookie(name, {path: '/', domain: domain});
         return false;

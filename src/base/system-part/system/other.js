@@ -8,6 +8,7 @@ otherCa['notice'].system = function(r) {
     function setNotice() {
         const notice_bar = document.getElementById('copyright_bar').cloneNode(true);
         notice_bar.id = `${npup.project.prefix.css}${notice_bar.id}`;
+        notice_bar.classList.add('s_inv');
         const main = document.getElementById('vue_main_wrapper');
 
         // system-content.css => notice css
@@ -20,7 +21,6 @@ otherCa['notice'].system = function(r) {
         const notice_list_btn = document.createElement('a');
         notice_list_btn.classList.add('d-flex');
         notice_list_btn.classList.add('align-items-center');
-        notice_list_btn.classList.add('s_inv');
         notice_list_btn.href = `/notice/list/1`;
         setListIcon(notice_list_btn, { color: '#000' });
 
@@ -206,6 +206,8 @@ otherCa['last-ep'].system = async function(r) {
             npup.log(`알림 쿨타임 남은 시간: ${hours ? `${hours}시간 ` : ''}${minutes ? `${minutes}분 ` : ''}${seconds}초`);
         }
         else {
+            freeze = false;
+
             localStorage.removeItem('last_episode_timestamp');
         }
     }
@@ -242,7 +244,7 @@ otherCa['last-ep'].system = async function(r) {
         last_ep_alarm.style.display = '';
         setTimeout(() => {
             last_ep_alarm.classList.add('active');
-        }, 0.1);
+        }, 10);
     }
 
     function offEvent(remove = false) {

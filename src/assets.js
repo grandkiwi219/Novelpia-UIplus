@@ -415,7 +415,7 @@ function keyMappingBase(callback, { condition = () => true, execution = () => un
 
             const result = await Promise.all([
                 tryChecker(() => {
-                    callback(r);
+                    callback(r, this);
                 }, `<keyMappingBase - quick-mapping-menu> ${this.key}`, false)
             ]);
 
@@ -448,7 +448,7 @@ function keyMappingBase(callback, { condition = () => true, execution = () => un
 
             const result = await Promise.all([
                 tryChecker(() => {
-                    callback(r);
+                    callback(r, this);
                 }, `<keyMappingBase> ${this.key}`, false)
             ]);
 

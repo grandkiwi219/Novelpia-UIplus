@@ -99,7 +99,7 @@ header {
 header,
 #bottom-nav-bar,
 .menu_alarm_m,
-.last-ep-alarm
+last-ep-alarm
 {
     background-color: rgba(0, 0, 0, 0.35) !important;    
     filter: none !important;
@@ -119,7 +119,7 @@ header,
     }
 }
 
-.last-ep-alarm {
+last-ep-alarm {
     box-shadow: 0 0 20px rgba(175, 175, 175, 0.5) !important;
 }
 `;

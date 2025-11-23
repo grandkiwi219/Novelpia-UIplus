@@ -40,6 +40,14 @@ headerThemeButton.addEventListener('click', function () {
         .then(manifest => {
             version = manifest.version;
             document.getElementById('version').textContent = manifest.version;
+
+            const options = options_category.find(e => e.type == document.documentElement.getAttribute('type'));
+            const name = manifest.name + (options.type == 'base' ? '' : ` | ${options.name}`);
+            document.title = name;
+            const name_el = document.getElementById('name');
+            if (name_el) {
+                name_el.textContent = name;
+            }
         });
 
     // 버전 업데이트 알림

@@ -259,6 +259,11 @@ html[dark=true] #update-banner {
     align-items: center;
 }
 
+#name {
+    height: fit-content;
+    padding-top: 4.5px;
+}
+
 #menu {
     width: fit-content;
     height: fit-content;

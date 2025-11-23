@@ -4,7 +4,7 @@ const base_path = '/page';
     if (!options_category || !options_category?.length) return;
 
     const options_ca_fil = options_category
-        .filter(e => e.type != document.getElementsByTagName('html')[0].getAttribute('type'));
+        .filter(e => e.type != document.documentElement.getAttribute('type'));
 
     if (!options_ca_fil.length) return;
 

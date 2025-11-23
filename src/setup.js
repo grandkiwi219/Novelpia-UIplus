@@ -1,3 +1,5 @@
+const html = document.documentElement;
+
 // let storage = chrome.storage.sync;
 // const local = chrome.storage.local;
 class Cache {
