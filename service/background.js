@@ -113,6 +113,7 @@ chrome.commands.onCommand.addListener(async (command) => {
             break;
 
         default:
+            console.warn(`Command: '${command}' isn't defined`);
             break;
     }
 });
