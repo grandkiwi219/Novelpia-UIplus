@@ -1,10 +1,14 @@
 const sync_key = 'extension-sync';
 const update_key = 'extension-update';
 
-const route_detect = 'route-detect';
-
 const mybook_key = 'quick-mybook';
 const popup_location = '/page/popup.html';
+
+const mybook_data_key = 'nav-mybook';
+
+const route_detect = 'route-detect';
+
+const novelpia = 'https://novelpia.com';
 
 let qm = false;
 
@@ -86,7 +90,29 @@ chrome.action.onClicked.addListener(() => {
 /**
  * 옵션 페이지 열림 커맨드
  */
-chrome.commands.onCommand.addListener((command) => {
-    if (command == 'run-options')
-        chrome.runtime.openOptionsPage();
+chrome.commands.onCommand.addListener(async (command) => {
+    switch(command) {
+        case 'run-options':
+            chrome.runtime.openOptionsPage();
+            break;
+        
+        case 'run-novelpia':
+            chrome.tabs.create({ url: novelpia });
+            break;
+
+        case 'run-novelpia-mybook':
+            const mybook_data = await chrome.storage.sync.get([mybook_data_key]);
+            const mybook_matches = {
+                like: 'like',
+                alarm: 'alarm',
+                collect: 'collect',
+                last: 'last_view',
+            };
+            const mybook_result = novelpia + '/mybook/' + (mybook_matches[mybook_data[mybook_data_key]] ?? '');
+            chrome.tabs.create({ url: mybook_result });
+            break;
+
+        default:
+            break;
+    }
 });

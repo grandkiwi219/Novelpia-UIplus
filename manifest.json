@@ -73,7 +73,7 @@
 
                 "./src/key-binding.js",
                 "./src/options-setup.js",
-                
+
                 "./src/content.js"
             ],
             "run_at": "document_start"
@@ -222,6 +222,12 @@
     "commands": {
         "run-options": {
             "description": "옵션 설정 페이지 열기"
+        },
+        "run-novelpia": {
+            "description": "새 노벨피아 탭 열기"
+        },
+        "run-novelpia-mybook": {
+            "description": "새 노벨피아 내서재 탭 열기"
         }
     }
 }
