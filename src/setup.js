@@ -45,6 +45,10 @@ let dom_loaded = false;
 
 let routing = false;
 
+let insert_initial_variable = false;
+
+
+
 local.get([npup.keys.sync]).then(async r => {
     if (!r[npup.keys.sync] && typeof r[npup.keys.sync] != 'boolean')
         local.set({ [npup.keys.sync]: true });

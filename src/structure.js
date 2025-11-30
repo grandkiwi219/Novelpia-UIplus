@@ -67,7 +67,7 @@ class EngineStructure {
 
         if (!this.use_route && settings.router) return;
 
-        if (!settings.router) {
+        if (!settings.router && insert_initial_variable) {
             let engine_el = document.getElementsByTagName(npup.project.engine)[0];
 
             const engine_data = engine_el.getAttribute('type');

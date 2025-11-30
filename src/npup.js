@@ -6,6 +6,12 @@ const npup = {
     project: {
         name: 'NPup',
         version: '3.11.0.0',
+        domain: {
+            base: 'novelpia.com',
+            books: 'book.novelpia.com',
+            webtoon: 'toptoon.novelpia.com',
+            global: 'global.novelpia.com'
+        },
         get prefix() {
             return {
                 css: this.name.toLowerCase() + '-',
@@ -198,16 +204,7 @@ npup.func.pathChecker = (paths, { target = npup.path, strict = false } = {}) => 
 
 
 npup.func.domainChecker = (domain) => {
-    const domain_type = {
-        base: 'novelpia.com',
-        books: 'book.novelpia.com',
-        webtoon: 'toptoon.novelpia.com',
-        global: 'global.novelpia.com'
-    };
-
-    const current_domain = window.location.hostname;
-
-    return current_domain == (domain_type[domain] || domain);
+    return window.location.hostname == (npup.project.domain[domain] || domain);
 }
 
 
@@ -226,13 +223,13 @@ npup.func.tryChecker = async (func, type, not_engine, ...comment) => {
         }
 
         try {
-            await func();
+            const result = await func();
             let log = `${type ? type + space + `${system_type}(이)가 ` : ''}실행 중입니다.${npup.debug?.performance ? ` [${performance.now() - performance_standard} ms]` : ''}`;
             if (!no_console) '';
             else if (!comment) npup.log(log);
             else npup.log(log, ...comment);
 
-            return { status: 2, error: '알 수 없음.' };
+            return { status: 2, error: '알 수 없음.', result: result };
         } catch (err) {
             npup.error((type ? type + space + `${system_type} `: '') + `오류 발생.\n원인: ${err.stack}`);
             if (npup.debug?.alert) npup.func.toastAlert({
@@ -240,7 +237,7 @@ npup.func.tryChecker = async (func, type, not_engine, ...comment) => {
                     msg: `${type ? type + space + `${system_type} | `: ''}오류 발생\n원인: ${err}`,
                     type: 'error'
                 });
-            return { status: 3, error: err };
+            return { status: 3, error: err, result: undefined };
         }
     } else {
         npup.error('엔진을 실행할 수 없습니다.\n원인: 함수가 아닙니다.');
@@ -249,7 +246,7 @@ npup.func.tryChecker = async (func, type, not_engine, ...comment) => {
                     msg: `${type ? `${type} | `: ''}오류 발생\n원인: 함수가 아닙니다.`,
                     type: 'error'
                 });
-        return { status: 4, error: '실행할 함수를 찾을 수 없습니다.' };
+        return { status: 4, error: '실행할 함수를 찾을 수 없습니다.', result: undefined };
     }
 }
 

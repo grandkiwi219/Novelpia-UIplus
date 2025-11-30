@@ -1,6 +1,10 @@
-changeEngine({ path: npup.path });
+(() => {
+    if (!npup) return console.error('Extension-Base[Novelpia-UI-Plus]: A fatal problem occurred. \'Options Setup\' is down.');
 
-optionsSetup();
+    changeEngine({ path: npup.path });
+
+    optionsSetup();
+})();
 
 function optionsSetup() {
     Object.values(npup.options).forEach(ca => {

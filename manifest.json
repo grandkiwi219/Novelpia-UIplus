@@ -13,7 +13,7 @@
     "content_scripts": [
         {
             "tag": "CSS",
-            "matches": ["*://*.novelpia.com/*"],
+            "matches": ["*://novelpia.com/*", "*://book.novelpia.com/*", "*://toptoon.novelpia.com/*"],
             "css": [
                 "./src/css/setup-content.css",
                 "./src/css/system-content.css",
@@ -23,48 +23,6 @@
             ],
             "run_at": "document_start"
         },
-        {
-            "tag": "모두",
-            "matches": ["*://*.novelpia.com/*"],
-            "exclude_matches": [
-                "*://images.novelpia.com/*",
-                "*://image.novelpia.com/*"
-            ],
-            "js": [
-                "./src/npup.js",
-                "./src/setup.js",
-                "./src/assets.js",
-                "./src/structure.js",
-                "./src/content.js",
-                "./src/options-category.js",
-                "./src/route-detector.js"
-            ],
-            "run_at": "document_start"
-        },
-        {
-            "tag": "document-status",
-            "matches": ["*://*.novelpia.com/*"],
-            "exclude_matches": [
-                "*://images.novelpia.com/*",
-                "*://image.novelpia.com/*"
-            ],
-            "js": [
-                "./src/etc/document-status.js"
-            ],
-            "run_at": "document_end"
-        },
-        {
-            "tag": "document-status",
-            "matches": ["*://*.novelpia.com/*"],
-            "exclude_matches": [
-                "*://images.novelpia.com/*",
-                "*://image.novelpia.com/*"
-            ],
-            "js": [
-                "./src/etc/document-status.js"
-            ],
-            "run_at": "document_idle"
-        },
 
         
 
@@ -72,13 +30,6 @@
 
         {
             "tag": "기본 노벨피아",
-            "matches": ["*://novelpia.com/*"],
-            "js": [
-                "./src/base/engine.js"
-            ],
-            "run_at": "document_start"
-        },
-        {
             "matches": ["*://novelpia.com/*"],
             "exclude_matches": [
                 "*://novelpia.com/img/*",
@@ -93,6 +44,15 @@
                 "*://novelpia.com/robots.txt"
             ],
             "js": [
+                "./src/npup.js",
+                "./src/setup.js",
+                "./src/assets.js",
+                "./src/options-category.js",
+                "./src/route-detector.js",
+                "./src/structure.js",
+
+                "./src/base/engine.js",
+
                 "./src/base/settings.js",
                 "./src/base/assets.js",
 
@@ -109,7 +69,12 @@
                 "./src/base/system-part/custom/custom-css.js",
 
                 "./src/base/system-part/pre-common/other.js",
-                "./src/base/system-part/pre-common/experimental.js"
+                "./src/base/system-part/pre-common/experimental.js",
+
+                "./src/key-binding.js",
+                "./src/options-setup.js",
+                
+                "./src/content.js"
             ],
             "run_at": "document_start"
         },
@@ -121,19 +86,21 @@
         {
             "tag": "북스 노벨피아",
             "matches": ["*://book.novelpia.com/*"],
-            "js": [
-                "./src/books/engine.js"
-            ],
-            "run_at": "document_start"
-        },
-        {
-            "matches": ["*://book.novelpia.com/*"],
             "exclude_matches": [
                 "*://book.novelpia.com/_nuxt/*",
                 "*://book.novelpia.com/scripts/*",
                 "*://book.novelpia.com/robots.txt"
             ],
             "js": [
+                "./src/npup.js",
+                "./src/setup.js",
+                "./src/assets.js",
+                "./src/options-category.js",
+                "./src/route-detector.js",
+                "./src/structure.js",
+
+                "./src/books/engine.js",
+
                 "./src/books/settings.js",
                 "./src/books/assets.js",
 
@@ -142,7 +109,12 @@
                 
                 "./src/books/system-part/custom/custom-css.js",
 
-                "./src/books/system-part/pre-common/other.js"
+                "./src/books/system-part/pre-common/other.js",
+
+                "./src/key-binding.js",
+                "./src/options-setup.js",
+
+                "./src/content.js"
             ],
             "run_at": "document_start"
         },
@@ -154,25 +126,33 @@
         {
             "tag": "웹툰 노벨피아",
             "matches": ["*://toptoon.novelpia.com/*"],
-            "js": [
-                "./src/webtoon/engine.js"
-            ],
-            "run_at": "document_start"
-        },
-        {
-            "matches": ["*://toptoon.novelpia.com/*"],
             "exclude_matches": [
                 "*://toptoon.novelpia.com/_nuxt/*",
                 "*://toptoon.novelpia.com/scripts/*",
                 "*://toptoon.novelpia.com/robots.txt"
             ],
             "js": [
+                "./src/npup.js",
+                "./src/setup.js",
+                "./src/assets.js",
+                "./src/options-category.js",
+                "./src/route-detector.js",
+                "./src/structure.js",
+                "./src/content.js",
+
+                "./src/webtoon/engine.js",
+
                 "./src/webtoon/settings.js",
 
                 "./src/webtoon/system-part/common/key-mapping.js",
                 "./src/webtoon/system-part/common/move.js",
                 
-                "./src/webtoon/system-part/custom/custom-css.js"
+                "./src/webtoon/system-part/custom/custom-css.js",
+
+                "./src/key-binding.js",
+                "./src/options-setup.js",
+
+                "./src/content.js"
             ],
             "run_at": "document_start"
         },
@@ -182,18 +162,28 @@
 
 
         {
-            "tag": "옵션 스크립트 바인딩",
-            "matches": ["*://*.novelpia.com/*"],
+            "tag": "document-status",
+            "matches": ["*://novelpia.com/*", "*://book.novelpia.com/*", "*://toptoon.novelpia.com/*"],
             "exclude_matches": [
                 "*://images.novelpia.com/*",
                 "*://image.novelpia.com/*"
             ],
             "js": [
-                "./src/key-binding.js",
-                "./src/options-setup.js"
-                
+                "./src/etc/document-status.js"
             ],
-            "run_at": "document_start"
+            "run_at": "document_end"
+        },
+        {
+            "tag": "document-status",
+            "matches": ["*://novelpia.com/*", "*://book.novelpia.com/*", "*://toptoon.novelpia.com/*"],
+            "exclude_matches": [
+                "*://images.novelpia.com/*",
+                "*://image.novelpia.com/*"
+            ],
+            "js": [
+                "./src/etc/document-status.js"
+            ],
+            "run_at": "document_idle"
         }
     ],
     "background": {
@@ -212,7 +202,7 @@
             "resources": [
                 "src/*"
             ],
-            "matches": ["*://*.novelpia.com/*"]
+            "matches": ["*://novelpia.com/*", "*://book.novelpia.com/*", "*://toptoon.novelpia.com/*"]
         }
     ],
     "action": {

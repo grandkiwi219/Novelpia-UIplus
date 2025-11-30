@@ -1,15 +1,20 @@
-// 2.0 route detector (url change detector)
 (() => {
+    if (!npup) return console.error('Extension-Base[Novelpia-UI-Plus]: A fatal problem occurred. \'Route Detector\' is down.');
+
     let osc = undefined;
 
     for (let i = 0; i < options_category.length; i++) {
-        if (domainChecker(options_category[i].type)) {
+        if (domainChecker(options_category[i]?.type)) {
             osc = options_category[i];
             break;
         }
     }
 
-    if (!osc || !osc.routes) return;
+    if (!osc) return;
+
+    insert_initial_variable = osc.initial_variable ?? false;
+
+    if (!osc.routes) return;
 
     const osc_routes_path = osc.routes.map(r => r.path);
 
@@ -19,31 +24,150 @@
         const loaded_about_path = searchAboutPath();
         let loaded_path = npup.func.resolvePath(loaded_about_path.options.method);
 
-        const urlChangeProcess = (request, sender, sendResponse) => {
-            if (request.message != 'route-detect') return; 
+        if (!osc?.router || osc.router == 'v2') {
+            // 2.0 route detector (url change detector)
+            (() => {
+                const urlChangeProcess = (request, sender, sendResponse) => {
+                    if (request.message != 'route-detect') return;
 
-            routeDetectorProcess();
+                    routeDetectorProcess();
+                }
+
+                chrome.runtime.onMessage.addListener(urlChangeProcess);
+
+                function routeDetectorProcess() {
+                    let current_path = npup.func.resolvePath({ hash: true, search: true });
+                    const current_about_path = searchAboutPath(current_path);
+                    current_path = npup.func.resolvePath(current_about_path.options.method);
+
+                    if (!pathChecker(osc_routes_path, { target: current_path })) {
+                        chrome.runtime.onMessage.removeListener(urlChangeProcess);
+                        npup.owo('route detector가 종료 상태에 들어섰습니다.');
+                        return;
+                    }
+
+                    if (loaded_path == current_path) return;
+
+                    routing = true;
+                    performance_standard = performance.now();
+                    loaded_path = current_path;
+                    routeDetector({ path: loaded_path });
+                }
+            })();
         }
+        else if (osc.router == 'v1') {
+            // v1.0 route-detector
+            (() => {
+                const routerObserver = new MutationObserver((mu, ob) => {
+                    ob.disconnect();
 
-        chrome.runtime.onMessage.addListener(urlChangeProcess);
+                    routeDetectorProcess(ob);
+                });
+                onOb(routerObserver, loaded_about_path);
 
-        function routeDetectorProcess() {
-            let current_path = npup.func.resolvePath({ hash: true, search: true });
-            const current_about_path = searchAboutPath(current_path);
-            current_path = npup.func.resolvePath(current_about_path.options.method);
 
-            if (!pathChecker(osc_routes_path, { target: current_path })) {
-                chrome.runtime.onMessage.removeListener(urlChangeProcess);
-                npup.owo('route detector가 종료 상태에 들어섰습니다.');
-                return;
-            }
+                function routeDetectorProcess(ob, { defender_pass = false } = {}) {
+                    let current_path = npup.func.resolvePath({ hash: true, search: true });
+                    const current_about_path = searchAboutPath(current_path);
+                    current_path = npup.func.resolvePath(current_about_path.options.method);
 
-            if (loaded_path == current_path) return;
-                        
-            routing = true;
-            performance_standard = performance.now();
-            loaded_path = current_path;
-            routeDetector({ path: loaded_path });
+                    if (!pathChecker(osc_routes_path, { target: current_path })) {
+                        ob.disconnect();
+                        npup.dev('route detector 연결 끊김');
+                        return;
+                    }
+
+                    if (loaded_path != current_path) {
+                        if (!defender_pass && current_about_path.options.defender && processDefender(ob))
+                            return;
+                        routing = true;
+                        performance_standard = performance.now();
+                        loaded_path = current_path;
+                        routeDetector({ path: loaded_path });
+                    }
+
+                    onOb(ob, current_about_path);
+                }
+
+
+                function onOb(ob, about_path) {
+                    const auto_decide_setup = about_path?.options?.method?.hash ? ob_all_setup : observer_setup;
+                    ob.disconnect();
+                    ob.observe(
+                        about_path?.observer?.target ? document.querySelector(about_path?.observer?.target) : document.body,
+                        about_path?.observer?.setup || auto_decide_setup
+                    );
+                }
+
+                let processing = {
+                    count: 0,
+                    clear: undefined,
+                    timeout: undefined
+                }
+                const std_process_defender = {
+                    count: 2,
+                    clear: 0.22 * 1000,
+                    stop: 1.6 * 1000
+                }
+
+                function processDefender(ob) {
+                    if (processing.count >= std_process_defender.count) {
+                        ob.disconnect();
+                        npup.uwu('route detector 강제 연결 종료');
+                        if (!processing.stop) {
+                            if (processing.clear)
+                                clearTimeout(processing.clear);
+                            processing.stop = setTimeout(() => {
+                                processing = {
+                                    count: 0,
+                                    clear: undefined,
+                                    timeout: undefined
+                                }
+                                routeDetectorProcess(ob, { defender_pass: true });
+                                npup.owo('route detector 재연결');
+                            }, std_process_defender.stop);
+                        }
+                        return true;
+                    } else if (processing.count > 0) {
+                        processing.count++;
+                        return false;
+                    }
+                    if (processing.clear)
+                        clearTimeout(processing.clear);
+                    processing.count++;
+                    processing.clear = setTimeout(() => {
+                        if (!processing.stop) {
+                            processing.count = 0;
+                            processing.clear = undefined;
+                        }
+                    }, std_process_defender.clear);
+                    return false;
+                }
+            })();
+        }
+        else {
+            (() => {
+                window.addEventListener(osc.router, routeDetectorProcess);
+
+                function routeDetectorProcess(e) {
+                    let current_path = npup.func.resolvePath({ hash: true, search: true });
+                    const current_about_path = searchAboutPath(current_path);
+                    current_path = npup.func.resolvePath(current_about_path.options.method);
+
+                    if (!pathChecker(osc_routes_path, { target: current_path })) {
+                        window.removeEventListener(osc.router, routeDetectorProcess);
+                        npup.owo('route detector가 종료 상태에 들어섰습니다.');
+                        return;
+                    }
+
+                    if (loaded_path == current_path) return;
+
+                    routing = true;
+                    performance_standard = performance.now();
+                    loaded_path = current_path;
+                    routeDetector({ path: loaded_path });
+                }
+            })();
         }
 
 
@@ -51,100 +175,12 @@
             let route_setup = {
                 path: '',
                 options: {
-                    method: undefined,
-                    defender: false,
-                }
-            }
-            osc.routes.forEach(r => {
-                if (pathChecker(r.path, { target: target_path }) && r.path.length > route_setup.path.length) {
-                    route_setup.path = r.path;
-                    Object.assign(route_setup.options, r.options);
-                }
-            });
-
-            return route_setup;
-        }
-    });
-})();
-
-/* // v1.0 route-detector
-(() => {
-    let osc = undefined;
-
-    for (let i = 0; i < options_category.length; i++) {
-        if (domainChecker(options_category[i].type)) {
-            osc = options_category[i];
-            break;
-        }
-    }
-
-    if (!osc || !osc.routes) return;
-
-    const osc_routes_path = osc.routes.map(r => r.path);
-
-    if (!pathChecker(osc_routes_path)) return;
-
-    const ob_all_setup = { ...observer_setup, attributes: true };
-
-    window.addEventListener('DOMContentLoaded', () => {
-        const c_about_path = searchAboutPath();
-        let c_path = npup.func.resolvePath(c_about_path.options.method);
-
-
-        const routerObserver = new MutationObserver((mu, ob) => {
-            ob.disconnect();
-
-            routeDetectorProcess(ob);
-        });
-        onOb(routerObserver, c_about_path);
-
-
-        function routeDetectorProcess(ob, { defender_pass = false } = {}) {
-            let current_path = npup.func.resolvePath({ hash: true, search: true });
-            const current_about_path = searchAboutPath(current_path);
-            current_path = npup.func.resolvePath(current_about_path.options.method);
-
-            if (!pathChecker(osc_routes_path, { target: current_path })) {
-                ob.disconnect();
-                npup.dev('route detector 연결 끊김');
-                return;
-            }
-            
-            
-            if (c_path != current_path) {
-                if (!defender_pass && current_about_path.options.defender && processDefender(ob))
-                    return;
-                routing = true;
-                performance_standard = performance.now();
-                c_path = current_path;
-                routeDetector({ path: c_path });
-            }
-
-            onOb(ob, current_about_path);
-        }
-
-
-
-
-        function onOb(ob, about_path) {
-            const auto_decide_setup = about_path?.options?.method?.hash ? ob_all_setup : observer_setup;
-            ob.disconnect();
-            ob.observe(
-                about_path?.observer?.target ? document.querySelector(about_path?.observer?.target) : document.body,
-                about_path?.observer?.setup || auto_decide_setup
-            );
-        }
-
-        function searchAboutPath(target_path = undefined) {
-            let route_setup = {
-                path: '',
-                options: {
-                    method: undefined,
-                    defender: false,
+                    method: undefined,  // all
+                    defender: false,    // only v1
                 },
                 observer: {
-                    target: undefined,
-                    setups: undefined,
+                    target: undefined,  // only v1
+                    setups: undefined,  // only v1
                 }
             }
             osc.routes.forEach(r => {
@@ -157,59 +193,8 @@
 
             return route_setup;
         }
-
-
-
-
-        let processing = {
-            count: 0,
-            clear: undefined,
-            timeout: undefined
-        }
-
-        const std_process_defender = {
-            count: 2,
-            clear: 0.22 * 1000,
-            stop: 1.6 * 1000
-        }
-
-        function processDefender(ob) {
-            if (processing.count >= std_process_defender.count) {
-                ob.disconnect();
-                npup.uwu('route detector 강제 연결 종료');
-                if (!processing.stop) {
-                    if (processing.clear)
-                        clearTimeout(processing.clear);
-                    processing.stop = setTimeout(() => {
-                        processing = {
-                            count: 0,
-                            clear: undefined,
-                            timeout: undefined
-                        }
-                        routeDetectorProcess(ob, { defender_pass: true });
-                        npup.owo('route detector 재연결');
-                    }, std_process_defender.stop);
-                }
-                return true;
-            } else if (processing.count > 0) {
-                processing.count++;
-                return false;
-            }
-            if (processing.clear)
-                clearTimeout(processing.clear);
-            processing.count++;
-            processing.clear = setTimeout(() => {
-                if (!processing.stop) {
-                    processing.count = 0;
-                    processing.clear = undefined;
-                }
-            }, std_process_defender.clear);
-            return false;
-        }
     });
-
-
-})(); */
+})();
 
 // -----------------------------------------------------------------------------
 

@@ -1,3 +1,3 @@
 (() => {
-    document_status++;
+    if (document_status) document_status++;
 })();

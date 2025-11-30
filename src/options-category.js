@@ -4,6 +4,7 @@ const options_category = [
         type: 'base',
         name: '웹소설',
         path: 'options',
+        initial_variable: true,
         routes: [
             {
                 path: '/search/',

@@ -6,13 +6,15 @@ ready();
 
 // ready start
 function ready(settings_param) {
+    if (!npup) return console.error('Extension-Base[Novelpia-UI-Plus]: A fatal problem occurred. \'System\' is down.');
+
     let settings = {
         router: false
     }
 
     Object.assign(settings, settings_param);
 
-    if (!document.getElementsByTagName(npup.project.engine)[0])
+    if (!document.getElementsByTagName(npup.project.engine)[0] && insert_initial_variable)
         html.appendChild(document.createElement(npup.project.engine));
 
     npup.log('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ');
@@ -59,7 +61,7 @@ function ready(settings_param) {
     }
 
     function startHead() {        
-        if (routing) return;
+        if (routing || !insert_initial_variable) return;
     
         // --- initial-setup injection ---
         scriptInjection('src/npup.js');

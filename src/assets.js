@@ -8,15 +8,16 @@
  * @param {function} handler 실행할 함수
  * @param {Object} [setup={}] 
  * @param {number} setup.redetect 재탐지할 횟수
- * @param {number} setup.duration 탐지할 시간, 이때 재탐지 횟수가 1회 이하일시 standard_duration[=8*1000]으로 고정
+ * @param {number} setup.duration 탐지할 시간, 이때 재탐지 횟수가 1회 이하일시 standard_duration으로 고정
+ * @param {number} setup.standard_duration 최대 탐지 시간, 기본적으로 8 * 1000
  * @param {*} setup.method 0 = 기본적으로 작동, * = 기본적으로 탐지함
  */
 function targetHandler(targetFinder, handler, {
     redetect = 0,
     duration = NaN,
+    standard_duration = 8 * 1000,
     method = 0
 } = {}) {
-    const standard_duration = 8 * 1000;
 
     if (!duration && duration !== 0)
         duration = standard_duration;
@@ -45,7 +46,8 @@ function targetHandler(targetFinder, handler, {
                 if (redetect > 0) {
                     targetHandler(targetFinder, handler, {
                         redetect: redetect - 1,
-                        duration: redetect < 2 ? standard_duration : Math.min(duration + 1 * 1000, standard_duration)
+                        duration: redetect < 2 ? standard_duration : Math.min(duration + 1 * 1000, standard_duration),
+                        standard_duration
                     });
                     npup.trace(`타겟을 찾지 못하였습니다. 재탐지를 시작합니다.`);
                 }
@@ -379,7 +381,8 @@ function searchSystem(key, engine = 'system') {
             msg: msg,
             type: 'error'
         })
-        return npup.error(msg);
+        npup.error(msg);
+        return undefined;
     }
     return data;
 }
@@ -409,22 +412,22 @@ const isViewer = { condition: () => engineChecker('뷰어') }
  * @returns {function} 키 맵핑을 위한 기본적인 토대가 되는 함수
  */
 function keyMappingBase(callback, { condition = () => true, execution = () => undefined } = {}) {
-    return async function(r, settings = { quick_mapping_menu: false }) {
-        if (settings.quick_mapping_menu) {
+    return async function(r, { basic_use = false, credit = 'basic-use' } = {}) {
+        if (basic_use) {
             if (!condition()) return;
 
-            const result = await Promise.all([
+            const [result] = await Promise.all([
                 tryChecker(() => {
-                    callback(r, this);
-                }, `<keyMappingBase - quick-mapping-menu> ${this.key}`, false)
+                    callback.call(this, r);
+                }, `<keyMappingBase - ${credit}> ${this.key}`, false)
             ]);
 
-            if (result[0].status > 2) toastAlert({
+            if (result.status > 2) toastAlert({
                     title: `오류 발생 | ${this.key}`,
                     msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
                     type: 'error'
                 });
-            return;
+            return result.result;
         }
 
         const keydownEvent = async (e) => {
@@ -442,17 +445,17 @@ function keyMappingBase(callback, { condition = () => true, execution = () => un
             if (
                 (key_match) ||
                 (!key_match && (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey))
-            ) return
+            ) return;
 
             e.preventDefault();
 
-            const result = await Promise.all([
+            const [result] = await Promise.all([
                 tryChecker(() => {
-                    callback(r, this);
+                    callback.call(this, r);
                 }, `<keyMappingBase> ${this.key}`, false)
             ]);
 
-            if (result[0].status > 2) toastAlert({
+            if (result.status > 2) toastAlert({
                     title: `오류 발생 | ${this.key}`,
                     msg: `'${this.description}' 기능 오류\n원인: ${result.error}`,
                     type: 'error'
@@ -661,7 +664,7 @@ function quickMappingMenuAsset(
             const menu_touches = document.getElementsByClassName(`${qmm}-touch`);
             for (let i = 0; i < menu_touches.length; i++) {
                 if (menu_touches[i].contains(e.target))
-                    return searchSystem(menu_touches[i].getAttribute('value'), 'common').system(r, { quick_mapping_menu: true });
+                    return searchSystem(menu_touches[i].getAttribute('value'), 'common').system(r, { basic_use: true, credit: 'quick-mapping-menu' });
             }
         }
 
