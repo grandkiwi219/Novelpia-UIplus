@@ -238,7 +238,7 @@ function settingSwitch(desc, key, settings = {}, sub = 0) {
 
 function settingSelector(desc, key, values, settings = {}, sub = 0) {
     const el = document.createElement('setting-selector');
-    el.textContent = values.map(v => `${v.name} {${v.value}}`).join('|');
+    el.textContent = values?.map(v => `${v.name} {${v.value}}`).join('|');
 
     return setTForm(desc, key, settings, sub, el, 'selector');
 }
