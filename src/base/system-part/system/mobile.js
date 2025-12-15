@@ -98,7 +98,7 @@ mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
                     () => document.getElementsByClassName('tab__buttonWrap')[0],
                     (target) => {
                         menu_tap = target;
-                        menu_top_important = false;
+                        menu_top_important = true;
                     },
                     {
                         redetect: 1
