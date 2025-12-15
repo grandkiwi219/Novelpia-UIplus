@@ -141,9 +141,13 @@ html[npup-origin-header], html[npup-bottom-nav] {
         *:has(> * > .tap-box), /* 2025 밀리언 클래스 (이벤트 탭) 포함, TRPG 완결 기념 이벤트 탭, 밀리언 클래스 선호작 이벤트 */
         .contest_menu, /* 2025 천지창조 (공모전 탭 => 이벤트 탭), 2025 우주최강 (공모전 탭 => 이벤트 탭, https://novelpia.com/contest_mission_2025) */
         .contest-tab /* 2024, 2023 우주최강 (이벤트 탭) */
-
         {
             top: 90px;
+        }
+
+        .tab__buttonWrap /* 2025 NOTY 투표 https://novelpia.com/event/noty_vote/noty_vote?sid=2025_noty_vote&tab=event */
+        {
+            top: 90px !important;
         }
     }
 }

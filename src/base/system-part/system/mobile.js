@@ -93,6 +93,18 @@ mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
                 menu_tap = document.getElementsByClassName('contest-tab')[0];
                 menu_top_important = false;
             }
+            else if (pCheck('/event/')) {
+                targetHandler(
+                    () => document.getElementsByClassName('tab__buttonWrap')[0],
+                    (target) => {
+                        menu_tap = target;
+                        menu_top_important = false;
+                    },
+                    {
+                        redetect: 1
+                    }
+                );
+            }
             else if (pCheck('/comic_main/')) {
                 menu_tap = document.getElementsByClassName('comic-new-header-wp')[0];
                 menu_top_important = false;

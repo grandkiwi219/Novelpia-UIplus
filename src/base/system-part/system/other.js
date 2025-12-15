@@ -38,7 +38,7 @@ otherCa['new-alarm'].system = function(r) {
     if (!pathChecker('/alarm/')) return;
 
     const newAlarmSystem = (target) => {
-        const active_counter = Number(target?.textContent);
+        const active_counter = parseInt(target?.textContent);
 
         npup.dev('active_counter:', active_counter);
 
