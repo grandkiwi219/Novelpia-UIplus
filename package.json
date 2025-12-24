@@ -1,0 +1,18 @@
+{
+  "name": "노벨피아 UI+",
+  "version": "0.1.0",
+  "description": "더 나은 노벨피아 UI를 경험해보세요!",
+  "keywords": [
+    "chrome-extension",
+    "extension"
+  ],
+  "license": "MIT",
+  "author": "grandkiwi219",
+  "type": "module",
+  "scripts": {
+    "test": "echo '그런 거 없습니다.'"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.32"
+  }
+}
