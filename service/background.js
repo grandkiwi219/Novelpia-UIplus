@@ -5,6 +5,8 @@ const route_detect = 'route-detect';
 
 const novelpia = 'https://novelpia.com';
 
+const mybook_data_key = 'nav-mybook';
+
 
 /**
  * 노벨피아 url 변경 감지
