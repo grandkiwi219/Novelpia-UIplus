@@ -781,24 +781,6 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                     invisible: true,
                 },
             },
-
-            'quick-mybook': {
-                desc: '빠른 내서재 (확장프로그램 아이콘 클릭 시)',
-                type: {
-                    option: 'switch'
-                },
-                options: {
-                    'quick-mybook-thumb': {
-                        desc: '표지를 표시하지 않음',
-                        type: {
-                            option: 'switch'
-                        }
-                    },
-                },
-                setups: {
-                    invisible: true,
-                },
-            },
         }
     },
 
