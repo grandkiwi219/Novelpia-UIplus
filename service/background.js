@@ -1,5 +1,7 @@
 const sync_key = 'extension-sync';
 const update_key = 'extension-update';
+const update_alert_key = 'extension-update-alert';
+const old_version_key = 'extension-old-version';
 
 const route_detect = 'route-detect';
 
@@ -30,9 +32,24 @@ chrome.runtime.onInstalled.addListener(async d => {
     if (d.reason === 'install') {
         await chrome.storage.local.set({ [sync_key]: 1 });
         chrome.runtime.openOptionsPage();
+
+        chrome.storage.local.set({
+            [old_version_key]: chrome.runtime.getVersion().split('.').slice(0, 2).join('.')
+        });
     }
     else if (d.reason === "update") {
-        chrome.storage.local.set({ [update_key]: 1 });
+        const storage_data = await chrome.storage.local.get([old_version_key]);
+
+        const old_version = storage_data[old_version_key]?.toString();
+        const current_version = chrome.runtime.getVersion().split('.').slice(0, 2).join('.');
+
+        if (old_version != current_version) {
+            chrome.storage.local.set({
+                [update_key]: true,
+                [update_alert_key]: true,
+                [old_version_key]: current_version
+            });
+        }
     }
 });
 

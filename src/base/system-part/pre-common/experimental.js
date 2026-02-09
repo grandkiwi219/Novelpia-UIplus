@@ -1,5 +1,3 @@
-const experimentalCa = npup.options.experimental.options;
-
 experimentalCa['frosted-glass'].system = function (r) {
     let blur_intensity = 18;
     const box_shadow_color_page = getCookie('DARKMODE_S') ? '255, 255, 255, 0.32' : '0, 0, 0, 0.16';

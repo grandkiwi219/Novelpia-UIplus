@@ -26,6 +26,7 @@ const npup = {
 
     keys: {
         sync: 'extension-sync',
+        update: 'extension-update-alert',
         log: 'extension-log',
         debug: 'debug-mode'
     },
@@ -382,7 +383,7 @@ npup.func.toastAlert = ({ title = undefined, msg, type = undefined } = {}) => {
         alert_box.addEventListener('mouseout', () => {
             alert_time = setTime();
         });
-    }, dom_loaded ? 100 : 400);
+    }, typeof dom_loaded == 'undefined' || dom_loaded ? 100 : 400);
 
     
     function setTime(once = false) {

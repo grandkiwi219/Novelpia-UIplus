@@ -771,6 +771,24 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 }
             },
 
+            'search-in-mybook': {
+                desc: '내서재에서 키워드 검색',
+                type: {
+                    option: 'selector',    
+                    structure: ['system']
+                },
+                values: [
+                    { name: '사용 안함', value: 'none' },
+                    { name: '태그', value: 'tag' },
+                    { name: '제목', value: 'title' },
+                    { name: '작가', value: 'name' },
+                    { name: '전체', value: 'tag,title,name' },
+                    { name: '태그, 제목', value: 'tag,title' },
+                    { name: '태그, 작가', value: 'tag,name' },
+                    { name: '제목, 작가', value: 'title,name' },
+                ],
+            },
+
             'repair': {
                 desc: '잘못된 부분 수정',
                 type: {

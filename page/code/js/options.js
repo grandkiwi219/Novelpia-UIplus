@@ -54,7 +54,7 @@ headerThemeButton.addEventListener('click', function () {
     local.get([update_key]).then(r => {
         if (!r[update_key]) return;
 
-        /* const banner_wrap = document.createElement('div');
+        const banner_wrap = document.createElement('div');
         banner_wrap.id = 'update-banner';
         banner_wrap.classList.add('cleaner');
 
@@ -77,10 +77,17 @@ headerThemeButton.addEventListener('click', function () {
 
         document.getElementById('box').insertAdjacentElement('beforebegin', banner_wrap);
 
+        what_patch.addEventListener('click', () => {
+            banner_wrap.classList.remove('active');
+        }, { once: true });
+
         setTimeout(() => {
             banner_wrap.classList.add('active');
-        }, 10); */
+        }, 10);
         
-        local.set({ [update_key]: false });
+        local.set({
+            [update_key]: false,
+            [update_alert_key]: false
+        });
     });
 })();

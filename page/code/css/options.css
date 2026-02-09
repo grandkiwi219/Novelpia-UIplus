@@ -197,7 +197,9 @@ id
     transition: all var(--theme-transition-speed);
 
     &.active {
-        height: 60px;
+        max-height: 55px;
+        min-height: 45px;
+        height: 10%;
     }
 
     * {
@@ -210,6 +212,8 @@ id
         justify-content: center;
         align-items: center;
         gap: 20px;
+
+        font-size: 14px;
     }
 
     .update-button {

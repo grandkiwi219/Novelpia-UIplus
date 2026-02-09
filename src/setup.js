@@ -60,6 +60,43 @@ local.get([npup.keys.sync]).then(async r => {
     extension_load = true, window.dispatchEvent(new CustomEvent(npup.event.load));
 });
 
+local.get([npup.keys.update]).then(async r => {
+    if (!r[npup.keys.update]) return;
+    
+    let alerting = false;
+
+    async function windowIsActive() {
+        if (alerting) return;
+
+        const sd = await local.get([npup.keys.update]);
+        const update_alert = sd[npup.keys.update];
+
+        if (!update_alert) {
+            removeEvent();
+            return;
+        }
+
+        const isVisible = document.visibilityState === 'visible';
+        const isFocused = document.hasFocus();
+
+        if (isVisible && isFocused && !alerting) {
+            alerting = true;
+            toastAlert({ title: '"노벨피아 UI+" 업데이트 완료', msg: '자세한 사항은 옵션 페이지를 참고해주세요!' });
+            removeEvent();
+            local.set({ [npup.keys.update]: false });
+        }
+    }
+
+    function removeEvent() {
+        window.removeEventListener('visibilitychange', windowIsActive);
+        window.removeEventListener('focus', windowIsActive);
+    }
+
+    window.addEventListener('visibilitychange', windowIsActive);
+    window.addEventListener('focus', windowIsActive);
+    windowIsActive();
+});
+
 local.get([npup.keys.debug, npup.keys.log]).then(r => {
     Object.assign(npup.debug, r[npup.keys.debug]);
     /* 
