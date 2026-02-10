@@ -1,3 +1,5 @@
+const isViewerDarkMode = getCookie('DARKMODE');
+
 function executeVote() {
     if (!document.getElementById('btn_episode_vote').src.includes('_on')) {
         document.getElementById('recommend_tap').children[0].click();
@@ -66,4 +68,14 @@ function useMode(name, result, { condition = true, handler = () => {} } = {}) {
     }
 
     toastAlert({ title: name, msg: `${name}가 ${result ? '켜졌습니다.' : '꺼졌습니다.'}` });
+}
+
+async function copyUrl(url) {
+    try {
+        await navigator.clipboard.writeText(url);
+        showAlert({ msg: '링크를 클립보드에 복사했습니다.' });
+    } catch (err) {
+        showAlert({ msg: '링크를 클립보드에 복사하는 데에 실패했습니다.', type: 'error' });
+        throw new Error(err);
+    }
 }

@@ -245,6 +245,29 @@ async function showIcon(
 
 
 
+async function showAlert({ type, msg = undefined }) {
+    const alert = document.createElement('div');
+    alert.classList.add(`${npup.project.prefix.css}show-alert`);
+    if (type) alert.classList.add(type);
+    alert.textContent = msg ?? '메세지가 할당되지 않았습니다.';
+
+    document.body.appendChild(alert);
+
+    await setDelay(100);
+    alert.classList.add('show');
+    alert.classList.add('down');
+    await setDelay(400);
+    alert.classList.add('up');
+    await setDelay(2 * 1000);
+    alert.classList.remove('show');
+    await setDelay(200);
+    alert.remove();
+
+    return true;
+}
+
+
+
 /**
  * 
  * @param {HTMLElement} el 목록 아이콘을 삽입할 HTML 요소

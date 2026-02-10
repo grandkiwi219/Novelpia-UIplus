@@ -1305,3 +1305,92 @@ dbl vote css
         transform: translateX(-50%) translateY(calc(60px + 5px));
     }
 }
+
+
+
+/* 
+show alert
+*/
+
+.npup-show-alert {
+    --header-height: 30px;
+
+    --alert-down: 20px;
+    --alert-up: 10px;
+    --box-shadow: 0px 0px 8px rgba(128, 128, 128, 0.7);
+
+    --color: white;
+    --background-color: #0f0f0f;
+    --background-color-hover: #6464644b;
+
+    max-width: 90vw;
+    width: fit-content;
+    height: fit-content;
+
+    padding: 12px 15px;
+    border-radius: 40px;
+
+    border: 2.5px solid var(--background-color-hover);
+    background-color: var(--background-color);
+
+    box-shadow: 0px 0px 2px rgba(128, 128, 128, 0.7);
+
+    position: fixed;
+    top: 0px;
+    left: 50%;
+
+    opacity: 0;
+
+    color: var(--color);
+    font-size: 13px;
+    text-align: center;
+    word-break: keep-all;
+
+    user-select: none;
+
+    transform: translateX(-50%) translateY(-50%);
+    transition: opacity .2s, top 0.4s ease-out, transform 0.4s ease-in-out;
+
+    z-index: 100000;
+}
+
+.npup-show-alert.show {
+    opacity: 1;
+    transform: translateX(-50%);
+}
+
+.npup-show-alert.down {
+    top: calc(var(--header-height) + var(--alert-down));
+}
+
+.npup-show-alert.up {
+    top: calc(var(--header-height) + var(--alert-down) - var(--alert-up));
+}
+
+.npup-show-alert.error {
+    border-color: rgb(196, 0, 0);
+    background-color: rgb(255, 55, 55);
+    box-shadow: var(--box-shadow);
+}
+
+.npup-show-alert.warn {
+    border-color: rgb(179, 101, 1);
+    background-color: rgb(255, 177, 31);
+    box-shadow: var(--box-shadow);
+}
+
+.npup-show-alert.dev {
+    border-color: rgb(0, 52, 196);
+    background-color: rgb(48, 103, 255);
+    box-shadow: var(--box-shadow);
+}
+
+
+
+/* 
+line share
+*/
+
+.npup-line-share-bar-hide {
+    display: none !important;
+}

@@ -196,3 +196,273 @@ viewerCa['scroll-close-menu'].system = function(r) {
 
     /* route detector? */
 }
+
+
+
+viewerCa['line-share'].system = function(r) {
+    window.addEventListener('DOMContentLoaded', () => {
+        const [header] = document.getElementsByClassName('menu-top-wrapper');
+
+        const share_wrap = document.createElement('div');
+        share_wrap.id = `${npup.project.prefix.css}${this.key}-btn`;
+        Object.assign(share_wrap.style, {
+            boxSizing: 'border-box',
+
+            width: '44px',
+            height: '44px',
+
+            borderRadius: '50px',
+
+            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+            boxShadow: 'rgba(80, 80, 80, 0.5) 0px 0px 5px',
+
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            
+            position: 'absolute',
+            top: '70px',
+            right: '20px',
+
+            cursor: 'pointer',
+
+            filter: isViewerDarkMode ? 'invert(1)' : ''
+        });
+
+        const share_icon = document.createElement('img');
+        share_icon.src = 'https://images.novelpia.com/img/new/common/ep_b_icon_share.svg';
+        share_icon.alt = '공유';
+        Object.assign(share_icon.style, {
+            width: '24px',
+            height: '24px'
+        });
+        share_wrap.appendChild(share_icon);
+
+        header.esrender(share_wrap);
+
+
+        const bar_hide = `${npup.project.prefix.css}${this.key}-bar-hide`;
+
+        const selector_class = `${npup.project.prefix.css}${this.key}-selector`;
+
+        const header_bar = document.getElementById('header_bar');
+        const footer_bar = document.getElementById('footer_bar');
+
+        share_wrap.addEventListener('click', e => {
+            const paging = localStorage['viewer_paging'] == '1';
+            const ani = localStorage['viewer_animation'] == 'on';
+
+            const viewer = paging ? document.getElementById('novel_drawing_page_c') : document.getElementById('novel_drawing');
+
+            header_bar.classList.add(bar_hide);
+            footer_bar.classList.add(bar_hide);
+
+            const cover = document.createElement('div');
+            Object.assign(cover.style, {
+                width: '100%',
+                height: `${viewer.offsetHeight}px`,
+
+                position: 'absolute',
+                top: 0,
+                left: 0
+            });
+
+            const cancel = document.createElement('div');
+            cancel.innerHTML = ''
+                + `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="20" height="20" stroke-width="2" stroke="${isViewerDarkMode ? 'white' : 'black'}" fill="none" stroke-linecap="round">`
+                    + '<path d="M5 5 L25 25 M5 25 L25 5"></path>'
+                + '</svg>';
+            Object.assign(cancel.style, {
+                width: 'fit-content',
+                height: 'fit-content',
+
+                padding: '8px',
+
+                fontSize: '0',
+                lineHeight: '0',
+
+                position: 'sticky',
+                top: '15px',
+                marginLeft: 'auto',
+                marginRight: '15px',
+
+                cursor: 'pointer'
+            });
+            cover.appendChild(cancel);
+
+            const selector_padding = 5;
+
+            const bgc = isViewerDarkMode ? 219 : 128;
+            const bsc = isViewerDarkMode ? 205 : 80;
+
+            const selector = document.createElement('div');
+            selector.classList.add(selector_class);
+            Object.assign(selector.style, {
+                width: `${viewer.clientWidth + (selector_padding * 2)}px`,
+                height: 0,
+                backgroundColor: `rgba(${bgc}, ${bgc}, ${bgc}, 0.2)`,
+                boxShadow: `rgba(${bsc}, ${bsc}, ${bsc}, 0.5) 0px 0px 3px`,
+                borderRadius: '8px',
+
+                position: 'absolute',
+                top: '0',
+                left: `${viewer.getBoundingClientRect().x - selector_padding}px`,
+
+                cursor: 'pointer',
+
+                transition: ani ? 'height .14s' : ''
+            });
+            cover.appendChild(selector);
+
+            document.getElementById('novel_box').esrender(cover);
+
+            // ---
+
+            const store = {
+                height: NaN,
+                top: NaN,
+                left: NaN
+            }
+ 
+            if (paging) {
+                exit();
+                toastAlert({ title: '문단 공유 불가능', msg: '페이지 형식에서는 아직 지원하지 않습니다.', type: 'warn' });
+                return;
+            }
+            scrollDocTracking(viewer, selector, cancel, moveSelector, idleSelector, exit);
+
+            showAlert({ msg: '공유하실 문단을 선택 후 클릭해주세요.' });
+
+            function moveSelector({ height, top, left } = {}) {
+                if (top && top != store.top) {
+                    selector.style.top = `${top - selector_padding}px`;
+                    store.top = top;
+                }
+
+                if (height && height != store.height) {
+                    selector.style.height = `${height + (selector_padding * 2)}px`;
+                    store.height = height;
+                }
+
+                if (left && left != store.left) {
+                    selector.style.left = `${left}px`;
+                    store.left = left;
+                }
+            }
+
+            async function idleSelector() {
+                if (!ani) return;
+                Object.assign(selector.style, {
+                    transition: 'height .14s, top .14s'
+                });
+            }
+
+            function exit() {
+                header_bar.classList.remove(bar_hide);
+                footer_bar.classList.remove(bar_hide);
+                if (header_bar.style.display == 'none') naviView();
+                cover.remove();
+            }
+        });
+    });
+
+    function scrollDocTracking(viewer, selector, cancel, moveSelector, idleSelector, exit) {
+        let idle = false;
+        let line = null;
+
+        /**
+         * @param {Element} target 
+         */
+        function registerSelectorData(target) {
+            if (!idle) {
+                idle = true;
+                idleSelector();
+            }
+
+            moveSelector({
+                height: target.offsetHeight,
+                top: target.offsetTop,
+            });
+
+            line = target.getAttribute('data-line');
+        }
+
+        /**
+         * @param {PointerEvent} e 
+         */
+        const pointermoveEv = e => {
+            const currentPosEls = document.elementsFromPoint(e.clientX, e.clientY);
+
+            const findAlViewer = el => el == viewer;
+            const target_viewer = currentPosEls.find(findAlViewer);
+
+            if (!target_viewer) return;
+
+            const findAl = el => el.classList.contains('line');
+            const target = document.elementsFromPoint(viewer.getBoundingClientRect().x + 5, e.clientY)
+                .find(findAl);
+
+            if (!target) return;
+
+            registerSelectorData(target);
+        }
+        document.addEventListener('pointermove', pointermoveEv);
+
+        /**
+         * @param {PointerEvent} e 
+         */
+        const clickEv = e => {
+            const currentPosEls = document.elementsFromPoint(e.clientX, e.clientY);
+
+            const findAlSelector = el => el == selector;
+            const currentPosSelector = document.elementsFromPoint(e.clientX, e.clientY).find(findAlSelector);
+
+            if (!currentPosSelector) {
+                const findAlViewer = el => el == viewer;
+                const target_viewer = currentPosEls.find(findAlViewer);
+
+                if (!target_viewer) {
+                    // exitAll();
+                    return;
+                }
+
+                const findAl = el => el.classList.contains('line');
+                const target = document.elementsFromPoint(viewer.getBoundingClientRect().x + 5, e.clientY)
+                    .find(findAl);
+
+                if (!target) return;
+
+                registerSelectorData(target);
+                return;
+            }
+
+            exitAll();
+            copyUrl(location.origin + location.pathname + `?line=${line}`);
+        }
+        window.addEventListener('click', clickEv);
+
+
+        /* Exit Event */
+
+        /**
+         * @param {KeyboardEvent} e 
+         */
+        const EscapeEv = e => {
+            if (e.key == 'Escape') exitAll();
+        }
+        window.addEventListener('keydown', EscapeEv);
+
+        
+        function exitAll() {
+            exit();
+            document.removeEventListener('pointermove', pointermoveEv);
+            window.removeEventListener('click', clickEv);
+            window.removeEventListener('keydown', EscapeEv);
+            window.removeEventListener('resize', exitAll);
+            window.removeEventListener(npup.event.router, exitAll);
+        }
+        cancel.addEventListener('click', exitAll);
+        window.addEventListener('resize', exitAll);
+        window.addEventListener(npup.event.router, exitAll);
+    }
+}
