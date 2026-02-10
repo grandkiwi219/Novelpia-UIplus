@@ -83,7 +83,7 @@ headerThemeButton.addEventListener('click', function () {
 
         setTimeout(() => {
             banner_wrap.classList.add('active');
-        }, 10);
+        }, 100);
         
         local.set({
             [update_key]: false,
