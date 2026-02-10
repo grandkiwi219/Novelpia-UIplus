@@ -28,7 +28,13 @@ engine = [
                 window.addEventListener('DOMContentLoaded', lineShare);
             }
 
+            let line_sharing_success = false;
+
             async function lineShare() {
+                if (line_sharing_success) return;
+
+                line_sharing_success = true;
+
                 await setDelay(1000);
 
                 const paging = localStorage['viewer_paging'] == '1';
@@ -68,8 +74,7 @@ engine = [
                 }, 2400);
             }
 
-
-    // ---
+            // ---
 
             if (!routing)
                 window.addEventListener("DOMContentLoaded", checkLastEp);
