@@ -209,26 +209,26 @@ experimentalCa['search-in-mybook'].system = function(r) {
 
                 if (!save) {
                     const i_value_no_space = i_value.replaceAll(' ', '');
-    
+
                     if (canUse('title')) {
                         (() => {
                             const title = el.querySelector('.novel-name').textContent.toLowerCase();
                             const title_no_space = title.replaceAll(' ', '');
-        
+
                             if (title_no_space.includes(i_value_no_space))
                                 return save = true;
-        
+
                             const title_pieces = title.split(' ');
                             const title_firsts = title_pieces.map(p => p.slice(0, 1)).join('');
-        
+
                             if (title_firsts.includes(i_value_no_space))
                                 return save = true;
                         })();
                     }
-    
+
                     if (!save && canUse('name')) {
                         const name = el.querySelector('.writer-name').textContent.trim().toLowerCase();
-    
+
                         if (name.includes(i_value_no_space)) save = true;
                     }
                 }
