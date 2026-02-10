@@ -34,7 +34,7 @@ engine = [
                 const paging = localStorage['viewer_paging'] == '1';
 
                 const search = location.search.slice(1);
-                const line_num = Number(search.split('&').find(r => r.startsWith('line=')).slice(5));
+                const line_num = Number(search.split('&').find(r => r.startsWith('line='))?.slice(5));
 
                 if (line_num == NaN) return;
 

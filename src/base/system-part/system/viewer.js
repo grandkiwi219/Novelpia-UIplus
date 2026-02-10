@@ -249,6 +249,13 @@ viewerCa['line-share'].system = function(r) {
         const footer_bar = document.getElementById('footer_bar');
 
         share_wrap.addEventListener('click', e => {
+            switch (location.hash) {
+                case '#comments':
+                case '#lists':
+                    showAlert({ msg: '댓글창 혹은 목록창을 닫아주세요.', type: 'warn' });
+                    return;
+            }
+
             const paging = localStorage['viewer_paging'] == '1';
             const ani = localStorage['viewer_animation'] == 'on';
 
