@@ -5,7 +5,15 @@ const npup = {
 
     project: {
         name: 'NPup',
-        version: '3.11.0.0',
+        get version() {
+            let version = 'Injection';
+
+            try {
+                version = chrome.runtime.getVersion().split('.').slice(0, 2).join('.');
+            } catch (e) {}
+
+            return version;
+        },
         domain: {
             base: 'novelpia.com',
             books: 'book.novelpia.com',

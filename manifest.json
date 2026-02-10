@@ -3,7 +3,7 @@
     "name": "노벨피아 UI+",
     "description": "더 나은 노벨피아 UI를 경험해보세요!",
     "author": "grand-kiwi",
-    "version": "3.12.0.0",
+    "version": "3.12.1.0",
     "browser_specific_settings": {
         "gecko": {
             "id": "",
@@ -13,6 +13,7 @@
     "content_scripts": [
         {
             "tag": "CSS",
+            "all_frames": true,
             "matches": ["*://novelpia.com/*", "*://book.novelpia.com/*", "*://toptoon.novelpia.com/*"],
             "css": [
                 "./src/css/setup-content.css",
@@ -30,6 +31,7 @@
 
         {
             "tag": "기본 노벨피아",
+            "all_frames": true,
             "matches": ["*://novelpia.com/*"],
             "exclude_matches": [
                 "*://novelpia.com/img/*",
@@ -86,6 +88,7 @@
 
         {
             "tag": "북스 노벨피아",
+            "all_frames": true,
             "matches": ["*://book.novelpia.com/*"],
             "exclude_matches": [
                 "*://book.novelpia.com/_nuxt/*",
@@ -126,6 +129,7 @@
 
         {
             "tag": "웹툰 노벨피아",
+            "all_frames": true,
             "matches": ["*://toptoon.novelpia.com/*"],
             "exclude_matches": [
                 "*://toptoon.novelpia.com/_nuxt/*",
@@ -164,6 +168,7 @@
 
         {
             "tag": "document-status",
+            "all_frames": true,
             "matches": ["*://novelpia.com/*", "*://book.novelpia.com/*", "*://toptoon.novelpia.com/*"],
             "exclude_matches": [
                 "*://images.novelpia.com/*",
@@ -176,6 +181,7 @@
         },
         {
             "tag": "document-status",
+            "all_frames": true,
             "matches": ["*://novelpia.com/*", "*://book.novelpia.com/*", "*://toptoon.novelpia.com/*"],
             "exclude_matches": [
                 "*://images.novelpia.com/*",

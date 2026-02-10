@@ -22,7 +22,9 @@ experimentalCa['search-in-mybook'].system = function(r) {
     wrap.classList.add('mybook-data-search');
     Object.assign(wrap.style, {
         justifyContent: 'flex-start',
-        gap: '15px'
+        gap: '5px 25px',
+        flexWrap: 'wrap',
+        lineHeight: 'inherit'
     });
 
     const text = el('b');
@@ -45,7 +47,6 @@ experimentalCa['search-in-mybook'].system = function(r) {
     Object.assign(input.style, {
         width: '200px',
         height: '30px',
-        marginLeft: '10px'
     });
     if (keep_data.use) input.value = keep_data.content.trim();
     search_wrap.appendChild(input);
@@ -75,7 +76,6 @@ experimentalCa['search-in-mybook'].system = function(r) {
     Object.assign(keep_wrap.style, {
         width: 'fit-content',
         height: 'fit-content',
-        marginLeft: '20px'
     });
 
     const keep = el('label');
@@ -85,6 +85,7 @@ experimentalCa['search-in-mybook'].system = function(r) {
 
         height: '30px',
 
+        padding: '0 5px',
         margin: 0,
 
         display: 'flex',

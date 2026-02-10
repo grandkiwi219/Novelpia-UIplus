@@ -131,6 +131,11 @@ novelCa['novel-page'].system = function(r) {
 novelCa['novel-notice-close'].system = function(r) {
     if (!pathChecker(['/novel/', '/collect_novel/'])) return;
 
+    const findTarget = () => document.getElementsByClassName('notice_toggle_btn')[0];
+
+    /**
+     * @param {HTMLDivElement} more_btn 
+     */
     const addCloseFunction = async (more_btn) => {
         const more_btn_display = more_btn.style.display == 'none';
 
@@ -138,41 +143,58 @@ novelCa['novel-notice-close'].system = function(r) {
             more_btn.style.display = '';
             const more_btn_content = more_btn.children[0];
             more_btn_content.innerHTML = more_btn_content.innerHTML.replace('더보기', '접기').replace('down', 'up');
+
+            addBottomCloseBtn.call(this, more_btn);
+        }
+        else {
+            /**
+             * @param {PointerEvent} e 
+             */
+            const ev = (e) => {
+                const target = findTarget();
+                if (!target.contains(e.target) && target != e.target) return;
+                addBottomCloseBtn.call(this, target);
+                document.removeEventListener('click', ev);
+            }
+
+            document.addEventListener('click', ev);
+            removeEvent(() => document.removeEventListener('click', ev));
         }
 
         more_btn.outerHTML = more_btn.outerHTML.replace('notice_toggle()', 'npupNoticeToggle()');
 
-        await setDelay(100);
+        function addBottomCloseBtn(more_btn) {
+            let match_count;
+            try {
+                match_count = Number(more_btn.textContent.match(/\((\d+)\)/)[1]);
+            } catch (error) {}
 
-        let match_count;
-        try {
-            match_count = Number(more_btn.textContent.match(/\((\d+)\)/)[1]);
-        } catch (error) {}
+            if (match_count > 4) {
+                const notice_table = document.getElementsByClassName('notice_table')[0] || document.querySelector('table[style*=width]:has(> * > .ep_style4)');
+                const more_btn_long = more_btn.cloneNode(true);
 
-        if (match_count > 4) {
-            const notice_table = document.getElementsByClassName('notice_table')[0] || document.querySelector('table[style*=width]:has(> * > .ep_style4)');
-            const more_btn_long = more_btn.cloneNode(true);
+                more_btn_long.id = `${npup.project.prefix.css}${this.key}`;
+                more_btn_long.style.height = 'fit-content';
+                more_btn_long.style.display = '';
+    
+                more_btn_long.classList.add('ep_style4');
 
-            more_btn_long.id = `${npup.project.prefix.css}${this.key}`;
-            more_btn_long.style.height = 'fit-content';
-            more_btn_long.style.display = more_btn_display ? '' : 'none';
+                notice_table.children[0].esrender(more_btn_long);
 
-            more_btn_long.classList.add('ep_style4');
-
-            notice_table.children[0].esrender(more_btn_long);
-
-            more_btn_long.outerHTML = more_btn_long.outerHTML
-                .replace('notice_toggle()', 'npupNoticeToggleLong()')
-                .replace('더보기', '접기')
-                .replace('down', 'up');
-        }
-        else {
-            npup.dev('추가 접기 버튼을 담을 정도로 크기가 크지 않습니다.');
+                more_btn_long.outerHTML = more_btn_long.outerHTML
+                    .replace('notice_toggle()', 'npupNoticeToggleLong()')
+                    .replace('npupNoticeToggle()', 'npupNoticeToggleLong()')
+                    .replace('더보기', '접기')
+                    .replace('down', 'up');
+            }
+            else {
+                npup.dev('추가 접기 버튼을 담을 정도로 크기가 크지 않습니다.');
+            }
         }
     }
 
     targetHandler(
-        () => document.getElementsByClassName('notice_toggle_btn')[0],
+        findTarget,
         (t) => addCloseFunction(t),
         { redetect: 1 }
     );
