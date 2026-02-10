@@ -21,6 +21,8 @@ engine = [
         name: '뷰어',
         matches: ['/viewer/'],
         execution: (r, _this, settings) => {
+            let line_sharing_success = false;
+
             if (dom_loaded) {
                 lineShare();
             }
@@ -28,14 +30,12 @@ engine = [
                 window.addEventListener('DOMContentLoaded', lineShare);
             }
 
-            let line_sharing_success = false;
-
             async function lineShare() {
                 if (line_sharing_success) return;
 
                 line_sharing_success = true;
 
-                await setDelay(1000);
+                await setDelay(1200);
 
                 const paging = localStorage['viewer_paging'] == '1';
 
