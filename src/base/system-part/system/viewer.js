@@ -200,7 +200,13 @@ viewerCa['scroll-close-menu'].system = function(r) {
 
 
 viewerCa['line-share'].system = function(r) {
-    window.addEventListener('DOMContentLoaded', () => {
+    switch (location.hash) {
+        case '#comments':
+        case '#lists':
+            return;
+    }
+
+    const lineShareSystem = () => {
         const [header] = document.getElementsByClassName('menu-top-wrapper');
 
         const share_wrap = document.createElement('div');
@@ -248,14 +254,7 @@ viewerCa['line-share'].system = function(r) {
         const header_bar = document.getElementById('header_bar');
         const footer_bar = document.getElementById('footer_bar');
 
-        share_wrap.addEventListener('click', e => {
-            switch (location.hash) {
-                case '#comments':
-                case '#lists':
-                    showAlert({ msg: '댓글창 혹은 목록창을 닫아주세요.', type: 'warn' });
-                    return;
-            }
-
+        const shareEvent = e => {
             const paging = localStorage['viewer_paging'] == '1';
             const ani = localStorage['viewer_animation'] == 'on';
 
@@ -332,11 +331,11 @@ viewerCa['line-share'].system = function(r) {
             }
  
             if (paging) {
-                exit();
-                toastAlert({ title: '문단 공유 불가능', msg: '페이지 형식에서는 아직 지원하지 않습니다.', type: 'warn' });
-                return;
+                pageDocTracking(viewer, selector, cancel, moveSelector, idleSelector, exit);
             }
-            scrollDocTracking(viewer, selector, cancel, moveSelector, idleSelector, exit);
+            else {
+                scrollDocTracking(viewer, selector, cancel, moveSelector, idleSelector, exit);
+            }
 
             showAlert({ msg: '공유하실 문단을 선택 후 클릭해주세요.' });
 
@@ -360,7 +359,7 @@ viewerCa['line-share'].system = function(r) {
             async function idleSelector() {
                 if (!ani) return;
                 Object.assign(selector.style, {
-                    transition: 'height .14s, top .14s'
+                    transition: 'height .14s, top .14s, left .14s'
                 });
             }
 
@@ -370,8 +369,20 @@ viewerCa['line-share'].system = function(r) {
                 if (header_bar.style.display == 'none') naviView();
                 cover.remove();
             }
-        });
-    });
+        }
+        share_wrap.addEventListener('click', shareEvent);
+
+        removeEvent(() => share_wrap.remove());
+    }
+
+    // ---
+
+    if (dom_loaded) lineShareSystem();
+    else window.addEventListener('DOMContentLoaded', lineShareSystem);
+
+    // ---
+
+    const findAl = el => el.classList.contains('line');
 
     function scrollDocTracking(viewer, selector, cancel, moveSelector, idleSelector, exit) {
         let idle = false;
@@ -405,7 +416,6 @@ viewerCa['line-share'].system = function(r) {
 
             if (!target_viewer) return;
 
-            const findAl = el => el.classList.contains('line');
             const target = document.elementsFromPoint(viewer.getBoundingClientRect().x + 5, e.clientY)
                 .find(findAl);
 
@@ -433,7 +443,6 @@ viewerCa['line-share'].system = function(r) {
                     return;
                 }
 
-                const findAl = el => el.classList.contains('line');
                 const target = document.elementsFromPoint(viewer.getBoundingClientRect().x + 5, e.clientY)
                     .find(findAl);
 
@@ -445,6 +454,114 @@ viewerCa['line-share'].system = function(r) {
 
             exitAll();
             copyUrl(location.origin + location.pathname + `?line=${line}`);
+        }
+        window.addEventListener('click', clickEv);
+
+
+        /* Exit Event */
+
+        /**
+         * @param {KeyboardEvent} e 
+         */
+        const EscapeEv = e => {
+            if (e.key == 'Escape') exitAll();
+        }
+        window.addEventListener('keydown', EscapeEv);
+
+        
+        function exitAll() {
+            exit();
+            document.removeEventListener('pointermove', pointermoveEv);
+            window.removeEventListener('click', clickEv);
+            window.removeEventListener('keydown', EscapeEv);
+            window.removeEventListener('resize', exitAll);
+            window.removeEventListener(npup.event.router, exitAll);
+        }
+        cancel.addEventListener('click', exitAll);
+        window.addEventListener('resize', exitAll);
+        window.addEventListener(npup.event.router, exitAll);
+    }
+
+    function pageDocTracking(viewer, selector, cancel, moveSelector, idleSelector, exit) {
+        let idle = false;
+        let clientY = NaN;
+
+        /**
+         * @param {Element} target 
+         */
+        function registerSelectorData(target, y = clientY) {
+            
+            moveSelector({
+                height: target.offsetHeight,
+                top: target.offsetTop,
+            });
+
+            if (!idle) {
+                idle = true;
+                idleSelector();
+            }
+
+            clientY = y;
+        }
+
+        /**
+         * @param {PointerEvent} e 
+         */
+        const pointermoveEv = e => {
+            const currentPosEls = document.elementsFromPoint(e.clientX, e.clientY);
+
+            const findAlViewer = el => el == viewer;
+            const target_viewer = currentPosEls.find(findAlViewer);
+
+            if (!target_viewer) return;
+
+            const target = document.elementsFromPoint(viewer.getBoundingClientRect().x + 5, e.clientY)
+                .find(findAl);
+
+            if (!target) return;
+
+            registerSelectorData(target, e.clientY);
+        }
+        document.addEventListener('pointermove', pointermoveEv);
+
+        /**
+         * @param {PointerEvent} e 
+         */
+        const clickEv = e => {
+            const currentPosEls = document.elementsFromPoint(e.clientX, e.clientY);
+
+            // cancel 혹은 novel_drawing_right, novel_drawing_left 가 존재할시에 대해
+
+            const findAlSelector = el => el == selector;
+            const currentPosSelector = document.elementsFromPoint(e.clientX, e.clientY).find(findAlSelector);
+
+            if (!currentPosSelector) {
+                const findAlViewer = el => el == viewer;
+                const target_viewer = currentPosEls.find(findAlViewer);
+
+                if (!target_viewer) {
+                    return;
+                }
+
+                const target = document.elementsFromPoint(viewer.getBoundingClientRect().x + 5, e.clientY)
+                    .find(findAl);
+
+                if (!target) return;
+
+                registerSelectorData(target, e.clientY);
+                return;
+            }
+
+            const line = document.elementsFromPoint(viewer.getBoundingClientRect().x + 5, clientY)
+                .find(findAl);
+
+            if (!line) {
+                showAlert({ msg: '문단이 존재하지 않습니다.', type: 'error' });
+                return;
+            }
+
+            exitAll();
+            copyUrl(location.origin + location.pathname + `?line=${line.getAttribute('data-line')}`);
         }
         window.addEventListener('click', clickEv);
 

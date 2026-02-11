@@ -1,3 +1,5 @@
+let line_sharing_success = false;
+
 engine = [
     {
         name: '페이지',
@@ -21,14 +23,10 @@ engine = [
         name: '뷰어',
         matches: ['/viewer/'],
         execution: (r, _this, settings) => {
-            let line_sharing_success = false;
-
-            if (dom_loaded) {
+            if (dom_loaded)
                 lineShare();
-            }
-            else {
+            else
                 window.addEventListener('DOMContentLoaded', lineShare);
-            }
 
             async function lineShare() {
                 if (line_sharing_success) return;

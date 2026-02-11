@@ -232,16 +232,19 @@ npup.options = {
             'line-share': {
                 desc: '문단 공유 (받는 상대의 노벨피아 UI+ 설치가 요구됩니다.)',
                 type: {
-                    option: 'switch',
+                    option: 'switch', // 'selector',
                     structure: ['system']
                 },
-                values: [
+                structure: {
+                    router: true,
+                },
+                /* values: [
                     { name: '사용 안 함', value: 'normal' },
                     { name: '오른쪽 위', value: 'right-top' },
                     { name: '오른쪽 아래', value: 'right-bottom' },
                     { name: '왼쪽 위', value: 'left-top' },
                     { name: '왼쪽 아래', value: 'left-bottom' },
-                ]
+                ] */
             }
         }
     },
