@@ -295,7 +295,7 @@ viewerCa['line-share'].system = function(r) {
                 cursor: 'pointer'
             });
 
-            if (isTouchDevice) {
+            if (!isTouchDevice()) {
                 const cancel_esc = document.createElement('div');
                 cancel_esc.textContent = 'Esc';
                 Object.assign(cancel_esc.style, {
@@ -315,6 +315,8 @@ viewerCa['line-share'].system = function(r) {
                     left: '0px',
     
                     transform: 'translateY(100%)',
+
+                    filter: isViewerDarkMode ? 'invert(1)' : ''
                 });
                 cancel.appendChild(cancel_esc);
             }
@@ -456,8 +458,16 @@ viewerCa['line-share'].system = function(r) {
         const clickEv = e => {
             const selected_target = e.target;
 
+            if (share.contains(selected_target) || share == selected_target) {
+                return;
+            }
+
             if (selected_target != selector) {
-                if (selected_target != viewer && !viewer.contains(selected_target)) {
+                const findAlViewer = el => el == viewer;
+                const viewer_target = document.elementsFromPoint(e.clientX, e.clientY)
+                    .find(findAlViewer);
+
+                if (!viewer_target) {
                     // exitAll();
                     return;
                 }
@@ -571,7 +581,11 @@ viewerCa['line-share'].system = function(r) {
             }
 
             if (selected_target != selector) {
-                if (selected_target != viewer && !viewer.contains(selected_target)) {
+                const findAlViewer = el => el == viewer;
+                const viewer_target = currentEls
+                    .find(findAlViewer);
+
+                if (!viewer_target) {
                     return;
                 }
 

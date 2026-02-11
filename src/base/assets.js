@@ -1,6 +1,6 @@
 const isViewerDarkMode = getCookie('DARKMODE');
 
-const isTouchDevice = (navigator.maxTouchPoints || 'ontouchstart' in document.documentElement);
+const isTouchDevice = () => (navigator.maxTouchPoints || 'ontouchstart' in document.documentElement);
 
 function executeVote() {
     if (!document.getElementById('btn_episode_vote').src.includes('_on')) {
