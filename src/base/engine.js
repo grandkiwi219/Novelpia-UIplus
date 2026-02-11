@@ -92,7 +92,7 @@ engine = [
 
                 Object.assign(line.style, {
                     width: '100%',
-                    backgroundColor: '#F8F8F8',
+                    backgroundColor: 'rgb(178, 178, 178, 0.28)',
                     borderLeft: '6px solid var(--novelpia-color)',
                     transition: 'border .24s, background-color .24s',
                     display: 'inline-block'
