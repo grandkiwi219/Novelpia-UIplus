@@ -209,9 +209,9 @@ viewerCa['line-share'].system = function(r) {
     const lineShareSystem = () => {
         const [header] = document.getElementsByClassName('menu-top-wrapper');
 
-        const share_wrap = document.createElement('div');
-        share_wrap.id = `${npup.project.prefix.css}${this.key}-btn`;
-        Object.assign(share_wrap.style, {
+        const share = document.createElement('div');
+        share.id = `${npup.project.prefix.css}${this.key}-btn`;
+        Object.assign(share.style, {
             boxSizing: 'border-box',
 
             width: '44px',
@@ -242,9 +242,9 @@ viewerCa['line-share'].system = function(r) {
             width: '24px',
             height: '24px'
         });
-        share_wrap.appendChild(share_icon);
+        share.appendChild(share_icon);
 
-        header.esrender(share_wrap);
+        header.esrender(share);
 
 
         const bar_hide = `${npup.project.prefix.css}${this.key}-bar-hide`;
@@ -331,10 +331,10 @@ viewerCa['line-share'].system = function(r) {
             }
  
             if (paging) {
-                pageDocTracking(viewer, selector, cancel, moveSelector, idleSelector, exit);
+                pageDocTracking(share, viewer, selector, cancel, moveSelector, idleSelector, exit);
             }
             else {
-                scrollDocTracking(viewer, selector, cancel, moveSelector, idleSelector, exit);
+                scrollDocTracking(share, viewer, selector, cancel, moveSelector, idleSelector, exit);
             }
 
             showAlert({ msg: '공유하실 문단을 선택 후 클릭해주세요.' });
@@ -370,9 +370,9 @@ viewerCa['line-share'].system = function(r) {
                 cover.remove();
             }
         }
-        share_wrap.addEventListener('click', shareEvent);
+        share.addEventListener('click', shareEvent);
 
-        removeEvent(() => share_wrap.remove());
+        removeEvent(() => share.remove());
     }
 
     // ---
@@ -384,7 +384,7 @@ viewerCa['line-share'].system = function(r) {
 
     const findAl = el => el.classList.contains('line');
 
-    function scrollDocTracking(viewer, selector, cancel, moveSelector, idleSelector, exit) {
+    function scrollDocTracking(share, viewer, selector, cancel, moveSelector, idleSelector, exit) {
         let idle = false;
         let line = null;
 
@@ -429,16 +429,10 @@ viewerCa['line-share'].system = function(r) {
          * @param {PointerEvent} e 
          */
         const clickEv = e => {
-            const currentPosEls = document.elementsFromPoint(e.clientX, e.clientY);
+            const selected_target = e.target;
 
-            const findAlSelector = el => el == selector;
-            const currentPosSelector = document.elementsFromPoint(e.clientX, e.clientY).find(findAlSelector);
-
-            if (!currentPosSelector) {
-                const findAlViewer = el => el == viewer;
-                const target_viewer = currentPosEls.find(findAlViewer);
-
-                if (!target_viewer) {
+            if (selected_target != selector) {
+                if (selected_target != viewer && !viewer.contains(selected_target)) {
                     // exitAll();
                     return;
                 }
@@ -482,7 +476,7 @@ viewerCa['line-share'].system = function(r) {
         window.addEventListener(npup.event.router, exitAll);
     }
 
-    function pageDocTracking(viewer, selector, cancel, moveSelector, idleSelector, exit) {
+    function pageDocTracking(share, viewer, selector, cancel, moveSelector, idleSelector, exit) {
         let idle = false;
         let clientY = NaN;
 
@@ -528,18 +522,31 @@ viewerCa['line-share'].system = function(r) {
          * @param {PointerEvent} e 
          */
         const clickEv = e => {
-            const currentPosEls = document.elementsFromPoint(e.clientX, e.clientY);
+            const selected_target = e.target;
 
-            // cancel 혹은 novel_drawing_right, novel_drawing_left 가 존재할시에 대해
+            if (share.contains(selected_target) || share == selected_target) {
+                return;
+            }
 
-            const findAlSelector = el => el == selector;
-            const currentPosSelector = document.elementsFromPoint(e.clientX, e.clientY).find(findAlSelector);
+            if (cancel == selected_target || cancel.contains(selected_target)) {
+                exitAll();
+                return;
+            }
 
-            if (!currentPosSelector) {
-                const findAlViewer = el => el == viewer;
-                const target_viewer = currentPosEls.find(findAlViewer);
+            const currentEls = document.elementsFromPoint(e.clientX, e.clientY);
+            const arrowEl = currentEls.find(el => el.id == 'novel_drawing_right' || el.id == 'novel_drawing_left');
+            switch (arrowEl?.id) {
+                case 'novel_drawing_right': 
+                    movePage('next');
+                    return;
 
-                if (!target_viewer) {
+                case 'novel_drawing_left':
+                    movePage('back');
+                    return;
+            }
+
+            if (selected_target != selector) {
+                if (selected_target != viewer && !viewer.contains(selected_target)) {
                     return;
                 }
 
@@ -585,7 +592,6 @@ viewerCa['line-share'].system = function(r) {
             window.removeEventListener('resize', exitAll);
             window.removeEventListener(npup.event.router, exitAll);
         }
-        cancel.addEventListener('click', exitAll);
         window.addEventListener('resize', exitAll);
         window.addEventListener(npup.event.router, exitAll);
     }

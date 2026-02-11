@@ -23,53 +23,87 @@ engine = [
         name: '뷰어',
         matches: ['/viewer/'],
         execution: (r, _this, settings) => {
-            if (dom_loaded)
-                lineShare();
-            else
-                window.addEventListener('DOMContentLoaded', lineShare);
-
-            async function lineShare() {
+            (() => {
                 if (line_sharing_success) return;
 
                 line_sharing_success = true;
-
-                await setDelay(1200);
 
                 const paging = localStorage['viewer_paging'] == '1';
 
                 const search = location.search.slice(1);
                 const line_num = Number(search.split('&').find(r => r.startsWith('line='))?.slice(5));
 
-                if (line_num == NaN) return;
+                if (Number.isNaN(line_num)) return;
 
-                const line = document.querySelector(`[data-line="${line_num}"]`);
+                scriptInjection('src/base/file/novelpia/get-page-mark.js');
 
-                if (!line) return;
+                if (dom_loaded)
+                    lineShare(paging, line_num);
+                else
+                    window.addEventListener('DOMContentLoaded', () => lineShare(paging, line_num));
+            })();
+
+            function getDataLineEl(line_num) {
+                return document.querySelector(`[data-line="${line_num}"]`);
+            }
+
+            async function lineShare(paging, line_num) {
+
+                await setDelay(600);
 
                 if (paging) {
-                    toastAlert({ title: '문단 공유 받지 못함', msg: '페이지 형식에서는 아직 지원하지 않습니다.', type: 'warn' });
+                    pageLineShare(line_num);
                     return;
                 }
 
+                scrollLineShare(line_num);
+            }
+
+            async function pageLineShare(line_num) {
+                document.getElementsByTagName(npup.project.engine)[0].setAttribute('line', line_num);
+                scriptInjection('src/base/file/page-line-share.js');
+
+                await setDelay(localStorage['viewer_animation'] == 'on' ? 300 : 200);
+
+                highlightLine(line_num, localStorage['viewer_animation'] == 'on' ? 2700 : 2500);
+            }
+
+            async function scrollLineShare(line_num) {
+
+                const line = getDataLineEl(line_num);
+
+                if (!line) return;
+                
                 document.getElementById('novel_box').scrollTo({
                     top: line.offsetTop - 100,
                     behavior: localStorage['viewer_animation'] == 'on' ? 'smooth' : 'instant'
                 });
 
-                if (localStorage['viewer_animation'] == 'on') {
-                    await setDelay(240);
-                }
+                await setDelay(200);
+
+                highlightLine(line_num, localStorage['viewer_animation'] == 'on' ? 4200 : 2500);
+            }
+
+            async function highlightLine(line_num, sec) {
+
+                const line = getDataLineEl(line_num);
+
+                if (!line) return;
 
                 Object.assign(line.style, {
-                    borderLeft: '5px solid var(--novelpia-color)',
-                    transition: 'border .24s'
+                    width: '100%',
+                    backgroundColor: '#F8F8F8',
+                    borderLeft: '6px solid var(--novelpia-color)',
+                    transition: 'border .24s, background-color .24s',
+                    display: 'inline-block'
                 });
 
-                setTimeout(() => {
-                    Object.assign(line.style, {
-                        borderLeftWidth: '0px'
-                    });
-                }, 2400);
+                await setDelay(sec);
+
+                Object.assign(line.style, {
+                    backgroundColor: 'rgba(255, 255, 255, 0)',
+                    borderLeftWidth: '0px',
+                });
             }
 
             // ---
