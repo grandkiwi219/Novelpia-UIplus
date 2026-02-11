@@ -4,6 +4,7 @@
     "description": "더 나은 노벨피아 UI를 경험해보세요!",
     "author": "grand-kiwi",
     "version": "3.13.0.0",
+    "minimum_chrome_version": "88",
     "browser_specific_settings": {
         "gecko": {
             "id": "",
