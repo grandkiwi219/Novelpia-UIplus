@@ -1,5 +1,7 @@
 const isViewerDarkMode = getCookie('DARKMODE');
 
+const isTouchDevice = (navigator.maxTouchPoints || 'ontouchstart' in document.documentElement);
+
 function executeVote() {
     if (!document.getElementById('btn_episode_vote').src.includes('_on')) {
         document.getElementById('recommend_tap').children[0].click();

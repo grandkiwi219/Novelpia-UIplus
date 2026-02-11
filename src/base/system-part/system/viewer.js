@@ -295,27 +295,29 @@ viewerCa['line-share'].system = function(r) {
                 cursor: 'pointer'
             });
 
-            const cancel_esc = document.createElement('div');
-            cancel_esc.textContent = 'Esc';
-            Object.assign(cancel_esc.style, {
-                width: '100%',
-                height: '22px',
-
-                borderRadius: '8px',
-                backgroundColor: 'white',
-                boxShadow: 'rgba(80, 80, 80, 0.5) 0px 0px 3px',
-
-                fontSize: '12px',
-                lineHeight: '22px',
-                textAlign: 'center',
-
-                position: 'absolute',
-                bottom: '0px',
-                left: '0px',
-
-                transform: 'translateY(100%)',
-            });
-            cancel.appendChild(cancel_esc);
+            if (isTouchDevice) {
+                const cancel_esc = document.createElement('div');
+                cancel_esc.textContent = 'Esc';
+                Object.assign(cancel_esc.style, {
+                    width: '100%',
+                    height: '22px',
+    
+                    borderRadius: '8px',
+                    backgroundColor: 'white',
+                    boxShadow: 'rgba(80, 80, 80, 0.5) 0px 0px 3px',
+    
+                    fontSize: '12px',
+                    lineHeight: '22px',
+                    textAlign: 'center',
+    
+                    position: 'absolute',
+                    bottom: '0px',
+                    left: '0px',
+    
+                    transform: 'translateY(100%)',
+                });
+                cancel.appendChild(cancel_esc);
+            }
 
             cover.appendChild(cancel);
 
