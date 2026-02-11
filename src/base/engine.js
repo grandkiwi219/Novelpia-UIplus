@@ -5,7 +5,7 @@ engine = [
         name: '페이지',
         matches: ['/'],
         excludes: ['/viewer/', '/viewer_collect/', '/comic_viewer/', '/page/block/', '/proc/payment_complete/'],
-        execution: async (r, _this, settings) => {
+        execution: async function(r, settings) {
             // For Search System
             scriptInjection('src/base/file/pc-search.js');
 
@@ -22,7 +22,7 @@ engine = [
     {
         name: '뷰어',
         matches: ['/viewer/'],
-        execution: (r, _this, settings) => {
+        execution: function(r, settings) {
             (() => {
                 if (line_sharing_success) return;
 
@@ -128,7 +128,7 @@ engine = [
     }
 ];
 
-STRUCTURE.PRE_COMMON.ENGINE.setAdditionalExecution(() => {
+STRUCTURE.PRE_COMMON.ENGINE.setAdditionalExecution(function() {
     try {
         toastAlert({
             title: '시크릿 모드',

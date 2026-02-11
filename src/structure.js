@@ -13,6 +13,11 @@ class EngineStructure {
      */
     #systems_structures = new Map();
 
+    /**
+     * @param {Object} r 엔진에 담긴 키들에 대한 값 오브젝트
+     * @param {Object} settings 오브젝트 형식의 추가 설정
+     * @returns 
+     */
     #execution = () => { return; };
 
     /**
@@ -87,7 +92,7 @@ class EngineStructure {
                     this.engine(r, settings);
 
                 //Object.assign(options.r, r);
-                this.#execution(this, settings);
+                this.#execution.call(this, r, settings);
             });
         }
 

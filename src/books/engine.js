@@ -11,7 +11,7 @@ engine = [
     },
 ];
 
-STRUCTURE.PRE_COMMON.ENGINE.setAdditionalExecution(() => {
+STRUCTURE.PRE_COMMON.ENGINE.setAdditionalExecution(function() {
     let books_dark_result;
 
     if (engineChecker('페이지')) {
