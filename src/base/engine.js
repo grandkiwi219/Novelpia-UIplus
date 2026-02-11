@@ -81,7 +81,7 @@ engine = [
 
                 await setDelay(200);
 
-                highlightLine(line_num, localStorage['viewer_animation'] == 'on' ? 4200 : 2500);
+                highlightLine(line_num, localStorage['viewer_animation'] == 'on' ? 3700 : 2500);
             }
 
             async function highlightLine(line_num, sec) {
