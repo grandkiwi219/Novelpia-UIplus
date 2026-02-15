@@ -3,6 +3,24 @@ const isViewerDarkMode = () => getCookie('DARKMODE');
 
 const isTouchDevice = () => (navigator.maxTouchPoints || 'ontouchstart' in document.documentElement);
 
+function isRestored() {
+    const [nav] = performance.getEntriesByType('navigation');
+
+    if (!nav) return false;
+
+    if (nav?.type == 'back_forward') {
+        return true;
+    }
+
+    if (typeof document.wasDiscarded == 'boolean') {
+        return document.wasDiscarded;
+    }
+
+    return nav.type === 'reload'
+        && nav.transferSize === 0
+        && nav.encodedBodySize > 0;
+}
+
 function executeVote() {
     if (!document.getElementById('btn_episode_vote').src.includes('_on')) {
         document.getElementById('recommend_tap').children[0].click();
