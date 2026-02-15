@@ -419,6 +419,15 @@ headerCa['renew-alarm'].system = function(r) {
         }
     );
 
+    function reloading(loading_target) {
+        if (isRestored()) {
+            renewAlarm({
+                confirm_cooltime: false,
+                loading_targets: [loading_target]
+            });
+        }
+    }
+
     function renewAlarmSystem() {
         stack++;
         if (stack == 2) {
@@ -426,14 +435,6 @@ headerCa['renew-alarm'].system = function(r) {
             window.addEventListener('focus', focusEvent);
             window.addEventListener('pageshow', pageshowEvent);
         }
-    }
-
-    function reloading(loading_target) {
-        if (isRestored())
-            renewAlarm({
-                confirm_cooltime: false,
-                loading_targets: [loading_target]
-            });
     }
 
     function cleanupFunction() {
