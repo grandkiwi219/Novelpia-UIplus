@@ -491,9 +491,12 @@ headerCa['renew-alarm'].system = function(r) {
 
         try {
             response = await fetch(path, {
-                method: 'post',
-                headers: {},
-                body: new URLSearchParams(data),
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: new URLSearchParams(data).toString(),
                 cache: 'no-store',
             }).then(r => r.json());
         } catch (error) {
