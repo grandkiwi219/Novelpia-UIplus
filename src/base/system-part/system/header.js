@@ -400,14 +400,11 @@ headerCa['renew-alarm'].system = function(r) {
 
     // ---
 
-    let stack = 0;
-
     targetHandler(
         () => document.getElementById(pc_alarm_id),
         (target) => {
             target.style.position = 'relative';
             reloading({ bottom: pc_loading_bottom, el: target });
-            renewAlarmSystem();
         }
     );
 
@@ -415,7 +412,6 @@ headerCa['renew-alarm'].system = function(r) {
         () => document.getElementById(m_alarm_id),
         (target) => {
             reloading({ bottom: m_loading_bottom, el: target });
-            renewAlarmSystem();
         }
     );
 
@@ -428,13 +424,21 @@ headerCa['renew-alarm'].system = function(r) {
         }
     }
 
+    // ---
+
+    if (dom_loaded)
+        renewAlarmSystem();
+    else
+        window.addEventListener('DOMContentLoaded', renewAlarmSystem);
+
+    removeEventForEngine(cleanupFunction);
+
+    // ---
+
     function renewAlarmSystem() {
-        stack++;
-        if (stack == 2) {
-            window.addEventListener('visibilitychange', visibilitychangeEvent);
-            window.addEventListener('focus', focusEvent);
-            window.addEventListener('pageshow', pageshowEvent);
-        }
+        window.addEventListener('visibilitychange', visibilitychangeEvent);
+        window.addEventListener('focus', focusEvent);
+        window.addEventListener('pageshow', pageshowEvent);
     }
 
     function cleanupFunction() {
@@ -460,8 +464,6 @@ headerCa['renew-alarm'].system = function(r) {
             renewAlarm({ confirm_cooltime: false });
         }
     }
-
-    removeEventForEngine(cleanupFunction);
 
     // ---
 
@@ -560,6 +562,8 @@ headerCa['renew-alarm'].system = function(r) {
         const temp_loading_els = [];
 
         targets.forEach((target, i) => {
+            if (!target.el) return;
+
             const loading_el = document.createElement('div');
             loading_el.className = `${npup.project.prefix.css}${this.key}-loading`;
 
