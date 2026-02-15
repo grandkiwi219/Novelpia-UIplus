@@ -429,7 +429,7 @@ headerCa['renew-alarm'].system = function(r) {
     }
 
     function reloading(loading_target) {
-        if (document.wasDiscarded) // chrome
+        if (isRestored())
             renewAlarm({
                 confirm_cooltime: false,
                 loading_targets: [loading_target]
