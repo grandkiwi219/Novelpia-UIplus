@@ -95,13 +95,15 @@ function iconSetup() {
 
 
 
-viewerCa['click-alert'].system = function(r) {
+/* viewerCa['click-alert'].system = function(r) {
+    if (!engineChecker('뷰어')) return;
+
     npup.log('우클릭 제거 준비가 완료되었습니다.');
 
     scriptInjection('src/base/file/delete-click-alert.js');
 
-    /* route detector? */
-}
+    // route detector?
+} */
 
 
 
@@ -232,7 +234,7 @@ viewerCa['line-share'].system = function(r) {
 
             cursor: 'pointer',
 
-            filter: isViewerDarkMode ? 'invert(1)' : ''
+            filter: isViewerDarkMode() ? 'invert(1)' : ''
         });
 
         const share_icon = document.createElement('img');
@@ -255,6 +257,8 @@ viewerCa['line-share'].system = function(r) {
         const footer_bar = document.getElementById('footer_bar');
 
         const shareEvent = e => {
+            const isDark = isViewerDarkMode();
+
             const paging = localStorage['viewer_paging'] == '1';
             const ani = localStorage['viewer_animation'] == 'on';
 
@@ -275,7 +279,7 @@ viewerCa['line-share'].system = function(r) {
 
             const cancel = document.createElement('div');
             cancel.innerHTML = ''
-                + `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="20" height="20" stroke-width="2" stroke="${isViewerDarkMode ? 'white' : 'black'}" fill="none" stroke-linecap="round">`
+                + `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="20" height="20" stroke-width="2" stroke="${isDark ? 'white' : 'black'}" fill="none" stroke-linecap="round">`
                     + '<path d="M5 5 L25 25 M5 25 L25 5"></path>'
                 + '</svg>';
             Object.assign(cancel.style, {
@@ -316,7 +320,7 @@ viewerCa['line-share'].system = function(r) {
     
                     transform: 'translateY(100%)',
 
-                    filter: isViewerDarkMode ? 'invert(1)' : ''
+                    filter: isDark ? 'invert(1)' : ''
                 });
                 cancel.appendChild(cancel_esc);
             }
@@ -325,8 +329,8 @@ viewerCa['line-share'].system = function(r) {
 
             const selector_padding = 5;
 
-            const bgc = isViewerDarkMode ? 219 : 128;
-            const bsc = isViewerDarkMode ? 205 : 80;
+            const bgc = isDark ? 219 : 128;
+            const bsc = isDark ? 205 : 80;
 
             const selector = document.createElement('div');
             selector.classList.add(selector_class);

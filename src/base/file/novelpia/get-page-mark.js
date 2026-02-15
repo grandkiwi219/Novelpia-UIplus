@@ -1,8 +1,13 @@
 (() => {
     if (typeof getPageMark != 'function') {
-        window.addEventListener('DOMContentLoaded', () => {
+        if (npup.dom_loaded) {
             getPageMark = overrideGetPageMark;
-        });
+        }
+        else {
+            window.addEventListener('DOMContentLoaded', () => {
+                getPageMark = overrideGetPageMark;
+            });
+        }
         return;
     }
 
@@ -36,7 +41,7 @@
         }
         else {
             const mark = {
-                novel_no: novel_no,
+                novel_no,
                 epi_no: content_no,
                 page: this_page
             }

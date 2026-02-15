@@ -345,3 +345,293 @@ headerCa['writer-room'].system = async function(r) {
         }
     );
 }
+
+
+
+
+
+headerCa['renew-alarm'].system = function(r) {
+    const this_key = this.key;
+
+    const pc_alarm_id = 'btn_alram';
+    const m_alarm_id = 'btn_m_alram';
+
+    const pc_alarm_dot_id = 'pc_alarm_dot';
+    const m_alarm_dot_id = 'alarm_dot';
+
+    const dot_class = 'red-dot';
+
+    const loading_style = {
+        width: '0%',
+        height: '4px',
+        borderRadius: '20px',
+
+        backgroundColor: 'var(--novelpia-color)',
+
+        position: 'absolute',
+        left: '0',
+
+        opacity: 1,
+        transform: 'translateY(100%)',
+
+        transition: 'width 2s'
+    }
+
+    const pc_loading_bottom = '-5px';
+    const m_loading_bottom = '-19px';
+
+    const loaded_width_transition = 110;
+    const loaded_opacity_transition = 200;
+    const loaded_opacity_transition_delay = loaded_width_transition + 380;
+    const loaded_transition = `width ${loaded_width_transition}ms linear, opacity ${loaded_opacity_transition}ms ${loaded_opacity_transition_delay}ms, background-color .12s`;
+
+    const path = '/proc/alarm';
+    const data = {
+        mode: 'getAlarmCnt'
+    }
+
+    let loading_elements = new Map();
+    let num_key = 0;
+
+    const period = 12;
+    let cooltime = NaN;
+
+    setCooltime();
+
+    // ---
+
+    let stack = 0;
+
+    targetHandler(
+        () => document.getElementById(pc_alarm_id),
+        (target) => {
+            target.style.position = 'relative';
+            reloading({ bottom: pc_loading_bottom, el: target });
+            renewAlarmSystem();
+        }
+    );
+
+    targetHandler(
+        () => document.getElementById(m_alarm_id),
+        (target) => {
+            reloading({ bottom: m_loading_bottom, el: target });
+            renewAlarmSystem();
+        }
+    );
+
+    function renewAlarmSystem() {
+        stack++;
+        if (stack == 2) {
+            window.addEventListener('visibilitychange', visibilitychangeEvent);
+            window.addEventListener('focus', focusEvent);
+            window.addEventListener('pageshow', pageshowEvent);
+        }
+    }
+
+    function reloading(loading_target) {
+        if (document.wasDiscarded) // chrome
+            renewAlarm({
+                confirm_cooltime: false,
+                loading_targets: [loading_target]
+            });
+    }
+
+    function cleanupFunction() {
+        window.removeEventListener('visibilitychange', visibilitychangeEvent);
+        window.removeEventListener('focus', focusEvent);
+        window.removeEventListener('pageshow', pageshowEvent);
+    }
+
+    // ---
+
+    function visibilitychangeEvent() {
+        if (document.visibilityState != "visible") return;
+
+        renewAlarm();
+    }
+
+    function focusEvent() {
+        renewAlarm();
+    }
+
+    function pageshowEvent(event) {
+        if (event.persisted) {
+            renewAlarm({ confirm_cooltime: false });
+        }
+    }
+
+    removeEventForEngine(cleanupFunction);
+
+    // ---
+
+    async function renewAlarm({ confirm_cooltime = true, loading_targets } = {}) {
+        // 쿠키 존재 확인 대신 로그인되어 있으면 존재할 요소 확인
+        if (!document.querySelector('.sidemenu-wrapper .sidemenu-profile'))
+            return;
+
+        if (confirm_cooltime && confirmCooltime()) return;
+
+        setCooltime();
+
+        removeExisting();
+
+        const key = num_key++;
+
+        await loading(key,
+            loading_targets
+            ? loading_targets
+            : [
+                { bottom: pc_loading_bottom, el: document.getElementById(pc_alarm_id) },
+                { bottom: m_loading_bottom, el: document.getElementById(m_alarm_id) }
+            ]
+        );
+
+        let response = {}
+
+        try {
+            response = await fetch(path, {
+                method: 'post',
+                headers: {},
+                body: new URLSearchParams(data),
+                cache: 'no-store',
+            }).then(r => r.json());
+        } catch (error) {
+            npup.error(this_key + ':fetch-> ' + error);
+            loadingFailed(key);
+            await loaded(key);
+            return;
+        }
+
+        if (Number(response?.status) != 200) {
+            if (response?.errmsg)
+                npup.error(response.errmsg);
+            else
+                npup.error(this_key + ':status-> ' + response?.status);
+            loadingFailed(key);
+            await loaded(key);
+            return;
+        }
+
+        const { cnt = 0 } = response?.result;
+
+        if (cnt !== 0) {
+            generateDot();
+        }
+
+        loadingSuccess(key);
+        await loaded(key);
+    }
+
+    function generateDot() {
+        const pc_alarm = document.getElementById(pc_alarm_id);
+        if (pc_alarm) {
+            const dot = document.createElement('div');
+            dot.id = pc_alarm_dot_id;
+            dot.className = dot_class;
+
+            pc_alarm.esrender(dot);
+        }
+
+        const m_alarm = document.getElementById(m_alarm_id);
+        if (m_alarm) {
+            const dot = document.createElement('span');
+            dot.id = m_alarm_dot_id;
+            dot.className = dot_class;
+
+            m_alarm.esrender(dot);
+        }
+    }
+
+    function removeExisting() {
+        const pc_dot = document.getElementById(pc_alarm_dot_id);
+        if (pc_dot) pc_dot.remove();
+        const m_dot = document.getElementById(m_alarm_dot_id);
+        if (m_dot) m_dot.remove();
+    }
+
+    // ---
+
+    async function loading(key, targets) {
+
+        const temp_loading_els = [];
+
+        targets.forEach((target, i) => {
+            const loading_el = document.createElement('div');
+            loading_el.className = `${npup.project.prefix.css}${this.key}-loading`;
+
+            temp_loading_els.push(loading_el);
+
+            target.el.esrender(loading_el);
+
+            Object.assign(loading_el.style, {
+                ...loading_style,
+                bottom: target.bottom
+            });
+        });
+
+        loading_elements.set(key, temp_loading_els);
+
+        return new Promise(resolve => {
+            setTimeout(() => {
+                loadStyle(key, {
+                    width: '75%'
+                });
+
+                resolve();
+            }, 50);
+        });
+    }
+    
+    function loadingSuccess(key) {
+        loadStyle(key, {
+            transition: loaded_transition
+        });
+    }
+    
+    function loadingFailed(key) {
+        loadStyle(key, {
+            backgroundColor: isDarkMode() ? '#00ffff' : '#ff0000',
+            transition: loaded_transition
+        });
+    }
+
+    function loadStyle(key, css_properties) {
+        loading_elements.get(key).forEach(loading_el => {
+            if (loading_el?.isConnected)
+                Object.assign(loading_el.style, css_properties);
+        });
+    }
+
+    async function loaded(key, delay = true) {
+
+        if (delay) {
+            loadStyle(key, {
+                width: '100%',
+                opacity: 0
+            });
+    
+            await setDelay(loaded_opacity_transition + loaded_opacity_transition_delay);
+        }
+
+        (loading_elements.get(key) || []).forEach(loading_el => {
+            if (loading_el?.isConnected)
+                loading_el.remove();
+        });
+
+        loading_elements.delete(key);
+    }
+
+    // ---
+
+    function confirmCooltime() {
+        return cooltime > new Date().getTime();
+    }
+
+    function setCooltime() {
+        const timestamp = new Date();
+
+        timestamp.setMinutes(timestamp.getMinutes() + period);
+
+        cooltime = timestamp.getTime();
+    }
+}

@@ -219,6 +219,7 @@ class SettingTextarea extends SettingBase {
 
         this.ta.placeholder = this.placeholder;
         this.ta.name = this.key;
+        this.ta.spellcheck = false;
 
         this.ta_wrap.appendChild(this.ta);
         this.center.appendChild(this.ta_wrap);

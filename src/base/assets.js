@@ -1,4 +1,5 @@
-const isViewerDarkMode = getCookie('DARKMODE');
+const isDarkMode = () => getCookie('DARKMODE_S');
+const isViewerDarkMode = () => getCookie('DARKMODE');
 
 const isTouchDevice = () => (navigator.maxTouchPoints || 'ontouchstart' in document.documentElement);
 

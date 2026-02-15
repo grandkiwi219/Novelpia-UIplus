@@ -73,6 +73,17 @@ npup.options = {
                     storage: 'local'
                 }
             },
+
+            'renew-alarm': {
+                desc: '오래된 페이지 알림 갱신',
+                type: {
+                    option: 'switch',
+                    structure: ['system']
+                },
+            },
+        },
+        setups: {
+            length: 2
         }
     },
 
@@ -191,7 +202,7 @@ npup.options = {
                 desc: '우클릭 알림 삭제',
                 type: {
                     option: 'switch',
-                    structure: ['system']
+                    structure: ['common']
                 },
                 /* structure: {
                     router: true,

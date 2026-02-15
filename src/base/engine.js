@@ -1,5 +1,3 @@
-let line_sharing_success = false;
-
 engine = [
     {
         name: '페이지',
@@ -23,10 +21,13 @@ engine = [
         name: '뷰어',
         matches: ['/viewer/'],
         execution: function(r, settings) {
-            (() => {
-                if (line_sharing_success) return;
+            // receive line sharing
+            this.line_sharing_success;
 
-                line_sharing_success = true;
+            (() => {
+                if (this.line_sharing_success) return;
+
+                this.line_sharing_success = 1;
 
                 const paging = localStorage['viewer_paging'] == '1';
 
@@ -49,7 +50,7 @@ engine = [
 
             async function lineShare(paging, line_num) {
 
-                await setDelay(600);
+                await setDelay(500);
 
                 if (paging) {
                     pageLineShare(line_num);
@@ -63,7 +64,7 @@ engine = [
                 document.getElementsByTagName(npup.project.engine)[0].setAttribute('line', line_num);
                 scriptInjection('src/base/file/page-line-share.js');
 
-                await setDelay(localStorage['viewer_animation'] == 'on' ? 300 : 200);
+                await setDelay(localStorage['viewer_animation'] == 'on' ? 520 : 400);
 
                 highlightLine(line_num, localStorage['viewer_animation'] == 'on' ? 2700 : 2500);
             }
@@ -79,7 +80,7 @@ engine = [
                     behavior: localStorage['viewer_animation'] == 'on' ? 'smooth' : 'instant'
                 });
 
-                await setDelay(200);
+                await setDelay(400);
 
                 highlightLine(line_num, localStorage['viewer_animation'] == 'on' ? 3700 : 2500);
             }
@@ -92,21 +93,23 @@ engine = [
 
                 Object.assign(line.style, {
                     width: '100%',
+                    paddingLeft: '5px',
                     backgroundColor: 'rgb(178, 178, 178, 0.28)',
                     borderLeft: '6px solid var(--novelpia-color)',
-                    transition: 'border .24s, background-color .24s',
+                    transition: 'border .24s, padding .24s, background-color .24s',
                     display: 'inline-block'
                 });
 
                 await setDelay(sec);
 
                 Object.assign(line.style, {
+                    paddingLeft: '5px',
                     backgroundColor: 'rgba(255, 255, 255, 0)',
                     borderLeftWidth: '0px',
                 });
             }
 
-            // ---
+            // check save last episode history
 
             if (!routing)
                 window.addEventListener("DOMContentLoaded", checkLastEp);

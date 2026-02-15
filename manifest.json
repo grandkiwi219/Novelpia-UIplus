@@ -3,12 +3,11 @@
     "name": "노벨피아 UI+",
     "description": "더 나은 노벨피아 UI를 경험해보세요!",
     "author": "grand-kiwi",
-    "version": "3.13.0.0",
-    "minimum_chrome_version": "88",
+    "version": "3.14.0.0",
+    "minimum_chrome_version": "117.0",
     "browser_specific_settings": {
         "gecko": {
-            "id": "",
-            "strict_min_version": "117.0"
+            "id": ""
         }
     },
     "content_scripts": [
@@ -69,6 +68,7 @@
                 
                 "./src/base/system-part/common/key-mapping.js",
                 "./src/base/system-part/common/move.js",
+                "./src/base/system-part/common/viewer.js",
                 
                 "./src/base/system-part/custom/custom-css.js",
 
