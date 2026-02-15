@@ -4,16 +4,16 @@ const isViewerDarkMode = () => getCookie('DARKMODE');
 const isTouchDevice = () => (navigator.maxTouchPoints || 'ontouchstart' in document.documentElement);
 
 function isRestored() {
-    if (typeof document.wasDiscarded == 'boolean') {
-        return document.wasDiscarded;
-    }
-    
     const [nav] = performance.getEntriesByType('navigation');
 
     if (!nav) return false;
 
     if (nav?.type == 'back_forward') {
         return true;
+    }
+
+    if (typeof document.wasDiscarded == 'boolean') {
+        return document.wasDiscarded;
     }
 
     return nav.type == 'reload'
