@@ -73,8 +73,8 @@ function targetHandlerLegacy(targetFinder, handler, {
  * ]
  */
 const targetHandler_storage = {
-    STD_DURATION: 10 * 1000,
-    STD_TIMEOUT_TIME: 100,
+    STD_DURATION: 16 * 1000,
+    STD_TIMEOUT_TIME: 80,
 
     key: 0,
     store: new Map(),
@@ -100,17 +100,11 @@ const registerTargetHandlerStore = (obj) => {
  */
 function targetHandler(targetFinder, handler, {
     duration = targetHandler_storage.STD_DURATION,
-    method = 0,
-    redetect = 0
+    method = 0
 } = {}) {
 
     if (Number.isNaN(Number(duration))) {
         duration = targetHandler_storage.STD_DURATION;
-    }
-
-    const redetect_f = Number(redetect);
-    if (redetect_f > 0) {
-        duration *= redetect_f + 1;
     }
 
     const target = targetFinder();
@@ -155,6 +149,7 @@ function targetHandler(targetFinder, handler, {
                     }
                 }, 'targetHandler -> handler', false);
             });
+
             clearTimeout(targetHandler_storage.timeout);
 
             if (targetHandler_storage.store.get(targetHandler_storage.key))
