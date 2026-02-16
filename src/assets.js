@@ -96,7 +96,6 @@ const registerTargetHandlerStore = (obj) => {
  * @param {Object} [setup={}] 
  * @param {number} setup.duration 탐지할 시간
  * @param {any} setup.method 0 = 기본적으로 작동, * = 바로 탐지 시작
- * @param {number} setup.redetect +1 만큼 탐지 시간을 배로 설정
  */
 function targetHandler(targetFinder, handler, {
     duration = targetHandler_storage.STD_DURATION,
