@@ -443,6 +443,7 @@ headerCa['renew-alarm'].system = function(r) {
         window.removeEventListener('focus', focusEvent);
         window.removeEventListener('blur', blurEvent);
         window.removeEventListener('pageshow', pageshowEvent);
+        window.removeEventListener('pagehide', pagehideEvent);
     }
 
     // ---
