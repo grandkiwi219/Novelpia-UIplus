@@ -143,7 +143,7 @@ function targetHandler(targetFinder, handler, {
                     try {
                         obj.handler(target);
                     } catch (error) {
-                        error.stack += '\n' + obj.stack;
+                        error.stack += '\n\n' + obj.stack;
                         throw error;
                     }
                 }, 'targetHandler -> handler', false);
