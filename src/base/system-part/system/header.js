@@ -393,7 +393,7 @@ headerCa['renew-alarm'].system = function(r) {
     let loading_elements = new Map();
     let num_key = 0;
 
-    const period = 10;
+    const cooltime_period = 10;
     let cooltime = NaN;
 
     setCooltime();
@@ -467,14 +467,14 @@ headerCa['renew-alarm'].system = function(r) {
 
     // ---
 
-    async function renewAlarm({ confirm_cooltime = true, loading_targets } = {}) {
+    async function renewAlarm({ confirm_cooltime = true, loading_targets, period = cooltime_period } = {}) {
         // 쿠키 존재 확인 대신 로그인되어 있으면 존재할 요소 확인
         if (!document.querySelector('.sidemenu-wrapper .sidemenu-profile'))
             return;
 
         if (confirm_cooltime && confirmCooltime()) return;
 
-        setCooltime();
+        setCooltime(period);
 
         removeExisting();
 
@@ -635,7 +635,7 @@ headerCa['renew-alarm'].system = function(r) {
         return cooltime > new Date().getTime();
     }
 
-    function setCooltime() {
+    function setCooltime(period) {
         const timestamp = new Date();
 
         timestamp.setMinutes(timestamp.getMinutes() + period);
