@@ -195,7 +195,7 @@ novelCa['novel-notice-close'].system = function(r) {
 
     targetHandler(
         findTarget,
-        (t) => addCloseFunction(t),
+        addCloseFunction,
         { redetect: 1 }
     );
 

@@ -12,7 +12,7 @@
  * @param {number} setup.standard_duration 최대 탐지 시간, 기본적으로 8 * 1000
  * @param {*} setup.method 0 = 기본적으로 작동, * = 기본적으로 탐지함
  */
-function targetHandler(targetFinder, handler, {
+function targetHandlerLegacy(targetFinder, handler, {
     redetect = 0,
     duration = NaN,
     standard_duration = 8 * 1000,
@@ -56,6 +56,109 @@ function targetHandler(targetFinder, handler, {
                 }
             }
         }, duration);
+    }
+}
+
+
+
+/**
+ * [key]: [
+ *  {
+ *      targetFinder: function,
+ *      handler: function,
+ *      stack: string,
+ *      cycle: number, // normally (duration / targetHandler_storage.STD_TIMEOUT_TIME)
+ *  },
+ *  ...
+ * ]
+ */
+const targetHandler_storage = {
+    STD_DURATION: 10 * 1000,
+    STD_TIMEOUT_TIME: 100,
+
+    key: 0,
+    store: new Map(),
+    timeout: null,
+}
+
+const registerTargetHandlerStore = (obj) => {
+    const prev_data = targetHandler_storage.store.get(targetHandler_storage.key);
+    targetHandler_storage.store.set(targetHandler_storage.key, [
+        ...(Array.isArray(prev_data) ? prev_data : []),
+        obj,
+    ]);
+}
+
+/**
+ * 불러올 요소가 없을 수도 있을 떄 불러오는 걸 감지해서 핸들을 실행시켜주는 함수
+ * @param {function} target 감지할 요소
+ * @param {function} handler 실행할 함수
+ * @param {Object} [setup={}] 
+ * @param {number} setup.duration 탐지할 시간
+ * @param {any} setup.method 0 = 기본적으로 작동, * = 바로 탐지 시작
+ */
+function targetHandler(targetFinder, handler, {
+    duration = targetHandler_storage.STD_DURATION,
+    method = 0,
+} = {}) {
+
+    if (Number.isNaN(Number(duration))) {
+        duration = targetHandler_storage.STD_DURATION;
+    }
+
+    const target = targetFinder();
+    if (target && method === 0) {
+        tryChecker(() => handler(target), 'targetHandler -> handler', false);
+    }
+    else {
+        const stack = new Error().stack;
+
+        registerTargetHandlerStore({
+            targetFinder,
+            handler,
+            stack: stack.slice(stack.indexOf('\n') + 1),
+            cycle: Math.ceil(duration / targetHandler_storage.STD_TIMEOUT_TIME)
+        });
+        
+        if (targetHandler_storage.timeout) return;
+
+        const timeout = () => {
+            targetHandler_storage.store
+            .get(targetHandler_storage.key++)
+            .forEach(obj => {
+                const target = obj.targetFinder();
+
+                if (!target) {
+                    if (obj.cycle > 1) {
+                        obj.cycle--;
+                        registerTargetHandlerStore(obj);
+                    }
+                    else {
+                        npup.devGroup('타겟을 찾는 데에 시간이 오래 걸려 함수 실행을 취소했습니다.', obj.stack);
+                    }
+                    return;
+                }
+
+                tryChecker(() => {
+                    try {
+                        obj.handler(target);
+                    } catch (error) {
+                        error.stack += '\n' + obj.stack;
+                        throw error;
+                    }
+                }, 'targetHandler -> handler', false);
+            });
+            clearTimeout(targetHandler_storage.timeout);
+
+            if (targetHandler_storage.store.get(targetHandler_storage.key))
+                targetHandler_storage.timeout = setTimeout(timeout, targetHandler_storage.STD_TIMEOUT_TIME);
+            else
+                targetHandler_storage.timeout = null;
+
+            targetHandler_storage.store.delete(targetHandler_storage.key - 1);
+        }
+
+        targetHandler_storage.timeout = setTimeout(timeout, targetHandler_storage.STD_TIMEOUT_TIME);
     }
 }
 

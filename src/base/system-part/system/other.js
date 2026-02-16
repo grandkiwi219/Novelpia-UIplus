@@ -3,7 +3,7 @@ const otherCa = npup.options.other.options;
 otherCa['notice'].system = function(r) {
     if (window.location.pathname != "/") return;
     
-    targetHandler(() => document.getElementById('copyright_bar'), () => setNotice(), { redetect: 1 });
+    targetHandler(() => document.getElementById('copyright_bar'), setNotice, { redetect: 1 });
 
     function setNotice() {
         const notice_bar = document.getElementById('copyright_bar').cloneNode(true);
@@ -62,7 +62,7 @@ otherCa['new-alarm'].system = function(r) {
 
     targetHandler(
         () => document.querySelector('.menu_alarm td.active .menu-counter'),
-        (target) => newAlarmSystem(target)
+        newAlarmSystem
     );
 }
 

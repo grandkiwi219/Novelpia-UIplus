@@ -10,7 +10,7 @@ mobileCa['bottom-nav'].system = function (r) {
 mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
     if (!r['origin-header'] && !r['bottom-nav']) return;
 
-    targetHandler(() => document.getElementById('copyright_bar'), () => scrollHiddenHeader());
+    targetHandler(() => document.getElementById('copyright_bar'), scrollHiddenHeader);
 
     function scrollHiddenHeader() {
         const header = document.querySelector('header.mobile_hidden');

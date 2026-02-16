@@ -127,7 +127,7 @@ viewerCa['dbl-vote'].system = function(r) {
         ['novel_drawing', 'novel_drawing_page_c'].forEach(nd => {
             targetHandler(
                 () => document.getElementById(nd),
-                (target) => targetFunction(target),
+                targetFunction,
                 {
                     method: 1,
                     redetect: 1

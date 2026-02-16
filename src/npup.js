@@ -131,6 +131,12 @@ const npup = {
         const style = `color: ${this.project.color};`;
         return console.log(`%c${this.project.prefix.console}`, style, ...content);
     },
+    devGroup(title, ...content) {
+        const style = `color: ${this.project.color}; font-weight: 300;`;
+        console.groupCollapsed(`%c${this.project.prefix.console} %c${title}`, style, this.settings.console.style.std);
+        console.log(...content);
+        return console.groupEnd();
+    },
     trace(content = '노벨피아 UI+ 콘솔 메세지 출력', { titles = [], contents = [] } = {}) {
         const style = `color: ${this.project.color}; font-weight: 300;`;
         console.groupCollapsed(`%c${this.project.prefix.console} %c${content}`, style, this.settings.console.style.std, ...titles );
