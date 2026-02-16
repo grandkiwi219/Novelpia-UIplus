@@ -149,8 +149,6 @@ function targetHandler(targetFinder, handler, {
                 }, 'targetHandler -> handler', false);
             });
 
-            clearTimeout(targetHandler_storage.timeout);
-
             if (targetHandler_storage.store.get(targetHandler_storage.key))
                 targetHandler_storage.timeout = setTimeout(timeout, targetHandler_storage.STD_TIMEOUT_TIME);
             else

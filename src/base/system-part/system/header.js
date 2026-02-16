@@ -393,10 +393,18 @@ headerCa['renew-alarm'].system = function(r) {
     let loading_elements = new Map();
     let num_key = 0;
 
-    const cooltime_period = 10;
+    const period = 8; // minutes
     let cooltime = NaN;
 
     setCooltime();
+
+    let cooltime_timer = null;
+
+    const cooltimeTime = () => {
+        renewAlarm({ confirm_cooltime: false });
+
+        cooltime_timer = setTimeout(cooltimeTime, cooltime - (new Date().getTime()));
+    }
 
     // ---
 
@@ -404,25 +412,8 @@ headerCa['renew-alarm'].system = function(r) {
         () => document.getElementById(pc_alarm_id),
         (target) => {
             target.style.position = 'relative';
-            reloading({ bottom: pc_loading_bottom, el: target });
         }
     );
-
-    targetHandler(
-        () => document.getElementById(m_alarm_id),
-        (target) => {
-            reloading({ bottom: m_loading_bottom, el: target });
-        }
-    );
-
-    function reloading(loading_target) {
-        if (isRestored()) {
-            renewAlarm({
-                confirm_cooltime: false,
-                loading_targets: [loading_target]
-            });
-        }
-    }
 
     // ---
 
@@ -436,45 +427,78 @@ headerCa['renew-alarm'].system = function(r) {
     // ---
 
     function renewAlarmSystem() {
+        renewCooltimeTimer();
+        
         window.addEventListener('visibilitychange', visibilitychangeEvent);
         window.addEventListener('focus', focusEvent);
+        window.addEventListener('blur', blurEvent);
         window.addEventListener('pageshow', pageshowEvent);
+        window.addEventListener('pagehide', pagehideEvent);
     }
 
     function cleanupFunction() {
+        clearCooltimeTimer();
+
         window.removeEventListener('visibilitychange', visibilitychangeEvent);
         window.removeEventListener('focus', focusEvent);
+        window.removeEventListener('blur', blurEvent);
         window.removeEventListener('pageshow', pageshowEvent);
     }
 
     // ---
 
-    function visibilitychangeEvent() {
-        if (document.visibilityState != "visible") return;
-
-        renewAlarm();
+    async function visibilitychangeEvent() {
+        if (document.visibilityState == "visible") {
+            await renewAlarm();
+            renewCooltimeTimer();
+        }
+        else {
+            clearCooltimeTimer();
+        }
     }
 
-    function focusEvent() {
-        renewAlarm();
+    async function focusEvent() {
+        await renewAlarm();
+        renewCooltimeTimer();
     }
 
-    function pageshowEvent(event) {
+    function blurEvent() {
+        clearCooltimeTimer();
+    }
+
+    async function pageshowEvent(event) {
         if (event.persisted) {
-            renewAlarm({ confirm_cooltime: false });
+            await renewAlarm({ confirm_cooltime: false });
+            renewCooltimeTimer();
+        }
+    }
+
+    function pagehideEvent() {
+        clearCooltimeTimer();
+    }
+
+    function renewCooltimeTimer() {
+        if (cooltime_timer) clearCooltimeTimer();
+        cooltime_timer = setTimeout(cooltimeTime, cooltime - (new Date().getTime()));
+    }
+
+    function clearCooltimeTimer() {
+        if (cooltime_timer) {
+            clearTimeout(cooltime_timer);
+            cooltime_timer = null;
         }
     }
 
     // ---
 
-    async function renewAlarm({ confirm_cooltime = true, loading_targets, period = cooltime_period } = {}) {
+    async function renewAlarm({ confirm_cooltime = true, loading_targets } = {}) {
         // 쿠키 존재 확인 대신 로그인되어 있으면 존재할 요소 확인
         if (!document.querySelector('.sidemenu-wrapper .sidemenu-profile'))
             return;
 
         if (confirm_cooltime && confirmCooltime()) return;
 
-        setCooltime(period);
+        setCooltime();
 
         removeExisting();
 
@@ -526,6 +550,8 @@ headerCa['renew-alarm'].system = function(r) {
 
         loadingSuccess(key);
         await loaded(key);
+
+        return;
     }
 
     function generateDot() {
@@ -635,7 +661,7 @@ headerCa['renew-alarm'].system = function(r) {
         return cooltime > new Date().getTime();
     }
 
-    function setCooltime(period) {
+    function setCooltime() {
         const timestamp = new Date();
 
         timestamp.setMinutes(timestamp.getMinutes() + period);
