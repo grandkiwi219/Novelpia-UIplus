@@ -1,20 +1,20 @@
 (() => {
-    const searchForm = document.getElementById(`${npup.project.prefix.css}search-form`);
+    const currentSearchForm = document.getElementById(`${npup.project.prefix.css}search-form`);
 
-    if (searchForm)
-        searchFormEvent();
+    if (currentSearchForm)
+        searchFormEvent(currentSearchForm);
     else 
         new MutationObserver((mu, ob) => {
-            const searchForm = document.getElementById(`${npup.project.prefix.css}search-form`);
+            const foundSearchForm = document.getElementById(`${npup.project.prefix.css}search-form`);
 
-            if (!searchForm) return;
+            if (!foundSearchForm) return;
 
             ob.disconnect();
 
-            searchFormEvent();
+            searchFormEvent(foundSearchForm);
         }).observe(document.body, npup.settings.observer);
 
-    function searchFormEvent() {
+    function searchFormEvent(searchForm) {
         searchForm.addEventListener('submit', (e) => {
             e.preventDefault();
             npupPcSearch();
