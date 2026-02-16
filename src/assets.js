@@ -91,19 +91,26 @@ const registerTargetHandlerStore = (obj) => {
 
 /**
  * 불러올 요소가 없을 수도 있을 떄 불러오는 걸 감지해서 핸들을 실행시켜주는 함수
- * @param {function} target 감지할 요소
+ * @param {function} targetFinder 감지할 요소
  * @param {function} handler 실행할 함수
  * @param {Object} [setup={}] 
  * @param {number} setup.duration 탐지할 시간
  * @param {any} setup.method 0 = 기본적으로 작동, * = 바로 탐지 시작
+ * @param {number} setup.redetect +1 만큼 탐지 시간을 배로 설정
  */
 function targetHandler(targetFinder, handler, {
     duration = targetHandler_storage.STD_DURATION,
     method = 0,
+    redetect = 0
 } = {}) {
 
     if (Number.isNaN(Number(duration))) {
         duration = targetHandler_storage.STD_DURATION;
+    }
+
+    const redetect_f = Number(redetect);
+    if (redetect_f > 0) {
+        duration *= redetect_f + 1;
     }
 
     const target = targetFinder();
