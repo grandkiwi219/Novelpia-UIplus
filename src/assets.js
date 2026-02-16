@@ -169,21 +169,32 @@ function targetHandler(targetFinder, handler, {
  * 입력한 파일 위치를 사이트 페이지에 삽입합니다
  * @param {string} path 파일 위치
  */
-async function scriptInjection(path) {
-    if (!path) return;
+async function scriptInjection(path, replaceWith = true) {
+    if (!path) return undefined;
 
-    const id = `${npup.project.prefix.css}${path.split('/').pop()}`;
+    let src = undefined;
 
-    const script = document.createElement('script');
     try {
-        script.src = chrome.runtime.getURL(path);
+        src = chrome.runtime.getURL(path);
     } catch (error) {
         setIsDisconnected();
+        return undefined;
     }
-    script.id = id;
 
-    if (document.getElementById(id))
-        document.getElementById(id).remove();
+    const id = `${npup.project.prefix.css}${path.split('/').pop()}`;
+    
+    const script = document.createElement('script');
+    script.id = id;
+    script.src = src;
+
+    if (document.getElementById(id)) {
+        if (replaceWith) {
+            document.getElementById(id).remove();
+        }
+        else {
+            return undefined;
+        }
+    }
 
     document.head.appendChild(script);
 

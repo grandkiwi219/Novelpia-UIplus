@@ -393,7 +393,7 @@ headerCa['renew-alarm'].system = function(r) {
     let loading_elements = new Map();
     let num_key = 0;
 
-    const period = 12;
+    const period = 10;
     let cooltime = NaN;
 
     setCooltime();
