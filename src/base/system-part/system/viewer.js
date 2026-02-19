@@ -108,6 +108,8 @@ function iconSetup() {
 
 
 viewerCa['dbl-vote'].system = function(r) {
+    const std_novel_el = 'novel_text';
+
     let last = {
         time: 0,
         pos: { x: 0, y: 0 },
@@ -139,7 +141,7 @@ viewerCa['dbl-vote'].system = function(r) {
             target.outerHTML = target.outerHTML.replace('onclick', '');
 
             enhanced.func = (target) => {
-                if (document.getElementById('novel_box') == target) return;
+                if (document.getElementById(std_novel_el) == target) return;
 
                 clearTimeout(last.clickTimer);
                 last.clickTimer = setTimeout(() => {
@@ -151,7 +153,7 @@ viewerCa['dbl-vote'].system = function(r) {
 
     
     const dblVoteEvent = (e) => {
-        if (!document.getElementById('novel_box')) return;
+        if (!document.getElementById(std_novel_el)) return;
         
         if (
             document.getElementById('novel_drawing_right') == e.target ||
@@ -160,7 +162,7 @@ viewerCa['dbl-vote'].system = function(r) {
             document.getElementById('novel_drawing_left')?.contains(e.target)
         ) return;
 
-        if (!document.getElementById('novel_box').contains(e.target)) return;
+        if (!document.getElementById(std_novel_el).contains(e.target)) return;
 
         const now = performance.now();
 
