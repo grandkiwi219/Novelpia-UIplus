@@ -149,12 +149,15 @@ function targetHandler(targetFinder, handler, {
                 }, 'targetHandler -> handler', false);
             });
 
-            if (targetHandler_storage.store.get(targetHandler_storage.key))
-                targetHandler_storage.timeout = setTimeout(timeout, targetHandler_storage.STD_TIMEOUT_TIME);
-            else
-                targetHandler_storage.timeout = null;
-
             targetHandler_storage.store.delete(targetHandler_storage.key - 1);
+
+            if (targetHandler_storage.store.get(targetHandler_storage.key)) {
+                targetHandler_storage.timeout = setTimeout(timeout, targetHandler_storage.STD_TIMEOUT_TIME);
+            }
+            else {
+                targetHandler_storage.timeout = null;
+                targetHandler_storage.key = 0;
+            }
         }
 
         targetHandler_storage.timeout = setTimeout(timeout, targetHandler_storage.STD_TIMEOUT_TIME);
