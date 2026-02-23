@@ -226,12 +226,25 @@ npup.options = {
                             router: true
                         } */
                     },
-                    'dbl-vote-more-slow': {
-                        desc: '더블 클릭 감지 간격 두배 증가',
+                    'dbl-vote-term': {
+                        desc: '더블 클릭 감지 간격',
                         type: {
-                            option: 'switch',
+                            option: 'selector',
                             structure: ['system']
                         },
+                        values: [
+                            { name: '180ms', value: 180 },
+                            { name: '200ms', value: 200 },
+                            { name: '220ms', value: 220 },
+                            { name: '240ms', value: 240 },
+                            { name: '260ms', value: 260 },
+                            { name: '270ms', value: 270 },
+                            { name: '280ms', value: 280 },
+                            { name: '300ms', value: 300 },
+                            { name: '320ms', value: 320 },
+                            { name: '340ms', value: 340 },
+                            { name: '360ms', value: 360 },
+                        ]
                     },
                 }
             },
