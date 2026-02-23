@@ -5,7 +5,7 @@ viewerCa['old-icon'].system = function(r) {
     /* if (dom_loaded) iconSetup();
     else */ window.addEventListener('DOMContentLoaded', iconSetup);
 
-    /* route detector? */
+    /* nd r-d */
 }
 
 
@@ -102,18 +102,21 @@ function iconSetup() {
 
     scriptInjection('src/base/file/delete-click-alert.js');
 
-    // route detector?
+    // nd r-d
 } */
 
 
 
 viewerCa['dbl-vote'].system = function(r) {
-    const std_novel_el = 'novel_text';
+    // const std_novel_el = 'novel_text';
+
+    const scroll_novel = 'novel_drawing';
+    const page_novel = 'novel_drawing_page_c';
 
     let last = {
         time: 0,
         pos: { x: 0, y: 0 },
-        clickTimer: undefined
+        clickTimer: null
     }
 
     const cooltime = 180;
@@ -126,7 +129,8 @@ viewerCa['dbl-vote'].system = function(r) {
     }
 
     if (r[enhanced.key]) {
-        ['novel_drawing', 'novel_drawing_page_c'].forEach(nd => {
+        // 둘 다 하는 이유는 novel_drawing_page_c의 height 가 완전히 0이 아니기 때문
+        [scroll_novel, page_novel].forEach(nd => {
             targetHandler(
                 () => document.getElementById(nd),
                 targetFunction,
@@ -141,7 +145,7 @@ viewerCa['dbl-vote'].system = function(r) {
             target.outerHTML = target.outerHTML.replace('onclick', '');
 
             enhanced.func = (target) => {
-                if (document.getElementById(std_novel_el) == target) return;
+                // if (document.getElementById(std_novel_el) == target) return;
 
                 clearTimeout(last.clickTimer);
                 last.clickTimer = setTimeout(() => {
@@ -153,7 +157,7 @@ viewerCa['dbl-vote'].system = function(r) {
 
     
     const dblVoteEvent = (e) => {
-        if (!document.getElementById(std_novel_el)) return;
+        /* if (!document.getElementById(std_novel_el)) return;
         
         if (
             document.getElementById('novel_drawing_right') == e.target ||
@@ -162,7 +166,12 @@ viewerCa['dbl-vote'].system = function(r) {
             document.getElementById('novel_drawing_left')?.contains(e.target)
         ) return;
 
-        if (!document.getElementById(std_novel_el).contains(e.target)) return;
+        if (!document.getElementById(std_novel_el).contains(e.target)) return; */
+
+        if (
+            !isTarget(scroll_novel)
+            && !isTarget(page_novel)
+        ) return;
 
         const now = performance.now();
 
@@ -183,11 +192,16 @@ viewerCa['dbl-vote'].system = function(r) {
             last.time = time;
             last.pos = { x: e.clientX, y: e.clientY };
         }
+
+        function isTarget(id) {
+            return document.getElementById(id) == e.target
+                || document.getElementById(id)?.contains(e.target);
+        }
     }
 
     document.addEventListener('click', dblVoteEvent);
 
-    /* route detector? */
+    /* nd r-d */
 }
 
 
@@ -198,7 +212,7 @@ viewerCa['scroll-close-menu'].system = function(r) {
         () => scriptInjection(`src/base/file/close-navi-view.js`)
     );  
 
-    /* route detector? */
+    /* nd r-d */
 }
 
 
