@@ -225,7 +225,14 @@ npup.options = {
                         /* structure: {
                             router: true
                         } */
-                    }
+                    },
+                    'dbl-vote-more-slow': {
+                        desc: '더블 클릭 감지 간격 두배 증가',
+                        type: {
+                            option: 'switch',
+                            structure: ['system']
+                        },
+                    },
                 }
             },
 
@@ -257,6 +264,9 @@ npup.options = {
                     { name: '왼쪽 아래', value: 'left-bottom' },
                 ] */
             }
+        },
+        setups: {
+            length: 2
         }
     },
 

@@ -109,9 +109,8 @@ viewerCa['dbl-vote'].system = function(r) {
         clickTimer: null
     }
 
-    const cooltime = 180;
+    const cooltime = r[this.key + '-more-slow'] ? 360 : 180;
     const pos_error = 100;
-
 
     let enhanced = {
         key: `${this.key}-plus`,
