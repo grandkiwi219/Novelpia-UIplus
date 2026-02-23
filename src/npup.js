@@ -170,6 +170,7 @@ const npup = {
 npup.event = {
     load: `${npup.project.name}LoadSuccess`,
     router: `${npup.project.name}RouterEnd`,
+    navi_view: `${npup.project.name}NaviView`,
 }
 
 

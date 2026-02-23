@@ -96,6 +96,8 @@ function iconSetup() {
 
 
 viewerCa['dbl-vote'].system = function(r) {
+    naviViewSetup();
+
     // const std_novel_el = 'novel_text';
 
     const scroll_novel = 'novel_drawing';
@@ -211,6 +213,8 @@ viewerCa['line-share'].system = function(r) {
         case '#lists':
             return;
     }
+
+    naviViewSetup();
 
     const lineShareSystem = () => {
         const [header] = document.getElementsByClassName('menu-top-wrapper');

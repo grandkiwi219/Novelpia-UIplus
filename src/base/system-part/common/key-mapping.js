@@ -63,7 +63,10 @@ keyMappingCa['ep-down'].system = keyMappingBase(r => {
 
 keyMappingCa['ep-menu'].system = keyMappingBase(r => {
     naviView();
-}, isViewer);
+}, {
+    ...isViewer,
+    execution: naviViewSetup
+});
 
 keyMappingCa['move-mb'].system = keyMappingBase(async r => {
     let where_href;

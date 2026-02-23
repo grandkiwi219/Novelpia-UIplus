@@ -37,8 +37,17 @@ function executeLike() {
     }
 }
 
+let injection_navi_view_event = false;
+
+function naviViewSetup() {
+    if (injection_navi_view_event) return;
+
+    injection_navi_view_event = true;
+    scriptInjection(`src/base/file/novelpia/navi-view.js`);
+}
+
 function naviView() {
-    return scriptInjection(`src/base/file/novelpia/navi-view.js`);
+    window.dispatchEvent(new Event(npup.event.navi_view));
 }
 
 function btnComment2() {
