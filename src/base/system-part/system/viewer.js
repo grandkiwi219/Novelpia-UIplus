@@ -199,7 +199,7 @@ viewerCa['scroll-close-menu'].system = function(r) {
     targetHandler(
         () => document.getElementById('novel_box'),
         () => scriptInjection(`src/base/file/close-navi-view.js`)
-    );  
+    );
 
     /* nd r-d */
 }
