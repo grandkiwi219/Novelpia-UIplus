@@ -236,6 +236,9 @@
         },
         "run-novelpia-mybook": {
             "description": "새 노벨피아 내서재 탭 열기"
+        },
+        "run-novelpia-alarm": {
+            "description": "새 노벨피아 알림 탭 열기"
         }
     }
 }

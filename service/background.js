@@ -8,6 +8,7 @@ const route_detect = 'route-detect';
 const novelpia = 'https://novelpia.com';
 
 const mybook_data_key = 'nav-mybook';
+const alarm_data_key = 'alarm';
 
 
 /**
@@ -77,7 +78,7 @@ chrome.commands.onCommand.addListener(async (command) => {
             chrome.tabs.create({ url: novelpia });
             break;
 
-        case 'run-novelpia-mybook':
+        case 'run-novelpia-mybook': {
             const mybook_data = await chrome.storage.sync.get([mybook_data_key]);
             const mybook_matches = {
                 like: 'like',
@@ -88,6 +89,20 @@ chrome.commands.onCommand.addListener(async (command) => {
             const mybook_result = novelpia + '/mybook/' + (mybook_matches[mybook_data[mybook_data_key]] ?? '');
             chrome.tabs.create({ url: mybook_result });
             break;
+        }
+
+        case 'run-novelpia-alarm': {
+            const alarm_data = await chrome.storage.sync.get([alarm_data_key]);
+            const alarm_matches = {
+                novel: 'novel',
+                comic: 'comic',
+                system: 'system',
+                event: 'event',
+            };
+            const alarm_result = novelpia + '/alarm/' + (alarm_matches[alarm_data[alarm_data_key]] ?? '');
+            chrome.tabs.create({ url: alarm_result });
+            break;
+        }
 
         default:
             console.warn(`Command: '${command}' isn't defined`);
