@@ -56,7 +56,7 @@ header {
     padding-bottom: ${viewer_nav_height}px;
 }
 
-#tab_top + table {
+.menu_alarm_m {
     background-color: rgba(235, 235, 235, 0.35) !important;
     backdrop-filter: blur(${blur_intensity}px);
 
