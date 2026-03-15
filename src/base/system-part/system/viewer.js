@@ -13,45 +13,46 @@ function iconSetup() {
     // style: system-content.css => old-icon css 부분
 
     // home
-    const home = document.getElementsByClassName('menu-top-home')[0];
-
-    const old_home = document.createElement('div');
-    old_home.classList.add('ion-home');
-    old_home.style.fontSize = '25px';
-
-    home.appendChild(old_home);
+    el(document.getElementsByClassName('menu-top-home')[0])(
+        el('div', {
+            class: 'ion-home',
+            style: {
+                fontSize: '25px'
+            }
+        })
+    );
 
     // title
-    const title = document.getElementsByClassName('menu-title-wrapper')[0];
+    const title_element_wrapper = el('div', { class: 'menu-top-title-element-wrapper' })(
+        document.getElementsByClassName('menu-top-title')[0].textContent
+    );
+    const textContent = title_element_wrapper.element.textContent;
+    title_element_wrapper.element.textContent = '';
 
-    const novel_name = document.createElement('b');
-    novel_name.classList.add('menu-top-novel-title');
-    novel_name.textContent = document.title
-        .replace('노벨피아', '')
-        .replace('웹소설로 꿈꾸는 세상!', '')
-        .replace(/ - /g, '');
-
-    const title_element_wrapper = document.createElement('div');
-    title_element_wrapper.classList.add('menu-top-title-element-wrapper');
-    title_element_wrapper.textContent = document.getElementsByClassName('menu-top-title')[0].textContent;
-
-    const title_tag = document.getElementsByClassName('menu-top-tag')[0];
-    if (title_tag)
-        title_element_wrapper.insertAdjacentElement('afterbegin', title_tag);
-
-    const title_nineteen = document.getElementsByClassName('menu-top-adult')[0]
+    let old_nineteen = null;
+    const title_nineteen = document.getElementsByClassName('menu-top-adult')[0];
     if (title_nineteen) {
         title_nineteen.remove();
 
-        const old_nineteen = document.createElement('span');
+        old_nineteen = document.createElement('span');
         old_nineteen.classList.add('menu-top-nineteen');
         old_nineteen.textContent = '19';
-
-        title_element_wrapper.insertAdjacentElement('afterbegin', old_nineteen);
     }
+    const title_tag = document.getElementsByClassName('menu-top-tag')[0];
 
-    title.insertAdjacentElement('afterbegin', novel_name);
-    title.appendChild(title_element_wrapper);
+    const novel_name = el('b', { className: 'menu-top-novel-title' })(
+        document.title
+            .replace('노벨피아', '')
+            .replace('웹소설로 꿈꾸는 세상!', '')
+            .replace(/ - /g, '')
+    );
+
+    el(document.getElementsByClassName('menu-title-wrapper')[0])(
+        novel_name,
+        title_element_wrapper
+            (old_nineteen)
+            (title_tag, textContent),
+    )
 
     // list -- 나중 svg, 텍스트로 직접 대체하기 전까지
     /* const list = document.getElementsByTagName('menu-top-list')[0]; */

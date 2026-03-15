@@ -6,7 +6,7 @@ const npup = {
     project: {
         name: 'NPup',
         get version() {
-            let version = 'Injection';
+            let version = 'Unknown';
 
             try {
                 version = chrome.runtime.getVersion().split('.').slice(0, 2).join('.');
