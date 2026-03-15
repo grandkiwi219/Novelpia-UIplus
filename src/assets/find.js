@@ -2,7 +2,7 @@
  * [key]: [
  *  {
  *      targetFinder: function,
- *      resolver: function,
+ *      resolve: function,
  *      stack: string,
  *      cycle: number, // normally (duration / findTarget_storage.STD_TIMEOUT_TIME)
  *  },
@@ -32,9 +32,9 @@ const registerFindTargetStore = (obj) => {
  * @param {Object} [setup={}] 
  * @param {number} setup.duration 탐지할 시간
  * @param {any} setup.method 0 = 기본적으로 작동, * = 바로 탐지 시작
- * @returns {HTMLElement} 
+ * @returns {Promise<HTMLElement>} 
  */
-async function findTarget(targetFinder, {
+function findTarget(targetFinder, {
     duration = findTarget_storage.STD_DURATION,
     method = 0
 } = {}) {
@@ -45,25 +45,20 @@ async function findTarget(targetFinder, {
 
     const target = targetFinder();
     if (target && method === 0) {
-        return target;
+        return Promise.resolve(target);
     }
-    else {
+
+    return new Promise(resolve => {
         const stack = new Error().stack;
-
-        let resolver = undefined;
-
-        const target = new Promise((resolve) => {
-            resolver = resolve;
-        });
 
         registerFindTargetStore({
             targetFinder,
-            resolver,
+            resolve,
             stack: stack.slice(stack.indexOf('\n') + 1),
             cycle: Math.ceil(duration / findTarget_storage.STD_TIMEOUT_TIME)
         });
         
-        if (findTarget_storage.timeout) return target;
+        if (findTarget_storage.timeout) return;
 
         const timeout = () => {
             findTarget_storage.store
@@ -78,12 +73,12 @@ async function findTarget(targetFinder, {
                     }
                     else {
                         npup.devGroup('타겟을 찾는 데에 시간이 오래 걸려 함수 실행을 취소했습니다.', obj.stack);
-                        obj.resolver(undefined);
+                        obj.resolve(undefined);
                     }
                     return;
                 }
 
-                obj.resolver(target);
+                obj.resolve(target);
             });
 
             findTarget_storage.store.delete(findTarget_storage.key - 1);
@@ -99,9 +94,7 @@ async function findTarget(targetFinder, {
         }
 
         findTarget_storage.timeout = setTimeout(timeout, findTarget_storage.STD_TIMEOUT_TIME);
-
-        return target;
-    }
+    });
 }
 
 

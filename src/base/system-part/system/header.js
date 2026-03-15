@@ -1,18 +1,16 @@
 const headerCa = npup.options.header.options;
 
-headerCa['adult'].system = function(r) {
-    targetHandler(
-        () => document.querySelector('.switch-adult'),
-        (target) => {
-            document.querySelectorAll('.s-logo').forEach(re => {
-                let adult_button = target.cloneNode(true);
-                adult_button.style = 'cursor: pointer;';
+headerCa['adult'].system = async function(r) {
+    const switch_adult = await findTarget(() => document.getElementsByClassName('switch-adult')[0]);
 
-                re.esrender('afterend', adult_button);
-            });
-        },
-        { redetect: 1 }
-    );
+    if (!switch_adult) return;
+
+    document.querySelectorAll('.s-logo').forEach(re => {
+        let adult_button = switch_adult.cloneNode(true);
+        adult_button.style = 'cursor: pointer;';
+
+        re.esrender('afterend', adult_button);
+    });
 }
 
 
