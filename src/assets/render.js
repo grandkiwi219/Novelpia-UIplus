@@ -1,6 +1,8 @@
 /**
  * @typedef {((this: HTMLElement, ev: Event) => any)} ElEventListener
  * @typedef {boolean | { capture?: boolean, once?: boolean, passive?: boolean, signal?: boolean | AddEventListenerOptions }} ElEventOptions
+ * @typedef {(() => void)} ElReload
+ * @typedef {{ value: any, detectableTarget: ElReload[] }} ElState
  */
 
 /**
@@ -11,7 +13,8 @@
  * @param {Object<string, string>} [attributes.style] CSS 요소
  * @param {Object<string, ElEventListener | { listener: ElEventListener, options: ElEventOptions }>} [attributes.on] addEventListener
  * @param {boolean} [attributes.custom] 사용자지정 특성 사용 여부
- * @param {Object} [attributes.ref] 
+ * @param {Object} [attributes.ref] ref 로 오는 객체에게 element 를 부여
+ * @param {ElState[]} [attributes.states] el.state 객체를 사용하여 값 변경시 자동 reload
  * @returns 
  */
 function el(tag = 'div', attributes = {}) {
@@ -24,6 +27,9 @@ function el(tag = 'div', attributes = {}) {
     let _custom = false;
     let _ref = undefined;
 
+    let _el_children = [];
+    let _children = new Set();
+
     let element = tag instanceof HTMLElement ? tag : document.createElement(tag);
 
     if (attributes.xmlns) {
@@ -32,7 +38,7 @@ function el(tag = 'div', attributes = {}) {
     }
 
     if (attributes.style && typeof attributes.style == 'object') {
-        setStyle(attributes.style);
+        setStyle({ style: attributes.style });
         _style = {};
         Object.assign(_style, attributes.style);
         delete attributes.style;
@@ -65,6 +71,12 @@ function el(tag = 'div', attributes = {}) {
         delete attributes.ref;
     }
 
+    if (Array.isArray(attributes.states)) {
+        attributes.states.forEach(state => {
+            state.detectableTarget.push(reload);
+        });
+    }
+
     setAttribute();
 
     /**
@@ -72,9 +84,23 @@ function el(tag = 'div', attributes = {}) {
      */
     function appendChildren(...children) {
         children.forEach(child => {
-            if (typeof child === 'function' && child?.element) {
-                child._setup({ xmlns: _xmlns });
-                element.appendChild(child.element);
+            if (typeof child === 'function') {
+                if (child?.element) {
+                    child._setup({ xmlns: _xmlns });
+                    element.appendChild(child.element);
+                    _el_children.push(child.element);
+                }
+                else {
+                    const result = child();
+                    if (typeof result == 'string') {
+                        element.insertAdjacentHTML('beforeend', result);
+                    }
+                    else if (result?.element instanceof HTMLElement) {
+                        result._setup({ xmlns: _xmlns });
+                        element.appendChild(result.element);
+                        _el_children.push(result.element);
+                    }
+                }
             }
             else if (typeof child == 'string') {
                 element.insertAdjacentHTML('beforeend', child);
@@ -85,6 +111,8 @@ function el(tag = 'div', attributes = {}) {
             else if (child) {
                 element.appendChild(child);
             }
+
+            _children.add(child);
         });
 
         return appendChildren;
@@ -123,11 +151,14 @@ function el(tag = 'div', attributes = {}) {
         return appendChildren;
     }
     /**
-     * @param {InsertPosition | Element} where_or_target 
      * @param {Element} target 
+     * @param {InsertPosition} where 
+     * @param {object} [options]
+     * @param {boolean} [options.validate_class]
+     * @param {string[]} [options.ignore_class]
      */
-    appendChildren.render = function(where_or_target = document.body, target = undefined, { validate_class = true, ignore_class = [] } = {}) {
-        element.esrender(where_or_target, target, { validate_class, ignore_class });
+    appendChildren.render = function(target = document.body, where = undefined, { validate_class = true, ignore_class = [] } = {}) {
+        target.esrender(where || element, element, { validate_class, ignore_class });
         return appendChildren;
     }
 
@@ -139,7 +170,23 @@ function el(tag = 'div', attributes = {}) {
             setEvent();
             setReference();
             setAppendChildrenElement();
+            _el_children.forEach(child => child._setup({ xmlns: _xmlns }));
         }
+    }
+
+    /**
+     * @type {ElReload}
+     */
+    function reload() {
+        setStyle({ reset: true });
+        setAttribute();
+
+        element.innerHTML = '';
+        _el_children = [];
+        appendChildren(..._children);
+
+        setReference();
+        setAppendChildrenElement();
     }
 
     return appendChildren;
@@ -162,7 +209,8 @@ function el(tag = 'div', attributes = {}) {
         _xmlns = xmlns;
     }
 
-    function setStyle(style = _style) {
+    function setStyle({ style = _style, reset = false }) {
+        if (reset) element.style = '';
         Object.assign(element.style, style);
     }
 
@@ -208,6 +256,31 @@ function el(tag = 'div', attributes = {}) {
         });
     }
 }
+/**
+ * @type {ElState}
+ * @param {*} value 
+ * @returns 
+ */
+el.state = function(value) {
+    const detectableTarget = [];
+
+    return new Proxy({ value, detectableTarget }, {
+        set(target, prop, value) {
+            switch (prop) {
+                case 'value': {
+                    target[prop] = value;
+
+                    detectableTarget.forEach(reload => reload());
+ 
+                    return true;
+                }
+
+                default:
+                    return false;
+            }
+        }
+    });
+}
 
 
 
@@ -219,7 +292,7 @@ function el(tag = 'div', attributes = {}) {
  * @param {HTMLElement | string} [element] 
  * @param {object} [options]
  * @param {boolean} [options.validate_class]
- * @param {string[]} [options.exclude_class]
+ * @param {string[]} [options.ignore_class]
  */
 HTMLElement.prototype.esrender = function(where, element, { validate_class = true, ignore_class = [] } = {}) {
     if (where instanceof HTMLElement) {
