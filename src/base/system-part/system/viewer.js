@@ -15,7 +15,7 @@ function iconSetup() {
     // home
     el(document.getElementsByClassName('menu-top-home')[0])(
         el('div', {
-            class: 'ion-home',
+            className: 'ion-home',
             style: {
                 fontSize: '25px'
             }
@@ -23,7 +23,7 @@ function iconSetup() {
     );
 
     // title
-    const title_element_wrapper = el('div', { class: 'menu-top-title-element-wrapper' })(
+    const title_element_wrapper = el('div', { className: 'menu-top-title-element-wrapper' })(
         document.getElementsByClassName('menu-top-title')[0].textContent
     );
     const textContent = title_element_wrapper.element.textContent;
@@ -34,9 +34,9 @@ function iconSetup() {
     if (title_nineteen) {
         title_nineteen.remove();
 
-        old_nineteen = document.createElement('span');
-        old_nineteen.classList.add('menu-top-nineteen');
-        old_nineteen.textContent = '19';
+        old_nineteen = el('span', { className: 'menu-top-nineteen' })(
+            '19'
+        );
     }
     const title_tag = document.getElementsByClassName('menu-top-tag')[0];
 
@@ -49,9 +49,10 @@ function iconSetup() {
 
     el(document.getElementsByClassName('menu-title-wrapper')[0])(
         novel_name,
-        title_element_wrapper
-            (old_nineteen)
-            (title_tag, textContent),
+        title_element_wrapper(
+            old_nineteen,
+            title_tag, textContent
+        )
     )
 
     // list -- 나중 svg, 텍스트로 직접 대체하기 전까지

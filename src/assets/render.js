@@ -1,13 +1,28 @@
 /**
+ * @typedef {((this: HTMLElement, ev: Event) => any)} ElEventListener
+ * @typedef {boolean | { capture?: boolean, once?: boolean, passive?: boolean, signal?: boolean | AddEventListenerOptions }} ElEventOptions
+ */
+
+/**
  * 간편 요소 생성 및 자식 추가 함수
  * @param {string | HTMLElement} tag 생성할 태그
- * @param {Object} attributes 특성
+ * @param {Object} [attributes] 특성
+ * @param {'MathML' | 'HTML' | 'SVG'} [attributes.xmlns] 
+ * @param {Object<string, string>} [attributes.style] CSS 요소
+ * @param {Object<string, ElEventListener | { listener: ElEventListener, options: ElEventOptions }>} [attributes.on] addEventListener
+ * @param {boolean} [attributes.custom] 사용자지정 특성 사용 여부
+ * @param {Object} [attributes.ref] 
  * @returns 
  */
 function el(tag = 'div', attributes = {}) {
+    const $attributes = {
+        className: 'class',
+    }
     let _xmlns = undefined;
     let _style = {};
+    let _event = {};
     let _custom = false;
+    let _ref = undefined;
 
     let element = tag instanceof HTMLElement ? tag : document.createElement(tag);
 
@@ -23,9 +38,31 @@ function el(tag = 'div', attributes = {}) {
         delete attributes.style;
     }
 
+    if (attributes.on && typeof attributes.on == 'object') {
+        Object.keys(attributes.on).forEach(type => {
+            const obj = attributes.on[type];
+            if (typeof obj == 'function') {
+                _event[type] = {
+                    listener: obj
+                }
+            }
+            else if (obj && typeof obj == 'object') {
+                _event[type] = obj;
+            }
+        });
+        setEvent();
+        delete attributes.on;
+    }
+
     if (attributes.custom) {
         _custom = true;
         delete attributes.custom;
+    }
+
+    if (attributes.ref && typeof attributes.ref == 'object') {
+        setReference(attributes.ref);
+        _ref = attributes.ref;
+        delete attributes.ref;
     }
 
     setAttribute();
@@ -53,32 +90,55 @@ function el(tag = 'div', attributes = {}) {
         return appendChildren;
     }
 
-    appendChildren.element = element;
+    setAppendChildrenElement();
+    /**
+     * @param {keyof HTMLElementEventMap} type 
+     * @param {ElEventListener} listener 
+     * @param {ElEventOptions} [options]
+     * @returns 
+     */
+    appendChildren.on = function(type, listener, options) {
+        if (_event[type]) {
+            element.removeEventListener(type, _event[type].listener, _event[type].options);
+        }
+
+        _event[type] = {
+            listener,
+            options
+        }
+        element.addEventListener(type, listener, options);
+
+        return appendChildren;
+    }
+    /**
+     * @param {keyof HTMLElementEventMap} type
+     * @returns 
+     */
+    appendChildren.off = function(type) {
+        if (_event[type]) {
+            element.removeEventListener(type, _event[type].listener, _event[type].options);
+            delete _event[type];
+        }
+
+        return appendChildren;
+    }
     /**
      * @param {InsertPosition | Element} where_or_target 
      * @param {Element} target 
      */
     appendChildren.render = function(where_or_target = document.body, target = undefined, { validate_class = true, ignore_class = [] } = {}) {
-        /* if (where_or_target instanceof Element) {
-            where_or_target.appendChild(element);
-        }
-        else {
-            try {
-                target.insertAdjacentElement(where_or_target, element);
-            } catch (error) {
-                console.error(error);
-            }
-        } */
-
         element.esrender(where_or_target, target, { validate_class, ignore_class });
-
         return appendChildren;
     }
+
     appendChildren._setup = function({ xmlns } = {}) {
         if (xmlns != _xmlns && typeof tag == 'string') {
             setXmlns(xmlns);
             setStyle();
             setAttribute(true);
+            setEvent();
+            setReference();
+            setAppendChildrenElement();
         }
     }
 
@@ -100,7 +160,6 @@ function el(tag = 'div', attributes = {}) {
                 break;
         }
         _xmlns = xmlns;
-        if (appendChildren) appendChildren.element = element;
     }
 
     function setStyle(style = _style) {
@@ -109,20 +168,44 @@ function el(tag = 'div', attributes = {}) {
 
     function setAttribute(assign = _xmlns || _custom) {
         if (assign) {
-            Object.assign(element, attributes);
-        }
-        else {
             if (_xmlns) {
                 Object.keys(attributes).forEach(key => {
-                    element.setAttributeNS(key, attributes[key]);
+                    element.setAttributeNS($attributes[key] || key, attributes[key]);
                 });
                 return;
             }
-
+            
             Object.keys(attributes).forEach(key => {
-                element.setAttribute(key, attributes[key]);
+                element.setAttribute($attributes[key] || key, attributes[key]);
             });
         }
+        else {
+            Object.assign(element, attributes);
+        }
+    }
+
+    function setEvent() {
+        Object.keys(_event).forEach(type => {
+            element.removeEventListener(type, _event[type].listener, _event[type].options);
+            element.addEventListener(type, _event[type].listener, _event[type].options);
+        });
+    }
+
+    function setReference(ref = _ref) {
+        if (_ref && typeof _ref == 'object')
+            Object.defineProperty(ref, 'element', {
+                value: element,
+                writable: false,
+                configurable: true
+            });
+    }
+
+    function setAppendChildrenElement() {
+        Object.defineProperty(appendChildren, 'element', {
+            value: element,
+            configurable: true,
+            writable: false
+        });
     }
 }
 
