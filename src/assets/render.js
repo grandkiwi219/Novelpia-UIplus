@@ -22,11 +22,11 @@ function el(tag = 'div', attributes = {}) {
         className: 'class',
     }
     let _xmlns = undefined;
-    let _style = {};
-    let _event = {};
     let _custom = false;
     let _ref = undefined;
-
+    let _event = {};
+    let _style = {};
+    
     let _el_children = [];
     let _children = new Set();
 
@@ -37,11 +37,21 @@ function el(tag = 'div', attributes = {}) {
         delete attributes.xmlns;
     }
 
-    if (attributes.style && typeof attributes.style == 'object') {
-        setStyle({ style: attributes.style });
-        _style = {};
-        Object.assign(_style, attributes.style);
-        delete attributes.style;
+    if (attributes.custom) {
+        _custom = true;
+        delete attributes.custom;
+    }
+
+    if (attributes.ref && typeof attributes.ref == 'object') {
+        setReference(attributes.ref);
+        _ref = attributes.ref;
+        delete attributes.ref;
+    }
+
+    if (Array.isArray(attributes.states)) {
+        attributes.states.forEach(state => {
+            state.detectableTarget.push(reload);
+        });
     }
 
     if (attributes.on && typeof attributes.on == 'object') {
@@ -60,21 +70,11 @@ function el(tag = 'div', attributes = {}) {
         delete attributes.on;
     }
 
-    if (attributes.custom) {
-        _custom = true;
-        delete attributes.custom;
-    }
-
-    if (attributes.ref && typeof attributes.ref == 'object') {
-        setReference(attributes.ref);
-        _ref = attributes.ref;
-        delete attributes.ref;
-    }
-
-    if (Array.isArray(attributes.states)) {
-        attributes.states.forEach(state => {
-            state.detectableTarget.push(reload);
-        });
+    if (attributes.style && typeof attributes.style == 'object') {
+        setStyle({ style: attributes.style });
+        _style = {};
+        Object.assign(_style, attributes.style);
+        delete attributes.style;
     }
 
     setAttribute();
@@ -209,11 +209,6 @@ function el(tag = 'div', attributes = {}) {
         _xmlns = xmlns;
     }
 
-    function setStyle({ style = _style, reset = false }) {
-        if (reset) element.style = '';
-        Object.assign(element.style, style);
-    }
-
     function setAttribute(assign = _xmlns || _custom) {
         if (assign) {
             if (_xmlns) {
@@ -232,13 +227,6 @@ function el(tag = 'div', attributes = {}) {
         }
     }
 
-    function setEvent() {
-        Object.keys(_event).forEach(type => {
-            element.removeEventListener(type, _event[type].listener, _event[type].options);
-            element.addEventListener(type, _event[type].listener, _event[type].options);
-        });
-    }
-
     function setReference(ref = _ref) {
         if (_ref && typeof _ref == 'object')
             Object.defineProperty(ref, 'element', {
@@ -254,6 +242,18 @@ function el(tag = 'div', attributes = {}) {
             configurable: true,
             writable: false
         });
+    }
+
+    function setEvent() {
+        Object.keys(_event).forEach(type => {
+            element.removeEventListener(type, _event[type].listener, _event[type].options);
+            element.addEventListener(type, _event[type].listener, _event[type].options);
+        });
+    }
+
+    function setStyle({ style = _style, reset = false }) {
+        if (reset) element.style = '';
+        Object.assign(element.style, style);
     }
 }
 /**
