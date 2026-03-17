@@ -228,12 +228,13 @@ function el(tag = 'div', attributes = {}) {
     }
 
     function setReference(ref = _ref) {
-        if (_ref && typeof _ref == 'object')
+        if (ref && typeof ref == 'object') {
             Object.defineProperty(ref, 'element', {
                 value: element,
                 writable: false,
                 configurable: true
             });
+        }
     }
 
     function setAppendChildrenElement() {
