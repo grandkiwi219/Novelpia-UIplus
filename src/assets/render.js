@@ -43,7 +43,7 @@ function el(tag = 'div', attributes = {}) {
         delete attributes.custom;
     }
 
-    if (attributes.ref && setReference(attributes.ref)) {
+    if (setReference(attributes.ref)) {
         _ref = attributes.ref;
         delete attributes.ref;
     }
