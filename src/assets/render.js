@@ -2,7 +2,8 @@
  * @typedef {((this: HTMLElement, ev: Event) => any)} ElEventListener
  * @typedef {boolean | { capture?: boolean, once?: boolean, passive?: boolean, signal?: boolean | AddEventListenerOptions }} ElEventOptions
  * @typedef {(() => void)} ElReload
- * @typedef {{ value: any, detectableTarget: ElReload[] }} ElState
+ * @typedef {{ value: any, detectableTarget: ElReload[] }} ElState Proxy Object
+ * @typedef {(() => void)} ElRef Proxy Object
  */
 
 /**
@@ -13,7 +14,7 @@
  * @param {Object<string, string>} [attributes.style] CSS 요소
  * @param {Object<string, ElEventListener | { listener: ElEventListener, options: ElEventOptions }>} [attributes.on] addEventListener
  * @param {boolean} [attributes.custom] 사용자지정 특성 사용 여부
- * @param {Object} [attributes.ref] ref 로 오는 객체에게 element 를 부여
+ * @param {Object | ElRef} [attributes.ref] [ref 로 오는 객체 | 'el.ref 객체' 또는 '함수 객체'] 에게 [element | appendChildren] (를)을 부여
  * @param {ElState[]} [attributes.states] el.state 객체를 사용하여 값 변경시 자동 reload
  * @returns 
  */
@@ -42,8 +43,7 @@ function el(tag = 'div', attributes = {}) {
         delete attributes.custom;
     }
 
-    if (attributes.ref && typeof attributes.ref == 'object') {
-        setReference(attributes.ref);
+    if (attributes.ref && setReference(attributes.ref)) {
         _ref = attributes.ref;
         delete attributes.ref;
     }
@@ -88,6 +88,7 @@ function el(tag = 'div', attributes = {}) {
                 if (child?.element) {
                     child._setup({ xmlns: _xmlns });
                     element.appendChild(child.element);
+
                     _el_children.push(child.element);
                 }
                 else {
@@ -98,11 +99,13 @@ function el(tag = 'div', attributes = {}) {
                     else if (result?.element instanceof HTMLElement) {
                         result._setup({ xmlns: _xmlns });
                         element.appendChild(result.element);
+
                         _el_children.push(result.element);
+                        return _children.add(result.element);
                     }
                 }
             }
-            else if (typeof child == 'string') {
+            else if (typeof child == 'string' || typeof child == 'number') {
                 element.insertAdjacentHTML('beforeend', child);
             }
             else if (Array.isArray(child)) {
@@ -228,13 +231,25 @@ function el(tag = 'div', attributes = {}) {
     }
 
     function setReference(ref = _ref) {
-        if (ref && typeof ref == 'object') {
-            Object.defineProperty(ref, 'element', {
-                value: element,
-                writable: false,
-                configurable: true
-            });
+        if (ref) {
+            switch (typeof ref) {
+                case 'object': {
+                    Object.defineProperty(ref, 'element', {
+                        value: element,
+                        writable: false,
+                        configurable: true
+                    });
+                    break;
+                }
+
+                case 'function': {
+                    ref.appendChildren = appendChildren;
+                    break;
+                }
+            }
+            return true;
         }
+        return false;
     }
 
     function setAppendChildrenElement() {
@@ -258,27 +273,37 @@ function el(tag = 'div', attributes = {}) {
     }
 }
 /**
- * @type {ElState}
  * @param {*} value 
- * @returns 
+ * @returns {ElState}
  */
 el.state = function(value) {
-    const detectableTarget = [];
-
-    return new Proxy({ value, detectableTarget }, {
+    return new Proxy({ value, detectableTarget: [] }, {
         set(target, prop, value) {
-            switch (prop) {
-                case 'value': {
-                    target[prop] = value;
-
-                    detectableTarget.forEach(reload => reload());
- 
-                    return true;
-                }
-
-                default:
-                    return false;
+            if (prop == 'value') {
+                target[prop] = value;
+                target.detectableTarget.forEach(reload => reload());
+                return true;
             }
+
+            return false;
+        }
+    });
+}
+/**
+ * @returns {ElRef}
+ */
+el.ref = function() {
+    return new Proxy(() => {}, {
+        apply(target, thisArg, args) {
+            try {
+                return target.appendChildren(...args);
+            } catch (e) {
+                return target();
+            }
+        },
+
+        get(target, prop) {
+            return Reflect.get(target.appendChildren || target, prop);
         }
     });
 }
@@ -292,8 +317,8 @@ el.state = function(value) {
  * @param {InsertPosition | HTMLElement} where 
  * @param {HTMLElement | string} [element] 
  * @param {object} [options]
- * @param {boolean} [options.validate_class]
- * @param {string[]} [options.ignore_class]
+ * @param {boolean} [options.validate_class] class 검사 여부
+ * @param {string[]} [options.ignore_class] class 검사시 무시할 class들
  */
 HTMLElement.prototype.esrender = function(where, element, { validate_class = true, ignore_class = [] } = {}) {
     if (where instanceof HTMLElement) {
