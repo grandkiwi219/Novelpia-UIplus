@@ -1,5 +1,5 @@
 /**
- * @typedef {'MathML' | 'HTML' | 'SVG'} ElXmlNS
+ * @typedef {'MathML' | 'HTML' | 'SVG' | URL} ElXmlNS
  * @typedef {((this: HTMLElement, existing: CSSStyleDeclaration) => string | CSSStyleDeclaration)} ElStyle
  * @typedef {((this: HTMLElement, ev: Event) => any)} ElEventListener
  * @typedef {boolean | { capture?: boolean, once?: boolean, passive?: boolean, signal?: boolean | AddEventListenerOptions }} ElEventOptions
@@ -10,8 +10,16 @@
  * @typedef {{ value: any, refs: Set<ElReload> }} ElState Proxy Object
  * @typedef {(() => void)} ElRef Proxy Object
  */
+/**
+ * @typedef {Object} ElAttributes 특성
+ * @prop {ElXmlNS | (() => ElXmlNS)} [xmlns]
+ * @prop {string | CSSStyleDeclaration | ElStyle} [style] CSS 요소
+ * @prop {Object<string, ElEventListener | [ElDynamicEventListenerFunction, ElEventOptions, ElDynamicEventListenerBoolean] | [ElEventListener, ElEventOptions, ElDynamicEventListenerFunction] | ElEventObject>} [on] addEventListener
+ * @prop {Object | ElRef} [ref] [ref 로 오는 객체 | 'el.ref 객체' 또는 '함수 객체'] 에게 [element | appendChildren] (를)을 부여
+ * @prop {ElState[]} [states] el.state 객체를 사용하여 값 변경시 자동 reload
+ */
 
-// todo: ref 수정, state 수정, shadow 열기 구현?
+// todo: ref 수정, shadow 열기 구현?
 // 요소에 부여할 특성과 요소에 붙일 객체에 대해서 분류?
 
 // 이벤트 => options 
@@ -19,23 +27,17 @@
 /**
  * 간편 요소 생성 및 자식 추가 함수
  * @param {string | HTMLElement} tag 생성할 태그
- * @param {Object} [attributes] 특성
- * @param {ElXmlNS | (() => ElXmlNS)} [attributes.xmlns] 
- * @param {string | CSSStyleDeclaration | ElStyle} [attributes.style] CSS 요소
- * @param {Object<string, ElEventListener | [ElDynamicEventListenerFunction, ElEventOptions, ElDynamicEventListenerBoolean] | [ElEventListener, ElEventOptions, ElDynamicEventListenerFunction] | ElEventObject>} [attributes.on] addEventListener
- * @param {Object | ElRef} [attributes.ref] [ref 로 오는 객체 | 'el.ref 객체' 또는 '함수 객체'] 에게 [element | appendChildren] (를)을 부여
- * @param {ElState[]} [attributes.states] el.state 객체를 사용하여 값 변경시 자동 reload
+ * @param {ElAttributes} [attributes] 특성
  * @returns {typeof appendChildren}
  */
 function el(tag, attributes = {}) {
-    let _dynamicEl = typeof tag == 'function';
+    let _dynamicEl = false;
 
     let element = tag instanceof HTMLElement
         ? tag
-        : _dynamicEl
-            ? document.createElement(tag() ?? 'div')
-            : document.createElement(tag ?? 'div');
-    setIsUsed();
+        : typeof tag == 'function'
+            ? (_dynamicEl = true, setTag(tag() ?? 'div'))
+            : setTag(tag ?? 'div');
     const init_style = element.style;
 
     const $attributes = {
@@ -46,21 +48,15 @@ function el(tag, attributes = {}) {
     let _ref = null;
     /** @type {ElState[]} */
     let _states = [];
-    /**
-     * @type {Object<string, ElEventObject>} 
-     */
+    /** @type {Object<string, ElEventObject>} */
     let _event = {};
     let _style = null;
 
     let _dynamicAttributes = {};
 
-    /**
-     * @type {(typeof appendChildren | { element: Node } | (typeof appendChildren | { element: Node } | undefined)[] | undefined)[]}
-     */
+    /** @type {(typeof appendChildren | { element: Node, isUsed: boolean } | (typeof appendChildren | { element: Node, isUsed: boolean } | undefined)[] | undefined)[]} */
     let _children = [];
-    /**
-     * @type {{ index: number, generate: () => {} }[]}
-     */
+    /** @type {{ index: number, generate: () => void }[]} */
     let _dynamicChildren = [];
 
     if (!_xmlns && attributes.xmlns) {
@@ -139,12 +135,13 @@ function el(tag, attributes = {}) {
         children.forEach(child => {
             if (typeof child === 'function') {
                 if (child.element) {
-                    if (child.element?.isUsed)
+                    if (child.isUsed)
                         element.appendChild(child.element);
 
                     _children.push(child);
 
-                    setParentReappend(child);
+                    setParent(child);
+                    setChildIndex(child);
                 }
                 else {
                     executeElChild(child);
@@ -158,62 +155,66 @@ function el(tag, attributes = {}) {
             }
             else if (child instanceof Node) {
                 element.appendChild(child);
-                setIsUsed(true, child);
-                _children.push({ element: child });
+                const data = {
+                    element: child
+                }
+                setIsUsed(true, data);
+                _children.push(data);
             }
         });
 
         return appendChildren;
     }
-    function executeElChild(childEl, get_data = false) {
-        const result = childEl();
-        if (typeof result == 'string' || typeof result == 'number') {
-            const transformation = el.toNodes(result).map(distributeChildren);
+    function executeElChild(component, get_data = false) {
+        const childEl = component();
+        const index = _children.length;
+        if (typeof childEl == 'string' || typeof childEl == 'number') {
+            const transformation = el.toNodes(childEl).map(distributeChildren);
 
             if (get_data) {
                 return transformation;
             }
             else {
-                _dynamicChildren.push({ index: _children.length, generate: childEl });
                 _children.push(transformation);
             }
         }
-        else if (result.element) {
-            if (result.element?.isUsed) {
-                element.appendChild(result.element);
+        else if (childEl.element) {
+            if (childEl.isUsed) {
+                element.appendChild(childEl.element);
             }
 
-            setParentReappend(result);
+            setParent(childEl);
+            setChildIndex(childEl);
 
             if (get_data) {
-                return result;
+                return childEl;
             }
             else {
-                _dynamicChildren.push({ index: _children.length, generate: childEl });
-                _children.push(result);
+                _children.push(childEl);
             }
         }
-        else if (Array.isArray(result)) {
-            const sub_children = result.map(distributeChildren);
+        else if (Array.isArray(childEl)) {
+            const sub_children = childEl.map(distributeChildren);
 
             if (get_data) {
                 return sub_children;
             }
             else {
-                _dynamicChildren.push({ index: _children.length, generate: childEl });
                 _children.push(sub_children);
             }
         }
-        else if (result instanceof Node) {
-            element.appendChild(result);
-            setIsUsed(true, result, false);
+        else if (childEl instanceof Node) {
+            element.appendChild(childEl);
+            const data = {
+                element: childEl
+            }
+            setIsUsed(true, data, false);
             
             if (get_data) {
-                return result;
+                return data;
             }
             else {
-                _dynamicChildren.push({ index: _children.length, generate: childEl });
-                _children.push({ element: result });
+                _children.push(data);
             }
         }
         else {
@@ -221,39 +222,54 @@ function el(tag, attributes = {}) {
                 return undefined;
             }
             else {
-                _dynamicChildren.push({ index: _children.length, generate: childEl });
                 _children.push(undefined);
             }
         }
+
+        _dynamicChildren.push({ index, generate: component });
     }
-    function distributeChildren(child) {
-        if (typeof child == 'string' || typeof child == 'number') {
-            return el.toNodes(child).map(distributeChildren);
+    function distributeChildren(childEl) {
+        if (typeof childEl == 'string' || typeof childEl == 'number') {
+            return el.toNodes(childEl).map(distributeChildren);
         }
-        else if (child.element) {
-            if (child.element?.isUsed) {
-                element.appendChild(child.element);
+        else if (childEl.element) {
+            if (childEl.isUsed) {
+                element.appendChild(childEl.element);
             }
 
-            setParentReappend(child);
+            setParent(childEl);
+            setChildIndex(childEl);
 
-            return child;
+            return childEl;
         }
-        else if (Array.isArray(child)) {
-            return child.map(distributeChildren);
+        else if (Array.isArray(childEl)) {
+            return childEl.map(distributeChildren);
         }
-        else if (child instanceof Node) {
-            element.appendChild(child);
-            setIsUsed(true, child, false);
-            return { element: child };
+        else if (childEl instanceof Node) {
+            element.appendChild(childEl);
+            const data = {
+                element: childEl
+            }
+            setIsUsed(true, data, false);
+            return data;
         }
         else return undefined;
     }
 
     Object.defineProperty(appendChildren, 'element', {
-        value: element,
-        configurable: true,
-        writable: false
+        get() {
+            return element;
+        }
+    });
+    Object.defineProperty(appendChildren, '_children', {
+        get() {
+            return _children;
+        }
+    });
+    Object.defineProperty(appendChildren, '_event', {
+        get() {
+            return _event;
+        }
     });
     /**
      * @param {keyof HTMLElementEventMap | (() => ElEventObject)} type 
@@ -262,7 +278,7 @@ function el(tag, attributes = {}) {
      * @returns 
      */
     appendChildren.on = function(type, listener, options) {
-        if (_event[type]) {
+        if (_event[type]) { 
             element.removeEventListener(type, _event[type].listener, _event[type].options);
         }
 
@@ -275,7 +291,7 @@ function el(tag, attributes = {}) {
         return appendChildren;
     }
     /**
-     * @param {keyof HTMLElementEventMap} type
+     * @param {keyof HTMLElementEventMap} type 
      * @returns 
      */
     appendChildren.off = function(type) {
@@ -297,53 +313,112 @@ function el(tag, attributes = {}) {
         target.esrender(where || element, element, { validate_class, ignore_class });
         return appendChildren;
     }
-    /**
-     * @type {ElReload}
-     */
+    /** @type {ElReload} */
     appendChildren.reload = reload;
     appendChildren.clear = function() {
         if (_states) _states.forEach(state => state.refs.delete(_refFn));
         if (_ref) _ref.ref = () => {};
+        element = null;
+        _children = null;
+        _event = null;
     }
-    
+    /** 
+     * isEqualNode 검사 통과 시 element 및 children, event 교체 작업
+     * @param {typeof appendChildren} target
+     */
+    appendChildren.transferWith = function(target) {
+        element = target.element;
+        _children = target._children;
+        const data = target._event;
+        Object.keys(_event).forEach(event => {
+            let total = 0;
+
+            const event_ref_match = data[event].listener === _event[event].listener;
+            const event_fn_match = data[event].listener 
+                && _event[event].listener 
+                && data[event].listener.toString() == _event[event].listener.toString();
+            // if event_ref_match => stay           0
+            // else if event_fn_match => ref change 1
+            // else => event change                 2
+
+            if (event_ref_match)        total |= 0; // stay
+            else if (event_fn_match)    total |= 1; // ref change
+            else {                                  // event change
+                target.off(event);
+                element.addEventListener(event, _event[event].listener, _event[event].options);
+                return;
+            }
+
+            const data_options = data[event].options;
+            const event_options = _event[event].options;
+            const options_type_match = typeof data_options == typeof event_options;
+
+            if (options_type_match) switch (data_options) {
+                case 'undefined': break;
+
+                case 'boolean': {
+                    if (data_options != event_options)
+                        return total2();
+                    else break;
+                }
+
+                case 'object': {
+                    if (data_options.once != event_options.once)        return total2();
+                    if (data_options.capture != event_options.capture)  return total2();
+                    if (data_options.passive != event_options.passive)  return total2();
+                    if (data_options.signal != event_options.signal)    return total2();
+                    break;
+                }
+
+                default: return total2();
+            }
+            else if (data_options != event_options) // not case undefined, null
+                return total2();
+
+            if (total == 1) {
+                _event[event].listener = data[event].listener;
+            }
+
+            return;
+
+            function total2() {
+                target.off(event);
+                element.addEventListener(event, _event[event].listener, _event[event].options);
+            }
+        });
+    }
+    /** @type {boolean | undefined} tag 가 undefined, null 과 같은 값을 지닐 경우 false 를 출력 */
+    appendChildren.isUsed = undefined;
+    setIsUsed();
+    /** @type {typeof appendChildren | undefined} 최상위 el 객체면 존재하지 않으며 주로 자식 el 객체에게서만 주어지는 부모의 appendChildren 객체 */
+    appendChildren.parent = undefined;
+    /** @type {number | undefined} 최상위 el 객체면 존재하지 않으며 주로 자식 el 객체에게서만 주어지는 부모 el 객체가 부여하는 children index */
+    appendChildren.index = undefined;
+
     function reload() {
 
         if (_dynamicEl) {
             const tag_result = tag();
             if (tag_result) {
                 if (tag_result !== element.tagName) {
-                    
+
                     if (_xmlns) {
                         setXmlns(typeof _xmlns == 'function' ? _xmlns() : _xmlns);
                     }
                     else {
-                        const reappend_control = appendChildren.parentReappend;
-                        const newEl = document.createElement(tag_result);
+                        const newEl = setTag(tag_result);
                         element.replaceWith(document.createElement(tag_result));
                         element = newEl;
-                        Object.defineProperties(appendChildren, {
-                            element: {
-                                value: element,
-                                configurable: true,
-                                writable: false
-                            },
-                            parentReappend: {
-                                value: reappend_control,
-                                configurable: true,
-                                writable: false
-                            }
-                        });
-                        setReference();
                     }
                     reappend();
                 }
 
-                if (!element.isUsed) {
+                if (!appendChildren.isUsed) {
                     setIsUsed();
-                    appendChildren.parentReappend && appendChildren.parentReappend();
+                    appendChildren.parent?.reappend && appendChildren.parent.reappend(appendChildren.index);
                 }
             }
-            else if (element.isUsed) {
+            else if (appendChildren.isUsed) {
                 setIsUsed();
                 element.remove();
             }
@@ -353,6 +428,7 @@ function el(tag, attributes = {}) {
             setXmlns(_xmlns());
         }
 
+        // todo: el 객체 내부 데이터 교체 진행 및 reappend 진행
         if (_dynamicChildren.length) {
             let use_reappend = -1;
 
@@ -366,10 +442,10 @@ function el(tag, attributes = {}) {
                 let prev_el = undefined;
 
                 new_data.forEach(child => {
-                    if (child && child.element.isUsed) {
+                    if (child && child.isUsed) {
                         const old_child = old_data.next();
 
-                        if (!old_child.done && old_child.value && old_child.value.element.isUsed) {
+                        if (!old_child.done && old_child.value && old_child.value.isUsed) {
                             old_child.value.element.replaceWith(child.element);
                             prev_el = child.element;
                             if (old_child.value.clear) old_child.value.clear();
@@ -407,7 +483,7 @@ function el(tag, attributes = {}) {
                 return;
             }
 
-            if (child && child.element.isUsed != child.element.isConnected) {
+            if (child && child.isUsed != child.element.isConnected) {
                 if (child.element.isConnected) {
                     child.element.remove();
                 }
@@ -423,7 +499,7 @@ function el(tag, attributes = {}) {
 
     return appendChildren;
 
-    function setIsUsed(value, target = element, configurable = true) {
+    function setIsUsed(value, target = appendChildren, configurable = true) {
         Object.defineProperty(target, 'isUsed', {
             configurable: configurable,
             writable: false,
@@ -431,12 +507,25 @@ function el(tag, attributes = {}) {
         });
     }
 
-    function setParentReappend(child) {
-        Object.defineProperty(child, 'parentReappend', {
-            value: reappend,
+    function setChildIndex(target, index) {
+        Object.defineProperty(target, 'index', {
             configurable: true,
-            writable: false
+            writable: false,
+            value: index
         });
+    }
+
+    function setParent(child) {
+        Object.defineProperty(child, 'parent', {
+            get() {
+                return appendChildren;
+            },
+            configurable: true
+        });
+    }
+
+    function setTag(tag) {
+        return document.createElement(tag);
     }
 
     function setXmlns(xmlns = _xmlns) {
@@ -459,7 +548,6 @@ function el(tag, attributes = {}) {
                 break;
         }
         if (element.xmlns !== namespace) {
-            const reappend_control = appendChildren.parentReappend;
             let newEl = undefined;
             if (namespace) {
                 newEl = document.createElementNS(namespace, _dynamicEl ? tag() : tag);
@@ -469,19 +557,6 @@ function el(tag, attributes = {}) {
             }
             element.replaceWith(newEl);
             element = newEl;
-            Object.defineProperties(appendChildren, {
-                element: {
-                    value: element,
-                    configurable: true,
-                    writable: false
-                },
-                parentReappend: {
-                    value: reappend_control,
-                    configurable: true,
-                    writable: false
-                }
-            });
-            setReference();
             _xmlns = xmlns;
             return true;
         }
@@ -496,8 +571,9 @@ function el(tag, attributes = {}) {
             switch (typeof ref) {
                 case 'object': {
                     Object.defineProperty(ref, 'element', {
-                        value: element,
-                        writable: false,
+                        get() {
+                            return element;   
+                        },
                         configurable: true
                     });
                     break;
