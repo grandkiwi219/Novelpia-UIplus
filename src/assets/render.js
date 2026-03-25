@@ -19,10 +19,7 @@
  * @prop {ElState[]} [states] el.state 객체를 사용하여 값 변경시 자동 reload
  */
 
-// todo: ref 수정, shadow 열기 구현?
-// 요소에 부여할 특성과 요소에 붙일 객체에 대해서 분류?
-
-// 이벤트 => options 
+// todo: ref, states, on->options의 동적 지원, shadow 열기 지원
 
 /**
  * 간편 요소 생성 및 자식 추가 함수
@@ -36,21 +33,29 @@ function el(tag, attributes = {}) {
     let element = tag instanceof HTMLElement
         ? tag
         : typeof tag == 'function'
-            ? (_dynamicEl = true, setTag(tag() ?? 'div'))
+            ? (_dynamicEl = true, tmp = tag(), (tag instanceof HTMLElement ? tmp : setTag(tmp ?? 'div')))
             : setTag(tag ?? 'div');
     const init_style = element.style;
+
+    const {
+        xmlns,
+        ref,
+        states,
+        on,
+        style,
+        ..._attributes
+    } = attributes;
 
     const $attributes = {
         className: 'class',
     }
-    let _xmlns = element.xmlns ?? null;
+    let _xmlns = element.xmlns ?? xmlns;
     let _refFn = null;
-    let _ref = null;
     /** @type {ElState[]} */
     let _states = [];
     /** @type {Object<string, ElEventObject>} */
     let _event = {};
-    let _style = null;
+    let _style = {};
 
     let _dynamicAttributes = {};
 
@@ -59,30 +64,24 @@ function el(tag, attributes = {}) {
     /** @type {{ index: number, generate: () => void }[]} */
     let _dynamicChildren = [];
 
-    if (!_xmlns && attributes.xmlns) {
-        setXmlns(typeof attributes.xmlns == 'function' ? attributes.xmlns() : attributes.xmlns);
-        delete attributes.xmlns;
+    if (!_xmlns) {
+        setXmlns(typeof _xmlns == 'function' ? xmlns() : _xmlns);
     }
 
-    if (setReference(attributes.ref)) {
-        _ref = attributes.ref;
-        delete attributes.ref;
-    }
+    setReference(ref);
 
-    if (Array.isArray(attributes.states)) {
-        if (!_refFn)
-            _refFn = () => appendChildren;
+    if (Array.isArray(states)) {
+        setRefFn();
 
-        attributes.states.forEach(state => {
+        states.forEach(state => {
             state.refs.add(_refFn);
         });
-        _states = attributes.states;
-        delete attributes.states;
+        _states = states;
     }
 
-    if (attributes.on && typeof attributes.on == 'object') {
-        Object.keys(attributes.on).forEach(key => {
-            const eventObj = attributes.on[key];
+    if (on && typeof on == 'object') {
+        Object.keys(on).forEach(key => {
+            const eventObj = on[key];
             const form = {
                 listener: undefined,
                 options: undefined,
@@ -118,15 +117,13 @@ function el(tag, attributes = {}) {
             _event[key] = form;
         });
         setEvent();
-        delete attributes.on;
     }
 
-    if (setStyle(attributes.style)) {
-        _style = attributes.style;
-        delete attributes.style;
+    if (setStyle(style)) {
+        _style = style;
     }
 
-    setAttributes();
+    setAttributes(true);
 
     /**
      * @param  {...HTMLElement | string} children 
@@ -165,6 +162,7 @@ function el(tag, attributes = {}) {
 
         return appendChildren;
     }
+    /** @param {() => any} component  */
     function executeElChild(component, get_data = false) {
         const childEl = component();
         const index = _children.length;
@@ -317,7 +315,7 @@ function el(tag, attributes = {}) {
     appendChildren.reload = reload;
     appendChildren.clear = function() {
         if (_states) _states.forEach(state => state.refs.delete(_refFn));
-        if (_ref) _ref.ref = () => {};
+        if (ref) ref.ref = () => {};
         element = null;
         _children = null;
         _event = null;
@@ -397,11 +395,26 @@ function el(tag, attributes = {}) {
 
     function reload() {
 
+        reloadDynamicElement();
+        reloadDynamicChildren();
+
+        if (typeof _style == 'function') setStyle();
+        setDynamicAttributes();
+        setEvent(true);
+    }
+
+    function reloadDynamicElement() {
         if (_dynamicEl) {
             const tag_result = tag();
             if (tag_result) {
-                if (tag_result !== element.tagName) {
+                replaceEl: if (tag_result !== element.tagName) {
 
+                    if (tag_result instanceof HTMLElement) {
+                        if (tag_result.isSameNode(element))
+                            break replaceEl;
+                        element.replaceWith(tag_result);
+                        element = tag_result;
+                    }
                     if (_xmlns) {
                         setXmlns(typeof _xmlns == 'function' ? _xmlns() : _xmlns);
                     }
@@ -410,6 +423,7 @@ function el(tag, attributes = {}) {
                         element.replaceWith(document.createElement(tag_result));
                         element = newEl;
                     }
+                    setAttributes();
                     reappend();
                 }
 
@@ -418,16 +432,18 @@ function el(tag, attributes = {}) {
                     appendChildren.parent?.reappend && appendChildren.parent.reappend(appendChildren.index);
                 }
             }
+            // if tag_result is undefined, null and NaN
             else if (appendChildren.isUsed) {
                 setIsUsed();
                 element.remove();
             }
-            else return;
         }
         else if (typeof _xmlns == 'function') {
             setXmlns(_xmlns());
         }
+    }
 
+    function reloadDynamicChildren() {
         // todo: el 객체 내부 데이터 교체 진행 및 reappend 진행
         if (_dynamicChildren.length) {
             let use_reappend = -1;
@@ -463,14 +479,10 @@ function el(tag, attributes = {}) {
                     child && child.element.remove();
                     child.clear && child.clear();
                 });
-
-                if (use_reappend > -1) reappend(use_reappend);
             });
-        }
 
-        if (typeof _style == 'function') setStyle();
-        setDynamicAttributes();
-        setEvent(true);
+            if (use_reappend > -1) reappend(use_reappend);
+        }
     }
 
     function reappend(until) {
@@ -483,17 +495,25 @@ function el(tag, attributes = {}) {
                 return;
             }
 
-            if (child && child.isUsed != child.element.isConnected) {
-                if (child.element.isConnected) {
-                    child.element.remove();
+            if (child) {
+                if (child.isUsed != child.element.isConnected) {
+                    if (child.element.isConnected) {
+                        child.element.remove();
+                    }
+                    else {
+                        if (prev_el)
+                            prev_el.insertAdjacentElement('afterend', child.element);
+                        else 
+                            element.appendChild(child.element);
+                        prev_el = child;
+                    }
                 }
-                else if (prev_el)
-                    prev_el.insertAdjacentElement('afterend', child.element);
-                else 
-                    element.appendChild(child.element);
+                else if (child.element.isConnected) {
+                    if (child.element.previousSibling !== prev_el && prev_el)
+                        prev_el.insertAdjacentElement('afterend', child.element);
+                    prev_el = child;
+                }
             }
-
-            if (child?.element.isConnected) prev_el = child;
         });
     }
 
@@ -522,6 +542,11 @@ function el(tag, attributes = {}) {
             },
             configurable: true
         });
+    }
+
+    function setRefFn() {
+        if (!_refFn)
+            _refFn = () => appendChildren;
     }
 
     function setTag(tag) {
@@ -557,35 +582,22 @@ function el(tag, attributes = {}) {
             }
             element.replaceWith(newEl);
             element = newEl;
-            _xmlns = xmlns;
             return true;
         }
         return false;
     }
 
-    function setReference(ref = _ref) {
+    function setReference(ref) {
         if (ref) {
-            if (!_refFn)
-                _refFn = () => appendChildren;
+            setRefFn();
 
-            switch (typeof ref) {
-                case 'object': {
-                    Object.defineProperty(ref, 'element', {
-                        get() {
-                            return element;   
-                        },
-                        configurable: true
-                    });
-                    break;
-                }
+            Object.defineProperty(ref, 'element', {
+                get() {
+                    return element;   
+                },
+                configurable: true
+            });
 
-                case 'function': {
-                    ref.ref = _refFn;
-                    break;
-                }
-
-                default: return false;
-            }
             return true;
         }
         return false;
@@ -621,8 +633,23 @@ function el(tag, attributes = {}) {
                 }
 
                 case 'object': {
-                    element.style = '';
-                    Object.assign(element.style, style);
+                    for (const key in _style) {
+                        const new_style = style[key] ?? '';
+                        if (_style[key] !== new_style) {
+                            _style[key] = new_style;
+                            element.style[key] = new_style;
+                        }
+                    }
+                    for (const key in style) {
+                        if (key in _style) {
+                            console.log(key)
+                            continue;
+                        }
+
+                        const new_style = style[key] ?? '';
+                        _style[key] = new_style;
+                        element.style[key] = new_style;
+                    }
                     break;
                 }
                 
@@ -630,20 +657,18 @@ function el(tag, attributes = {}) {
                     setStyle(style.call(element, init_style));
                     break;
                 }
-
-                default: return false;
             }
             return true;
         }
         return false;
     }
 
-    function setAttributes(type_check = true) {
-        const attributes_keys = Object.keys(attributes);
+    function setAttributes(init_check = false) {
+        const attributes_keys = Object.keys(_attributes);
 
-        if (type_check) {
+        if (init_check) {
             attributes_keys.forEach(key => {
-                const value = attributes[key];
+                const value = _attributes[key];
                 let filtered_value = undefined; 
                 
                 if (typeof value == 'function') {
@@ -666,7 +691,7 @@ function el(tag, attributes = {}) {
         }
 
         attributes_keys.forEach(key => {
-            const value = attributes[key];
+            const value = _attributes[key];
             element.setAttribute(
                 $attributes[key] || key,
                 value
@@ -724,7 +749,7 @@ el.state = function(value) {
  */
 el.ref = function() {
     const obj = () => {}
-    obj.ref = () => {};
+    obj.ref = () => {}
 
     return new Proxy(obj, {
         apply(target, _, args) {
@@ -757,6 +782,24 @@ function* traverse(array) {
             yield item;
         }
     }
+}
+
+function* reverseTraverse(array) {
+    for (let i = array.length - 1; i >= 0; i--) {
+        const item = array[i];
+        if (Array.isArray(item)) {
+            yield* reverseTraverse(item);
+        } else {
+            yield item;
+        }
+    }
+}
+
+function unboxFunction(fn) {
+    if (typeof fn == 'function') {
+        return unboxFunction(fn());
+    }
+    return fn;
 }
 
 
