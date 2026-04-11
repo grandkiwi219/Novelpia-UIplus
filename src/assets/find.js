@@ -48,53 +48,56 @@ function findTarget(targetFinder, {
         return Promise.resolve(target);
     }
 
-    return new Promise(resolve => {
-        const stack = new Error().stack;
+    const stack = new Error().stack;
 
-        registerFindTargetStore({
-            targetFinder,
-            resolve,
-            stack: stack.slice(stack.indexOf('\n') + 1),
-            cycle: Math.ceil(duration / findTarget_storage.STD_TIMEOUT_TIME)
-        });
-        
-        if (findTarget_storage.timeout) return;
+    let resolver = null;
+    const return_value = new Promise(resolve => resolver = resolve);
 
-        const timeout = () => {
-            findTarget_storage.store
-            .get(findTarget_storage.key++)
-            .forEach(obj => {
-                const target = obj.targetFinder();
-
-                if (!target) {
-                    if (obj.cycle > 1) {
-                        obj.cycle--;
-                        registerFindTargetStore(obj);
-                    }
-                    else {
-                        npup.devGroup('타겟을 찾는 데에 시간이 오래 걸려 함수 실행을 취소했습니다.', obj.stack);
-                        obj.resolve(undefined);
-                    }
-                    return;
-                }
-
-                obj.resolve(target);
-            });
-
-            findTarget_storage.store.delete(findTarget_storage.key - 1);
-
-            if (findTarget_storage.store.get(findTarget_storage.key)) {
-                findTarget_storage.timeout = setTimeout(timeout, findTarget_storage.STD_TIMEOUT_TIME);
-            }
-            else {
-                findTarget_storage.timeout = null;
-                findTarget_storage.store.delete(findTarget_storage.key);
-                findTarget_storage.key = 0;
-            }
-        }
-
-        findTarget_storage.timeout = setTimeout(timeout, findTarget_storage.STD_TIMEOUT_TIME);
+    registerFindTargetStore({
+        targetFinder,
+        resolve: resolver,
+        stack: stack.slice(stack.indexOf('\n') + 1),
+        cycle: Math.ceil(duration / findTarget_storage.STD_TIMEOUT_TIME)
     });
+    
+    if (findTarget_storage.timeout) return return_value;
+
+    const timeout = () => {
+        findTarget_storage.store
+        .get(findTarget_storage.key++)
+        .forEach(obj => {
+            const target = obj.targetFinder();
+
+            if (!target) {
+                if (obj.cycle > 1) {
+                    obj.cycle--;
+                    registerFindTargetStore(obj);
+                }
+                else {
+                    npup.devGroup('타겟을 찾는 데에 시간이 오래 걸려 함수 실행을 취소했습니다.', obj.stack);
+                    obj.resolve(undefined);
+                }
+                return;
+            }
+
+            obj.resolve(target);
+        });
+
+        findTarget_storage.store.delete(findTarget_storage.key - 1);
+
+        if (findTarget_storage.store.get(findTarget_storage.key)) {
+            findTarget_storage.timeout = setTimeout(timeout, findTarget_storage.STD_TIMEOUT_TIME);
+        }
+        else {
+            findTarget_storage.timeout = null;
+            findTarget_storage.store.delete(findTarget_storage.key);
+            findTarget_storage.key = 0;
+        }
+    }
+
+    findTarget_storage.timeout = setTimeout(timeout, findTarget_storage.STD_TIMEOUT_TIME);
+
+    return return_value;
 }
 
 
