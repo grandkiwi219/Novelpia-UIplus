@@ -195,7 +195,7 @@ function el(tag, attributes = {}) {
             else
                 _children.push(transformation);
         }
-        else if (childEl.element) {
+        else if (childEl?.element) {
             setParent(childEl);
             setChildIndex(childEl);
 
@@ -242,7 +242,7 @@ function el(tag, attributes = {}) {
                 return el.toNodes(childEl)
                     .map(distributeChildren({ get_data, fragment }));
             }
-            else if (childEl.element) {
+            else if (childEl?.element) {
                 if (!get_data && childEl.isUsed) {
                     (fragment || element).appendChild(childEl.element);
                 }
@@ -489,10 +489,10 @@ function el(tag, attributes = {}) {
                 const fragment = document.createDocumentFragment();
 
                 for (const child of new_data) {
-                    if (child && child.isUsed) {
+                    if (child?.isUsed) {
                         const old_child = old_data.next();
 
-                        if (!old_child.done && old_child.value && old_child.value.element.isConnected) {
+                        if (!old_child.done && old_child.value?.element?.isConnected) {
                             // if (child.transferWith && old_child.value.transferWith && child.element.isEqualNode(old_child.value.element)) {
                             //     child.transferWith(old_child.value);
                             //     old_child.value.clear(true);
@@ -505,7 +505,7 @@ function el(tag, attributes = {}) {
                         else if (prev_el) {
                             element.insertBefore(child.element, prev_el);
 
-                            if (!old_child.done && old_child.value && old_child.value.element.isConnected)
+                            if (!old_child.done && old_child.value?.element?.isConnected)
                                 if (old_child.value.clear)
                                     old_child.value.clear();
                                 else
@@ -531,7 +531,7 @@ function el(tag, attributes = {}) {
                 let old_child_end_point = undefined;
 
                 for (const child of old_data) {
-                    if (child.element.isConnected) {
+                    if (child?.element?.isConnected) {
                         old_child_end_point = child.element;
                         break;
                     }
