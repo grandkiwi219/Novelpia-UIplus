@@ -472,13 +472,17 @@ function el(tag, attributes = {}) {
             for (let i = _dynamicChildren.length - 1; i >= 0; i--) {
                 const v = _dynamicChildren[i];
 
-                const old_children_is_arr = Array.isArray(_children[v.index]);
-                const old_data = old_children_is_arr ? reverseTraverse(_children[v.index]) : reverseTraverse([_children[v.index]]);
-                const forward_old_data = old_children_is_arr ? traverse(_children[v.index]) : traverse([_children[v.index]]);
+                const handle_old_children = Array.isArray(_children[v.index])
+                    ? _children[v.index]
+                    : [_children[v.index]];
+                const old_data = reverseTraverse(handle_old_children);
+                const forward_old_data = traverse(handle_old_children);
 
                 _children[v.index] = executeElChild(v.generate, { get_data: true });
 
-                const new_data = Array.isArray(_children[v.index]) ? reverseTraverse(_children[v.index]) : reverseTraverse([_children[v.index]]);
+                const new_data = Array.isArray(_children[v.index])
+                    ? reverseTraverse(_children[v.index])
+                    : reverseTraverse([_children[v.index]]);
 
                 let prev_el = undefined;
 
