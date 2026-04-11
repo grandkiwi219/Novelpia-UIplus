@@ -334,9 +334,9 @@ function el(tag, attributes = {}) {
         element = null;
         appendChildren.isExist = false;
         if (!migrated)
-            traverse(_children).forEach(child => {
+            for (const child of traverse(Array.isArray(_children) ? _children : [_children])) {
                 if (child?.isExist) child.clear();
-            });
+            }
         _children = null;
         _event = null;
     }
@@ -472,7 +472,9 @@ function el(tag, attributes = {}) {
             for (let i = _dynamicChildren.length - 1; i >= 0; i--) {
                 const v = _dynamicChildren[i];
 
-                const old_data = Array.isArray(_children[v.index]) ? reverseTraverse(_children[v.index]) : reverseTraverse([_children[v.index]]);
+                const old_children_is_arr = Array.isArray(_children[v.index]);
+                const old_data = old_children_is_arr ? reverseTraverse(_children[v.index]) : reverseTraverse([_children[v.index]]);
+                const forward_old_data = old_children_is_arr ? traverse(_children[v.index]) : traverse([_children[v.index]]);
 
                 _children[v.index] = executeElChild(v.generate, { get_data: true });
 
@@ -522,10 +524,44 @@ function el(tag, attributes = {}) {
 
                 if (!prev_el && use_reappend == -1) use_reappend = v.index;
 
+                let old_child_end_point = undefined;
+
                 for (const child of old_data) {
-                    child && child.element.remove();
-                    child.clear && child.clear();
+                    if (child.element.isConnected) {
+                        old_child_end_point = child.element;
+                        break;
+                    }
                 }
+                
+                if (old_child_end_point) {
+                    let bypass = false;
+                    for (const child of forward_old_data) {
+                        if (!child) continue;
+
+                        if (bypass) {
+                            if (child && child.clear) child.clear();
+                            if (old_child_end_point === child.element) break;
+                        }
+                        else if (child?.element?.isConnected) {
+                            if (old_child_end_point === child.element) {
+                                if (child) 
+                                    child.element.remove(),
+                                    child.clear && child.clear();
+                            }
+                            else {
+                                const range = document.createRange();
+                                range.setStartBefore(child.element);
+                                range.setEndAfter(old_child_end_point);
+                                range.deleteContents();
+    
+                                child.clear && child.clear();
+                            }
+    
+                            bypass = true;
+                        }
+                    }
+                }
+
             }
 
             if (use_reappend > -1) reappend(use_reappend);
