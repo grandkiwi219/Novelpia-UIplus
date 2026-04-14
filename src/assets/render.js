@@ -527,7 +527,7 @@ function el(tag, attributes = {}) {
                     }
                 }
 
-                if (!prev_el && use_reappend == -1) use_reappend = v.index;
+                if (!prev_el) use_reappend = v.index;
 
                 let old_child_end_point = undefined;
 
@@ -576,7 +576,7 @@ function el(tag, attributes = {}) {
     function reappend(until) {
         let prev_el = undefined;
 
-        (typeof until == 'number' ? _children.slice(0, until + 1) : _children).toReversed()
+        (typeof until == 'number' ? _children.slice(until, _children.length) : _children).toReversed()
         .forEach(function findLastChild(child) {
             if (Array.isArray(child)) {
                 child.toReversed().forEach(findLastChild);
