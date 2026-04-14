@@ -340,6 +340,7 @@ function el(tag, attributes = {}) {
         _children = null;
         _event = null;
     }
+    // todo: 자식의 이벤트마저 교체 변경하는 로직 필요
     /** 
      * isEqualNode 검사 통과 시 element 및 children, event 교체 작업
      * @param {typeof appendChildren} target
