@@ -1,5 +1,7 @@
 /**
- * @typedef {'MathML' | 'HTML' | 'SVG' | URL} ElXmlNS
+ * 
+ * @typedef {string & {}} ElXmlNamespaceURI more information is {@link https://www.w3schools.com/xml/xml_namespaces.asp here}
+ * @typedef {'MathML' | 'HTML' | 'SVG' | ElXmlNamespaceURI} ElXmlNS
  * @typedef {((this: HTMLElement, existing: CSSStyleDeclaration) => string | CSSStyleDeclaration)} ElStyle
  * @typedef {((this: HTMLElement, ev: Event) => any)} ElEventListener
  * @typedef {boolean | { capture?: boolean, once?: boolean, passive?: boolean, signal?: boolean | AddEventListenerOptions }} ElEventOptions
@@ -13,10 +15,10 @@
 /**
  * @typedef {Object} ElAttributes 특성
  * @prop {ElXmlNS | (() => ElXmlNS)} [xmlns]
- * @prop {string | CSSStyleDeclaration | ElStyle} [style] CSS 요소
- * @prop {Object<string, ElEventListener | [ElDynamicEventListenerFunction, ElEventOptions, ElDynamicEventListenerBoolean] | [ElEventListener, ElEventOptions, ElDynamicEventListenerFunction] | ElEventObject>} [on] addEventListener
  * @prop {Object | ElRef} [ref] [ref 로 오는 객체 | 'el.ref 객체' 또는 '함수 객체'] 에게 [element | appendChildren] (를)을 부여
  * @prop {ElState[]} [states] el.state 객체를 사용하여 값 변경시 자동 reload
+ * @prop {Object<string, ElEventListener | [ElDynamicEventListenerFunction, ElEventOptions, ElDynamicEventListenerBoolean] | [ElEventListener, ElEventOptions, ElDynamicEventListenerFunction] | ElEventObject>} [on] addEventListener
+ * @prop {string | CSSStyleDeclaration | ElStyle} [style] CSS 요소
  */
 
 // todo: ref, states, on->options의 동적 지원, shadow 열기 지원
@@ -24,7 +26,7 @@
 /**
  * 간편 요소 생성 및 자식 추가 함수
  * @param {string | HTMLElement} tag 생성할 태그
- * @param {ElAttributes} [attributes] 특성
+ * @param {ElAttributes & { [key: string]: any }} [attributes] 특성
  * @returns {typeof appendChildren}
  */
 function el(tag, attributes = {}) {
