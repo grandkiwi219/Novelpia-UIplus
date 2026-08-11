@@ -12,17 +12,17 @@ npup.options = {
                 }
             },
 
-            'b-w': {
-                desc: '"북스 | Chat" 제거',
+            'b-w': { // "북스 | 웹툰" 제거
+                desc: '로고 옆 "노벨챗" 제거',
                 type: {
                     option: 'selector',    
                     structure: ['selector']
                 },
                 values: [                              // 옵션 유형, selector의 선택지 
                     { name: '그대로', value: 'normal' },
-                    { name: '"북스"만 제거', value: 'books' },
-                    { name: '"웹툰"만 제거', value: 'webtoon' },
-                    { name: '모두 제거', value: 'true' },
+                    // { name: '"북스"만 제거', value: 'books' },
+                    // { name: '"웹툰"만 제거', value: 'webtoon' },
+                    { name: '제거', value: 'true' },
                 ]
             },
 
@@ -452,7 +452,7 @@ npup.options = {
             },
 
             'new-alarm': {
-                desc: '알림 페이지에 새 알림 표시',
+                desc: '알림 페이지에 새 알림 표시 🚨(더 이상 사용되지 않음)🚨',
                 type: {
                     option: 'switch',
                     structure: ['system']

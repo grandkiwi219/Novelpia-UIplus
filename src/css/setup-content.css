@@ -10,7 +10,11 @@ html[npup-b-w="true"] .s-logo {
     display: none;
 }
 
-html:where([npup-b-w="books"], [npup-b-w="webtoon"]) .s-logo {
+html[npup-b-w="true"] .header-txt-bar {
+    display: none;
+}
+
+/* html:where([npup-b-w="books"], [npup-b-w="webtoon"]) .s-logo {
     gap: 0px;
 }
 
@@ -20,7 +24,7 @@ html[npup-b-w="books"] :where(.slogo-books, .header-txt-bar) {
 
 html[npup-b-w="webtoon"] :where(.slogo-webtoon, .header-txt-bar) {
     display: none;
-}
+} */
 
 
 html[npup-search] .header-search {
