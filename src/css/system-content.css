@@ -983,6 +983,7 @@ npup-qmm {
 
     html[npup-quick-mapping-menu^=right] &,
     html[npup-wt-quick-mapping-menu^=right] &,
+    html[npup-chat-quick-mapping-menu^=right] &,
     html[npup-books-quick-mapping-menu^=right] & {
         right: 0;
 
@@ -1021,6 +1022,7 @@ npup-qmm {
 
     html[npup-quick-mapping-menu^=left] &,
     html[npup-wt-quick-mapping-menu^=left] &,
+    html[npup-chat-quick-mapping-menu^=left] &,
     html[npup-books-quick-mapping-menu^=left] & {
         left: 0;
 
@@ -1055,6 +1057,7 @@ npup-qmm {
 
     html[npup-quick-mapping-menu$=top] &,
     html[npup-wt-quick-mapping-menu$=top] &,
+    html[npup-chat-quick-mapping-menu$=top] &,
     html[npup-books-quick-mapping-menu$=top] & {
         .npup-qmm-wrap {
             top: var(--npup-qmm-wrap-top);
@@ -1075,6 +1078,7 @@ npup-qmm {
 
     html[npup-quick-mapping-menu$=center] &,
     html[npup-wt-quick-mapping-menu$=center] &,
+    html[npup-chat-quick-mapping-menu$=center] &,
     html[npup-books-quick-mapping-menu$=center] & {
         .npup-qmm-wrap {
             bottom: var(--npup-qmm-wrap-center);
@@ -1097,6 +1101,7 @@ npup-qmm {
 
     html[npup-quick-mapping-menu$=bottom] &,
     html[npup-wt-quick-mapping-menu$=bottom] &,
+    html[npup-chat-quick-mapping-menu$=bottom] &,
     html[npup-books-quick-mapping-menu$=bottom] & {
         .npup-qmm-wrap {
             top: var(--npup-qmm-wrap-bottom);

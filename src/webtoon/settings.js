@@ -219,7 +219,16 @@ npup.options = {
                 type: {
                     option: 'mapping'
                 },
-            }
+            },
+            'move-chat': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '(공통) Chat으로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
         },
     },
 

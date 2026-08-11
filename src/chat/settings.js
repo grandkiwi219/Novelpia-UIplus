@@ -1,32 +1,4 @@
 npup.options = {
-    other: {
-        icon: '🛠️',
-        name: '기타',
-        engine: '페이지',
-        options: {
-            'books-web-title': {
-                desc: '페이지 이름 변경',
-                type: {
-                    option: 'selector',
-                    structure: ['pre-common']
-                },
-                engine: 'all',                                                              // 개별적으로 적용될 엔진 선택 (모든 엔진서 작동하고 싶을 때 all로)
-                values: [
-                    { name: '노벨피아 - 웹소설로 꿈꾸는 세상! - (page)', value: 'normal' },
-                    { name: '노벨피아 - (page)', value: 'short' },
-                    { name: '(page) - 노벨피아', value: 'reverse-short' },
-                    { name: '(page)', value: 'single' },
-                    { name: '(page) - 노벨피아 - 웹소설로 꿈꾸는 세상!', value: 'reverse-normal' },
-                ],
-                settings: {
-                    type: 'long'
-                },
-                structure: {
-                    router: true,
-                },
-            },
-        },
-    },
 
     custom_css: {
         icon_svg: 'https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg',
@@ -34,7 +6,7 @@ npup.options = {
         name: '커스텀 CSS',
         engine: 'all',
         options: {
-            'books-custom-css': {
+            'chat-custom-css': {
                 system() {
                     return this.key
                 },
@@ -42,17 +14,8 @@ npup.options = {
                     option: 'textarea',
                     structure: ['custom']
                 },
-                desc: 
-`div.flex.w-\\[420px\\] { transition: border .24s; }
-
-div.flex.w-\\[420px\\]:has(input:focus) {
-    border-bottom: 1px solid var(--primary);
-}
-
-::selection {
-    background-color: rgba(40, 40, 40, 0.12);
-}`,
-                settings: {                                 // 옵션 UI 설정
+                desc: ``,
+                settings: {
                     placeholder: `설정 필요`
                 }
             }
@@ -64,8 +27,8 @@ div.flex.w-\\[420px\\]:has(input:focus) {
         name: '조작',
         engine: 'all',
         options: {
-            'books-quick-mapping-menu': {
-                tag: {                                // 다른 함수들에 쓰일지 말지 자율적으로 
+            'chat-quick-mapping-menu': {
+                tag: {
                     quick_mapping_menu: false
                 },
                 desc: '조작 퀵 메뉴',
@@ -83,8 +46,8 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                     { name: '왼쪽 아래', value: 'left-bottom' },
                 ],
                 options: {
-                    'books-quick-mapping-menu-viewer': {
-                        desc: '뷰어에서 사용하지 않음',
+                    'chat-quick-mapping-menu-viewer': {
+                        desc: '채팅에서 사용하지 않음',
                         type: {
                             option: 'switch',
                             structure: ['common']
@@ -93,8 +56,8 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                             storage: 'local'
                         }
                     },
-                    'books-quick-mapping-menu-page': {
-                        desc: '뷰어 이외의 곳에서 사용하지 않음',
+                    'chat-quick-mapping-menu-page': {
+                        desc: '채팅 이외의 곳에서 사용하지 않음',
                         type: {
                             option: 'switch',
                             structure: ['common']
@@ -105,76 +68,53 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                     },
                 },
                 settings: {
-                    storage: 'local'
+                    storage: 'local',
                 },
-            },
-            'books-after-ep': {
-                tag: {
-                    quick_mapping_menu: false
+                setups: {
+                    invisible: true,
                 },
-                desc: '(뷰어) 다음화로 가기',
-                type: {
-                    option: 'mapping'
-                },
-            },
-            'books-before-ep': {
-                tag: {
-                    quick_mapping_menu: false
-                },
-                desc: '(뷰어) 이전화로 가기',
-                type: {
-                    option: 'mapping'
-                },
-            },
-            'books-ep-home': {
-                tag: {
-                    quick_mapping_menu: false
-                },
-                desc: '(뷰어) 소설 페이지로 이동',
-                type: {
-                    option: 'mapping'
-                },
-            },
-            'books-page-dark': {
+            }, // 지원 X
+
+            'chat-home': {
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '노벨피아 \'다크모드\' 사용',
+                desc: '홈으로 가기',
                 type: {
                     option: 'mapping'
                 },
             },
-            'books-viewer-dark': {
+            'chat-chat': {
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '노벨피아 \'뷰어 다크모드\' 사용',
+                desc: '채팅 내역으로 가기',
                 type: {
                     option: 'mapping'
                 },
             },
-            'books-move-mb': {
+            'chat-favorite': {
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '내서재로 이동',
+                desc: '즐겨찾기로 가기',
                 type: {
                     option: 'mapping'
                 },
             },
-            'books-move-search': {
+            'chat-ranking': {
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '검색창으로 이동',
+                desc: '랭킹으로 가기',
                 type: {
                     option: 'mapping'
                 },
-            },
+            }
         },
-        setups: {
+        /* setups: {
             length: 2
-        }
+        } */
     },
 
     move: {
@@ -188,6 +128,9 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                     option: 'switch',
                 },
                 engine: 'null', 
+                setups: {
+                    invisible: true,
+                },
             },
 
             'move-base': {

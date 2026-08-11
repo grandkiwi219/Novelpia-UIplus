@@ -1,69 +1,62 @@
 const otherCa = npup.options.other.options;
 
-otherCa['notice'].system = function(r) {
+otherCa['notice'].system = async function(r) {
     if (window.location.pathname != "/") return;
-    
-    targetHandler(() => document.getElementById('copyright_bar'), setNotice, { redetect: 1 });
 
-    function setNotice() {
-        const notice_bar = document.getElementById('copyright_bar').cloneNode(true);
-        notice_bar.id = `${npup.project.prefix.css}${notice_bar.id}`;
-        notice_bar.classList.add('s_inv');
-        const main = document.getElementById('vue_main_wrapper');
+    const target = await findTarget(() => document.getElementById('copyright_bar'));
 
-        // system-content.css => notice css
-        notice_bar.classList.add(`${npup.project.prefix.css}notice`);
-        notice_bar.style = "";
+    if (!target) return;
 
-        notice_bar.firstElementChild.firstElementChild.classList.remove('justify-content-start');
-        notice_bar.firstElementChild.firstElementChild.classList.add('justify-content-between');
+    const notice_bar = el(target.cloneNode(true), {
+        style: ''
+    });
+    notice_bar.element.id = `${npup.project.prefix.css}${notice_bar.element.id}`;
+    notice_bar.element.classList.add('s_inv');
+    notice_bar.element.classList.add(`${npup.project.prefix.css}notice`);
 
-        const notice_list_btn = document.createElement('a');
-        notice_list_btn.classList.add('d-flex');
-        notice_list_btn.classList.add('align-items-center');
-        notice_list_btn.href = `/notice/list/1`;
-        setListIcon(notice_list_btn, { color: '#000' });
+    // system-content.css => notice css
+    notice_bar.element.firstElementChild.firstElementChild.classList.remove('justify-content-start');
+    notice_bar.element.firstElementChild.firstElementChild.classList.add('justify-content-between');
 
-        notice_bar.firstElementChild.firstElementChild.appendChild(notice_list_btn);
-    
-        main.esrender("beforebegin", notice_bar);
-    }
+    const notice_list_btn = el('a', { href: '/notice/list/1', className: 'd-flex align-items-center' });
+    setListIcon(notice_list_btn.element, { color: '#000' });
+
+    notice_list_btn.render(notice_bar.element.firstElementChild.firstElementChild);
+
+    notice_bar.render(document.getElementById('vue_main_wrapper'), 'beforebegin');
 }
 
 
 
 
 
-otherCa['new-alarm'].system = function(r) {
+otherCa['new-alarm'].system = async function(r) {
     if (!pathChecker('/alarm/')) return;
 
-    const newAlarmSystem = (target) => {
-        const active_counter = parseInt(target?.textContent);
+    const target = await findTarget(() => document.querySelector('.menu_alarm td.active .menu-counter'));
 
-        npup.dev('active_counter:', active_counter);
+    if (!target) return;
 
-        if (!active_counter) return;
+    const active_counter = parseInt(target?.textContent);
 
-        const active_alarm = '' +
+    npup.dev('active_counter:', active_counter);
+
+    if (!active_counter) return;
+
+    const active_alarm = '' +
 `
 .note-editor > .alarm_box:nth-child(-n + ${active_counter}) {
-    border: 1px solid var(--novelpia-color);
+border: 1px solid var(--novelpia-color);
 }
 `;
 
-        const new_alarm_style = styleInjection(npup.project.prefix.css + this.key, active_alarm);
+    const new_alarm_style = styleInjection(npup.project.prefix.css + this.key, active_alarm);
 
-        npup.dev(new_alarm_style);
+    npup.dev(new_alarm_style);
 
-        removeEvent(() => {
-            new_alarm_style.remove();
-        });
-    }
-
-    targetHandler(
-        () => document.querySelector('.menu_alarm td.active .menu-counter'),
-        newAlarmSystem
-    );
+    removeEvent(() => {
+        new_alarm_style.remove();
+    });
 }
 
 

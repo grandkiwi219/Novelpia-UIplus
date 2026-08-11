@@ -1,5 +1,4 @@
 /**
- * 
  * @typedef {string & {}} ElXmlNamespaceURI more information is {@link https://www.w3schools.com/xml/xml_namespaces.asp here}
  * @typedef {'MathML' | 'HTML' | 'SVG' | ElXmlNamespaceURI} ElXmlNS
  * @typedef {((this: HTMLElement, existing: CSSStyleDeclaration) => string | CSSStyleDeclaration)} ElStyle
@@ -417,7 +416,8 @@ function el(tag, attributes = {}) {
     function reload() {
 
         reloadDynamicElement();
-        reloadDynamicChildren();
+        if (appendChildren.isUsed)
+            reloadDynamicChildren();
 
         if (typeof _style == 'function') setStyle();
         setDynamicAttributes();

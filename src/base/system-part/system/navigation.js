@@ -31,7 +31,7 @@ navigationCa['nav-mybook'].system = function(r, get_data = false) {
 
     document.querySelectorAll('.top_nav > a:last-child').forEach(b => {
         b.href += where_href;
-    })
+    });
 
     // mobile area
     targetHandler(
@@ -48,8 +48,7 @@ navigationCa['nav-mybook'].system = function(r, get_data = false) {
             if (where_name != '최근기록') m_mybook = m_mybook.replace('recent', 'mybook');
 
             m_menu[m_menu.length - 1].outerHTML = m_mybook
-        },
-        { redetect: 1 }
+        }
     );
 }   
 

@@ -42,7 +42,7 @@ headerThemeButton.addEventListener('click', function () {
             document.getElementById('version').textContent = manifest.version;
 
             const options = options_category.find(e => e.type == document.documentElement.getAttribute('type'));
-            const name = manifest.name + (options.type == 'base' ? '' : ` | ${options.name}`);
+            const name = manifest.name + (!options?.type || options?.type == 'base' ? '' : ` | ${options.name}`);
             document.title = name;
             const name_el = document.getElementById('name');
             if (name_el) {
@@ -66,7 +66,8 @@ headerThemeButton.addEventListener('click', function () {
 
         const what_patch = document.createElement('a');
         what_patch.classList.add('update-button');
-        what_patch.href = document.getElementById('patch').href;
+        // what_patch.href = document.getElementById('patch').href;
+        what_patch.href = './PatchNote.html';
         what_patch.target = '_blank';
         what_patch.textContent = '패치노트';
 

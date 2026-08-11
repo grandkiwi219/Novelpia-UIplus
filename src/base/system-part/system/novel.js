@@ -8,8 +8,7 @@ novelCa['novel-page'].system = function(r) {
                 return {
                     wrapperTarget,
                     pageTarget: () => document.getElementById('episode_list'),
-                    attachTarget: wrapperTarget,
-                    tHOption: { redetect: 2 }
+                    attachTarget: wrapperTarget
                 }
             }
             else if (pathChecker('/collect_novel/')) {
@@ -17,8 +16,7 @@ novelCa['novel-page'].system = function(r) {
                 return {
                     wrapperTarget: () => document.querySelector('div.d-flex.align-items-center.justify-content-center'),
                     pageTarget,
-                    attachTarget: pageTarget,
-                    tHOption: { redetect: 2 }
+                    attachTarget: pageTarget
                 }
             }
             else
@@ -29,8 +27,7 @@ novelCa['novel-page'].system = function(r) {
             return {
                 wrapperTarget,
                 pageTarget: () => document.getElementById('episode_list_viewer'),
-                attachTarget: wrapperTarget,
-                tHOption: { redetect: 2 }
+                attachTarget: wrapperTarget
             }
         }
         else
@@ -52,8 +49,7 @@ novelCa['novel-page'].system = function(r) {
                 phs.attachTarget
             );
             select_episode = scriptInjection('src/base/file/select-episode.js');
-        },
-        phs.tHOption
+        }
     );
 
 
@@ -131,7 +127,7 @@ novelCa['novel-page'].system = function(r) {
 novelCa['novel-notice-close'].system = function(r) {
     if (!pathChecker(['/novel/', '/collect_novel/'])) return;
 
-    const findTarget = () => document.getElementsByClassName('notice_toggle_btn')[0];
+    const findTargetHandler = () => document.getElementsByClassName('notice_toggle_btn')[0];
 
     /**
      * @param {HTMLDivElement} more_btn 
@@ -151,7 +147,7 @@ novelCa['novel-notice-close'].system = function(r) {
              * @param {PointerEvent} e 
              */
             const ev = (e) => {
-                const target = findTarget();
+                const target = findTargetHandler();
                 if (!target.contains(e.target) && target != e.target) return;
                 addBottomCloseBtn.call(this, target);
                 document.removeEventListener('click', ev);
@@ -194,9 +190,8 @@ novelCa['novel-notice-close'].system = function(r) {
     }
 
     targetHandler(
-        findTarget,
-        addCloseFunction,
-        { redetect: 1 }
+        findTargetHandler,
+        addCloseFunction
     );
 
     const close_script = scriptInjection(`/src/base/file/${this.key}.js`);

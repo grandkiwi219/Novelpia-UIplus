@@ -13,7 +13,7 @@ npup.options = {
             },
 
             'b-w': {
-                desc: '"북스 | 웹툰" 제거',
+                desc: '"북스 | Chat" 제거',
                 type: {
                     option: 'selector',    
                     structure: ['selector']
@@ -276,6 +276,37 @@ npup.options = {
                     { name: '왼쪽 위', value: 'left-top' },
                     { name: '왼쪽 아래', value: 'left-bottom' },
                 ] */
+            },
+
+            'hidden-cursor': {
+                desc: '마우스 커서 정지 이후 숨김 처리',
+                type: {
+                    option: 'selector',
+                    structure: ['system']
+                },
+                values: [
+                    { name: '미사용', value: 'unused' },
+                    { name: '1초 후', value: 1_000 },
+                    { name: '1.2초 후', value: 1_200 },
+                    { name: '1.5초 후', value: 1_500 },
+                    { name: '1.8초 후', value: 1_800 },
+                    { name: '2초 후', value: 2_000 },
+                    { name: '2.5초 후', value: 2_500 },
+                    { name: '3초 후', value: 3_000 },
+                    { name: '3.5초 후', value: 3_500 },
+                    { name: '4초 후', value: 4_000 },
+                    { name: '5초 후', value: 5_000 },
+                    { name: '6초 후', value: 6_000 },
+                    { name: '7초 후', value: 7_000 },
+                    { name: '8초 후', value: 8_000 },
+                    { name: '9초 후', value: 9_000 },
+                    { name: '10초 후', value: 10_000 },
+                    { name: '11초 후', value: 11_000 },
+                    { name: '12초 후', value: 12_000 },
+                    { name: '13초 후', value: 13_000 },
+                    { name: '14초 후', value: 14_000 },
+                    { name: '15초 후', value: 15_000 },
+                ]
             }
         },
         setups: {
@@ -803,7 +834,16 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 type: {
                     option: 'mapping'
                 },
-            }
+            },
+            'move-chat': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '(공통) Chat으로 이동',
+                type: {
+                    option: 'mapping'
+                },
+            },
         },
         setups: {
             length: 2

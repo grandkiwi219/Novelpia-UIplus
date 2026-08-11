@@ -6,10 +6,10 @@ headerCa['adult'].system = async function(r) {
     if (!switch_adult) return;
 
     document.querySelectorAll('.s-logo').forEach(re => {
-        let adult_button = switch_adult.cloneNode(true);
-        adult_button.style = 'cursor: pointer;';
+        const switch_adult_clone = switch_adult.cloneNode(true);
+        switch_adult_clone.style.cursor = 'pointer';
 
-        re.esrender('afterend', adult_button);
+        re.esrender('afterend', switch_adult_clone);
     });
 }
 
@@ -17,26 +17,22 @@ headerCa['adult'].system = async function(r) {
 
 
 
-headerCa['search'].system = function(r) {
-    
+headerCa['search'].system = async function(r) {
+
     document.getElementsByClassName('header-search')[0]?.remove();
 
-    const search_icon = document.createElement('div');
-    search_icon.classList.add(`${npup.project.prefix.css}search-base`);
-
-    search_icon.innerHTML = ''
-        + `<form id="${npup.project.prefix.css}search-form" class="${npup.project.prefix.css}search-header" autocomplete="off">`
+    const search_icon = el('div', { className: `${npup.project.prefix.css}search-base` })(
+        `<form id="${npup.project.prefix.css}search-form" class="${npup.project.prefix.css}search-header" autocomplete="off">`
                 + `<input id="search_input" class="${npup.project.prefix.css}search-box" type="text" name="search_box" placeholder="제목, 작가를 입력하세요." maxlength="50" autocomplete="off" value form="${npup.project.prefix.css}search-form">`
         + '</form>'
         + `<button type="button" class="${npup.project.prefix.css}search-align" onclick="javascript:npupPcSearch()">`
             +`<img src="//images.novelpia.com/img/new/header/icon_in_search.svg" alt="검색" class="${npup.project.prefix.css}search-icon">`
-        + '</button>';
-
-    targetHandler(
-        () => document.getElementById('btn_alram'),
-        (target) => target.esrender("beforebegin", search_icon),
-        { redetect: 1 }
+        + '</button>'
     );
+
+    const target = await findTarget(() => document.getElementById('btn_alram'));
+
+    if (target) search_icon.render(target, 'beforebegin');
 }
 
 
@@ -309,8 +305,7 @@ headerCa['alarm'].system = function(r, get_data = false) {
         () => {
             const m_alarm = document.querySelector('.bt-nv-menu:has(#btn_m_alram)');
             m_alarm.outerHTML = m_alarm.outerHTML.replace(/div/g, 'a').replace('a', `a href="/alarm${where_href}" style="color: black;"`);
-        },
-        { redetect: 1 }
+        }
     );
 } 
 
@@ -321,27 +316,19 @@ headerCa['alarm'].system = function(r, get_data = false) {
 headerCa['writer-room'].system = async function(r) {
 
     const generateWriterIcon = () => {
-        const writer_wrap = document.createElement('a');
-        writer_wrap.href = '/writer_room';
-        writer_wrap.classList.add(`${npup.project.prefix.css}${this.key}`);
-    
-        const writer_icon = document.createElement('img');
-        writer_icon.src = '//image.novelpia.com/img/new/menu/w/write.png';
-        writer_icon.alt = '내작품';
-    
-        writer_wrap.appendChild(writer_icon);
-
-        return writer_wrap;
+        const writer_wrap = el('a', { href: '/writer_room', className: `${npup.project.prefix.css}${this.key}` })(
+            el('img', { alt: '내작품', src: '//image.novelpia.com/img/new/menu/w/write.png' }) // writer_icon
+        );
+        return writer_wrap.element;
     }
 
-    targetHandler(
-        () => document.getElementsByClassName('header-gift')[0],
-        () => {
-            const target = document.getElementsByClassName('header-gift');
-            for (let i = 0; i < target.length; i++)
-                target[i].esrender("afterend", generateWriterIcon());
-        }
-    );
+    const target = await findTarget(() => document.getElementsByClassName('header-gift')[0]);
+
+    if (target) {
+        const targets = document.getElementsByClassName('header-gift');
+        for (let i = 0; i < targets.length; i++)
+            targets[i].esrender("afterend", generateWriterIcon());
+    }
 }
 
 
@@ -533,7 +520,7 @@ headerCa['renew-alarm'].system = function(r) {
 
         if (Number(response?.status) != 200) {
             if (response?.errmsg)
-                npup.error(response.errmsg);
+                npup.error(this_key + `:status[${response?.status}]-> ` + response.errmsg);
             else
                 npup.error(this_key + ':status-> ' + response?.status);
             loadingFailed(key);

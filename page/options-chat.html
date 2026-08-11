@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<!--
+
+Copyright ⓒ 2025. grand kiwi All rights reserved.
+
+-->
+
+<html lang="ko" type="chat" dark="true">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+        <title></title>
+
+        <!-- 기본 키 값 -->
+        <script src="./code/js/keys.js"></script>
+
+        <!-- 옵션 -->
+        <script src="../src/chat/settings.js"></script>
+        <script src="../src/key-binding.js"></script>
+
+        <script src="./code/js/options-setup.js" defer></script>
+        <script src="../src/options-category.js" defer></script>
+        <script src="./code/js/options-category.js" defer></script>
+        
+
+        <!-- 기본 UI 설정 -->
+        <script src="./code/js/assets.js"></script>
+        <script src="./code/js/pre-setup.js"></script>
+        <script src="./code/js/options.js" defer></script>
+        <script src="./code/js/element-binding.js"></script>
+        <script src="./code/js/event-binding.js" defer></script>
+
+        <!-- UI -->
+        <link rel="stylesheet" href="./code/css/options.css">
+
+        <!-- 크롬 전용 UI -->
+        <link rel="stylesheet" href="./code/css/options-chrome.css">
+    </head>
+
+    <body>
+        <header class="cleaner">
+            <div class="container">
+                <div id="title" class="child">
+                    <img id="icon" src="../img/icon.png" width="25px" height="25px">
+                    &nbsp;&nbsp;
+                    <div id="name"></div>
+                </div>
+                <div id="menu" class="child">
+                    <a class="header-button" href="https://chat.novelpia.com" target="_blank" rel="noopener">
+                        <img id="novel-logo" 
+                        src="https://images.novelpia.com/img/favicon/2025-android-icon-192x192.png"
+                        alt="🪽">
+                    </a>
+
+                    <button id="theme" class="header-button">
+                        <!-- moon -->
+                        <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="-5 -2.5 24 19">
+                            <path d="M 3.223 0.36 A 1 1 0 0 0 12.91 12.475 Q 13.232 11.994 12.666 11.924 Q 3.008 10.089 3.681 0.655 Q 3.719 0.109 3.223 0.36" fill="#000000"/>
+                        </svg> -->
+
+                        <!-- sun -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -2.5 22 19">
+                            <path
+                                d="M8 3A1 1 0 008 11 1 1 0 008 3M8 0Q8.46.002 8.46.481L8.453 1.496Q8.453 1.997 8 2 7.514 1.992 7.508 1.53L7.503.459Q7.502.002 8 0zM3 7Q2.991 6.51 2.488 6.512L1.514 6.51Q1 6.517 1 7 1.007 7.502 1.481 7.502L2.506 7.502Q3.01 7.498 3 7M13 7Q13.006 6.488 13.487 6.483L14.477 6.483Q15 6.488 15 7 15.005 7.497 14.5 7.497L13.496 7.497Q13.006 7.492 13 7M8 12Q8.47 12.001 8.48 12.477L8.48 13.481Q8.48 13.991 8 14 7.513 13.995 7.494 13.495L7.485 12.505Q7.48 12.005 8 12"
+                                fill="#ffffff" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="sun-deg" viewBox="-2.2 -2.2 22 19" transform="rotate(45, 50, 50)">
+                            <path
+                                d="M8 3A1 1 0 008 11 1 1 0 008 3M8 0Q8.46.002 8.46.481L8.453 1.496Q8.453 1.997 8 2 7.514 1.992 7.508 1.53L7.503.459Q7.502.002 8 0zM3 7Q2.991 6.51 2.488 6.512L1.514 6.51Q1 6.517 1 7 1.007 7.502 1.481 7.502L2.506 7.502Q3.01 7.498 3 7M13 7Q13.006 6.488 13.487 6.483L14.477 6.483Q15 6.488 15 7 15.005 7.497 14.5 7.497L13.496 7.497Q13.006 7.492 13 7M8 12Q8.47 12.001 8.48 12.477L8.48 13.481Q8.48 13.991 8 14 7.513 13.995 7.494 13.495L7.485 12.505Q7.48 12.005 8 12"
+                                fill="#ffffff" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <div id="box" class="cleaner">
+            <div class="container">
+
+                <div id="waiting" class="tools">
+
+                    <div class="tools-headline">
+                        🚧 ??? 설정
+                    </div>
+
+                    <div class="tools-options-wrap">
+                        <div class="tools-options">
+                            <div class="tools-main">
+                                "준비 중"
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+            </div>
+
+            <footer>
+                <span>v<span id="version">0.0.0.0</span></span>
+                <a id="patch" href="https://addons.mozilla.org/ko/firefox/addon/novelpia-ui-plus/versions/" target="_blank" rel="noopener">패치노트</a>
+                <a id="github" href="https://github.com/grandkiwi219/Novelpia-UIplus" target="_blank" rel="noopener">깃허브</a>
+            </footer>
+        </div>
+
+    </body>
+</html>

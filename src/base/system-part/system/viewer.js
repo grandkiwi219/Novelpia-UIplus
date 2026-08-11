@@ -13,21 +13,16 @@ function iconSetup() {
     // style: system-content.css => old-icon css 부분
 
     // home
-    el(document.getElementsByClassName('menu-top-home')[0])(
-        el('div', {
-            className: 'ion-home',
-            style: {
-                fontSize: '25px'
-            }
-        })
-    );
+    el('div', {
+        className: 'ion-home',
+        style: {
+            fontSize: '25px'
+        }
+    })
+    .render(document.getElementsByClassName('menu-top-home')[0])
 
     // title
-    const title_element_wrapper = el('div', { className: 'menu-top-title-element-wrapper' })(
-        document.getElementsByClassName('menu-top-title')[0].textContent
-    );
-    const textContent = title_element_wrapper.element.textContent;
-    title_element_wrapper.element.textContent = '';
+    const title_element_wrapper = el('div', { className: 'menu-top-title-element-wrapper' });
 
     let old_nineteen = null;
     const title_nineteen = document.getElementsByClassName('menu-top-adult')[0];
@@ -39,6 +34,7 @@ function iconSetup() {
         );
     }
     const title_tag = document.getElementsByClassName('menu-top-tag')[0];
+    const title_text = document.getElementsByClassName('menu-top-title')[0].textContent;
 
     const novel_name = el('b', { className: 'menu-top-novel-title' })(
         document.title
@@ -51,7 +47,7 @@ function iconSetup() {
         novel_name,
         title_element_wrapper(
             old_nineteen,
-            title_tag, textContent
+            title_tag, title_text
         )
     )
 
@@ -208,7 +204,7 @@ viewerCa['scroll-close-menu'].system = function(r) {
 
 
 
-viewerCa['line-share'].system = function(r) {
+viewerCa['line-share'].system = function(r) {   
     switch (location.hash) {
         case '#comments':
         case '#lists':
@@ -220,42 +216,42 @@ viewerCa['line-share'].system = function(r) {
     const lineShareSystem = () => {
         const [header] = document.getElementsByClassName('menu-top-wrapper');
 
-        const share = document.createElement('div');
-        share.id = `${npup.project.prefix.css}${this.key}-btn`;
-        Object.assign(share.style, {
-            boxSizing: 'border-box',
+        const share = el('div', {
+            id: `${npup.project.prefix.css}${this.key}-btn`,
+            style: {
+                boxSizing: 'border-box',
 
-            width: '44px',
-            height: '44px',
+                width: '44px',
+                height: '44px',
 
-            borderRadius: '50px',
+                borderRadius: '50px',
 
-            backgroundColor: 'rgba(255, 255, 255, 0.7)',
-            boxShadow: 'rgba(80, 80, 80, 0.5) 0px 0px 5px',
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                boxShadow: 'rgba(80, 80, 80, 0.5) 0px 0px 5px',
 
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            
-            position: 'absolute',
-            top: '70px',
-            right: '20px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                
+                position: 'absolute',
+                top: '70px',
+                right: '20px',
 
-            cursor: 'pointer',
+                cursor: 'pointer',
 
-            filter: isViewerDarkMode() ? 'invert(1)' : ''
-        });
-
-        const share_icon = document.createElement('img');
-        share_icon.src = 'https://images.novelpia.com/img/new/common/ep_b_icon_share.svg';
-        share_icon.alt = '공유';
-        Object.assign(share_icon.style, {
-            width: '24px',
-            height: '24px'
-        });
-        share.appendChild(share_icon);
-
-        header.esrender(share);
+                filter: isViewerDarkMode() ? 'invert(1)' : ''
+            }
+        })(
+            el('img', {
+                alt: '공유',
+                src: 'https://images.novelpia.com/img/new/common/ep_b_icon_share.svg',
+                style: {
+                    width: '24px',
+                    height: '24px'
+                }
+            })
+        )
+        .render(header);
 
 
         const bar_hide = `${npup.project.prefix.css}${this.key}-bar-hide`;
@@ -265,7 +261,7 @@ viewerCa['line-share'].system = function(r) {
         const header_bar = document.getElementById('header_bar');
         const footer_bar = document.getElementById('footer_bar');
 
-        const shareEvent = e => {
+        const shareEvent = () => {
             const isDark = isViewerDarkMode();
 
             const paging = localStorage['viewer_paging'] == '1';
@@ -273,94 +269,83 @@ viewerCa['line-share'].system = function(r) {
 
             const viewer = paging ? document.getElementById('novel_drawing_page_c') : document.getElementById('novel_drawing');
 
+            const selector_padding = 5;
+            const bgc = isDark ? 219 : 128;
+            const bsc = isDark ? 205 : 80;
+
             header_bar.classList.add(bar_hide);
             footer_bar.classList.add(bar_hide);
 
-            const cover = document.createElement('div');
-            Object.assign(cover.style, {
+            const cover = {}, cancel = {}, selector = {};
+
+            el('div', { ref: cover, style: {
                 width: '100%',
                 height: `${viewer.offsetHeight}px`,
 
                 position: 'absolute',
                 top: 0,
                 left: 0
-            });
+            } })(
+                el('div', { ref: cancel, style: {
+                    width: 'fit-content',
+                    height: 'fit-content',
 
-            const cancel = document.createElement('div');
-            cancel.innerHTML = ''
-                + `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="20" height="20" stroke-width="2" stroke="${isDark ? 'white' : 'black'}" fill="none" stroke-linecap="round">`
-                    + '<path d="M5 5 L25 25 M5 25 L25 5"></path>'
-                + '</svg>';
-            Object.assign(cancel.style, {
-                width: 'fit-content',
-                height: 'fit-content',
+                    padding: '8px',
 
-                padding: '8px',
+                    fontSize: '0',
+                    lineHeight: '0',
 
-                fontSize: '0',
-                lineHeight: '0',
+                    position: 'sticky',
+                    top: '15px',
+                    marginLeft: 'auto',
+                    marginRight: '15px',
 
-                position: 'sticky',
-                top: '15px',
-                marginLeft: 'auto',
-                marginRight: '15px',
+                    cursor: 'pointer'
+                } })(
+                    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="20" height="20" stroke-width="2" stroke="${isDark ? 'white' : 'black'}" fill="none" stroke-linecap="round">`
+                        + '<path d="M5 5 L25 25 M5 25 L25 5"></path>'
+                    + '</svg>',
 
-                cursor: 'pointer'
-            });
+                    isTouchDevice() ? null
+                    : el('div', { style: {
+                        width: '100%',
+                        height: '22px',
 
-            if (!isTouchDevice()) {
-                const cancel_esc = document.createElement('div');
-                cancel_esc.textContent = 'Esc';
-                Object.assign(cancel_esc.style, {
-                    width: '100%',
-                    height: '22px',
-    
+                        borderRadius: '8px',
+                        backgroundColor: 'white',
+                        boxShadow: 'rgba(80, 80, 80, 0.5) 0px 0px 3px',
+
+                        fontSize: '12px',
+                        lineHeight: '22px',
+                        textAlign: 'center',
+
+                        position: 'absolute',
+                        bottom: '0px',
+                        left: '0px',
+
+                        transform: 'translateY(100%)',
+
+                        filter: isDark ? 'invert(1)' : ''
+                    } })('Esc')
+                ),
+
+                el('div', { ref: selector, className: selector_class, style: {
+                    width: `${viewer.clientWidth + (selector_padding * 2)}px`,
+                    height: 0,
+                    backgroundColor: `rgba(${bgc}, ${bgc}, ${bgc}, 0.2)`,
+                    boxShadow: `rgba(${bsc}, ${bsc}, ${bsc}, 0.5) 0px 0px 3px`,
                     borderRadius: '8px',
-                    backgroundColor: 'white',
-                    boxShadow: 'rgba(80, 80, 80, 0.5) 0px 0px 3px',
-    
-                    fontSize: '12px',
-                    lineHeight: '22px',
-                    textAlign: 'center',
-    
+        
                     position: 'absolute',
-                    bottom: '0px',
-                    left: '0px',
-    
-                    transform: 'translateY(100%)',
-
-                    filter: isDark ? 'invert(1)' : ''
-                });
-                cancel.appendChild(cancel_esc);
-            }
-
-            cover.appendChild(cancel);
-
-            const selector_padding = 5;
-
-            const bgc = isDark ? 219 : 128;
-            const bsc = isDark ? 205 : 80;
-
-            const selector = document.createElement('div');
-            selector.classList.add(selector_class);
-            Object.assign(selector.style, {
-                width: `${viewer.clientWidth + (selector_padding * 2)}px`,
-                height: 0,
-                backgroundColor: `rgba(${bgc}, ${bgc}, ${bgc}, 0.2)`,
-                boxShadow: `rgba(${bsc}, ${bsc}, ${bsc}, 0.5) 0px 0px 3px`,
-                borderRadius: '8px',
-
-                position: 'absolute',
-                top: '0',
-                left: `${viewer.getBoundingClientRect().x - selector_padding}px`,
-
-                cursor: 'pointer',
-
-                transition: ani ? 'height .14s' : ''
-            });
-            cover.appendChild(selector);
-
-            document.getElementById('novel_box').esrender(cover);
+                    top: '0',
+                    left: `${viewer.getBoundingClientRect().x - selector_padding}px`,
+        
+                    cursor: 'pointer',
+        
+                    transition: ani ? 'height .14s' : ''
+                } })
+            )
+            .render(document.getElementById('novel_box'));
 
             // ---
 
@@ -371,34 +356,34 @@ viewerCa['line-share'].system = function(r) {
             }
  
             if (paging) {
-                pageDocTracking(share, viewer, selector, cancel, moveSelector, idleSelector, exit);
+                pageDocTracking(share.element, viewer, selector.element, cancel.element, moveSelector, idleSelector, exit);
             }
             else {
-                scrollDocTracking(share, viewer, selector, cancel, moveSelector, idleSelector, exit);
+                scrollDocTracking(share.element, viewer, selector.element, cancel.element, moveSelector, idleSelector, exit);
             }
 
             showAlert({ msg: '공유하실 문단을 선택 후 클릭해주세요.' });
 
             function moveSelector({ height, top, left } = {}) {
                 if (top && top != store.top) {
-                    selector.style.top = `${top - selector_padding}px`;
+                    selector.element.style.top = `${top - selector_padding}px`;
                     store.top = top;
                 }
 
                 if (height && height != store.height) {
-                    selector.style.height = `${height + (selector_padding * 2)}px`;
+                    selector.element.style.height = `${height + (selector_padding * 2)}px`;
                     store.height = height;
                 }
 
                 if (left && left != store.left) {
-                    selector.style.left = `${left}px`;
+                    selector.element.style.left = `${left}px`;
                     store.left = left;
                 }
             }
 
             async function idleSelector() {
                 if (!ani) return;
-                Object.assign(selector.style, {
+                Object.assign(selector.element.style, {
                     transition: 'height .14s, top .14s, left .14s'
                 });
             }
@@ -407,12 +392,12 @@ viewerCa['line-share'].system = function(r) {
                 header_bar.classList.remove(bar_hide);
                 footer_bar.classList.remove(bar_hide);
                 if (header_bar.style.display == 'none') naviView();
-                cover.remove();
+                cover.element.remove();
             }
         }
-        share.addEventListener('click', shareEvent);
+        share.on('click', shareEvent);
 
-        removeEvent(() => share.remove());
+        removeEvent(() => share.element.remove());
     }
 
     // ---
@@ -646,5 +631,40 @@ viewerCa['line-share'].system = function(r) {
         }
         window.addEventListener('resize', exitAll);
         window.addEventListener(npup.event.router, exitAll);
+    }
+}
+
+
+
+viewerCa['hidden-cursor'].system = function(r) {
+    
+    const selector_value = r[this.key]; // number
+
+    !async function() {
+        const target = await findTarget(() => document.getElementById('novel_box'));
+
+        if (!target) return;
+
+        let timer = setHidden(target.style);
+
+        target.addEventListener('mousemove', () => {
+            const style = target.style;
+            resetHidden(style, timer);
+            timer = setHidden(style);
+        });
+    }();
+
+    function resetHidden(style, timer) {
+        clearTimeout(timer);
+
+        style.cursor !== ''
+        && (style.cursor = '');
+    }
+
+    function setHidden(style) {
+        return setTimeout(() => {
+            style.cursor !== 'none'
+            && (style.cursor = 'none');
+        }, selector_value);
     }
 }

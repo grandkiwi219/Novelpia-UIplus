@@ -1,0 +1,1 @@
+const isChat = { condition: () => engineChecker('채팅') }

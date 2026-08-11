@@ -32,6 +32,14 @@ const options_category = [
         name: '웹툰',
         path: 'options-webtoon',
     },
+    {
+        type: 'chat',
+        name: 'Chat',
+        path: 'options-chat',
+        routes: [
+            { path: '/' }
+        ]
+    },
     /* {
         type: 'global',
         name: 'Global',

@@ -15,5 +15,7 @@ moveCa['move-webtoon'].system = keyMappingBase(r => {
 });
 
 moveCa['move-chat'].system = keyMappingBase(r => {
-    location.href = '//chat.novelpia.com/';
+    if (pathChecker('/', { strict: true })) return;
+    history.pushState({}, '', '/');
+    window.dispatchEvent(new PopStateEvent('popstate'));
 });

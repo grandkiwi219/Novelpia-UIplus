@@ -7,118 +7,111 @@ mobileCa['bottom-nav'].system = function (r) {
 
 
 
-mobileCa['origin-header'].options['scroll-hidden-header'].system = function(r) {
+mobileCa['origin-header'].options['scroll-hidden-header'].system = async function(r) {
     if (!r['origin-header'] && !r['bottom-nav']) return;
 
-    targetHandler(() => document.getElementById('copyright_bar'), scrollHiddenHeader);
+    // await findTarget(() => document.getElementById('copyright_bar'));
 
-    function scrollHiddenHeader() {
-        const header = document.querySelector('header.mobile_hidden');
-        let header_all_height = null;
-        let header_height = null;
-        header.style.top = 0;
+    const header = await findTarget(() => document.querySelector('header.mobile_hidden'));
 
-        let scrollY = window.scrollY;
+    if (!header) return;
 
-        let menu_tap = undefined;
-        let menu_top_important = false;
+    let header_all_height = null;
+    let header_height = null;
+    header.style.top = 0;
 
-        decideMenuTap();
+    let scrollY = window.scrollY;
 
-        if (window.innerWidth < 892) {
-            header_all_height = getHeaderHeight(header);
-            header_height = header.getBoundingClientRect().height; 
-        }
+    let menu_tap = undefined;
+    let menu_top_important = false;
 
-        const scrollHeader = () => {
-            if (window.innerWidth >= 892) {
-                header.style.top = '0px';
-                if (menu_tap) menu_tap.style.top = '';
-                scrollY = window.scrollY;
-                return;
-            }
+    decideMenuTap();
 
-            if (!header_all_height) {
-                header_all_height = getHeaderHeight(header);
-                header_height = header.getBoundingClientRect().height;
-            }
+    if (window.innerWidth < 892) {
+        header_all_height = getHeaderHeight(header);
+        header_height = header.getBoundingClientRect().height; 
+    }
 
-            const scroll_gap = window.scrollY - scrollY;
+    const scrollHeader = () => {
+        if (window.innerWidth >= 892) {
+            header.style.top = '0px';
+            if (menu_tap) menu_tap.style.top = '';
             scrollY = window.scrollY;
-
-            let header_top = parseFloat(header.style.top) || 0;
-            
-            const header_calc = header_top - scroll_gap;
-
-            if (scroll_gap > 0 && window.scrollY > 0) { // scroll up
-                if (header_top == -header_all_height) return;
-                header_top = header_calc < -header_all_height ? -header_all_height : header_calc;
-            }
-            else if (scroll_gap < 0) { // scroll down
-                if (header_top == 0) return;
-                header_top = header_calc > 0 ? 0 : header_calc;
-            }
-
-            if (menu_tap) {
-                if (!document.body.contains(menu_tap)) decideMenuTap();
-                const menu_tap_calc = header_height - 1 + header_top;
-                if (menu_top_important) menu_tap.style.setProperty('top', `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`, 'important');
-                else menu_tap.style.top = `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`;
-            }
-
-            header.style.top = `${header_top}px`;
+            return;
         }
-        window.addEventListener('scroll', scrollHeader);
 
+        if (!header_all_height) {
+            header_all_height = getHeaderHeight(header);
+            header_height = header.getBoundingClientRect().height;
+        }
+
+        const scroll_gap = window.scrollY - scrollY;
         scrollY = window.scrollY;
 
-        const decideMenuRouter = route_event => decideMenuTap(route_event.detail.pCheck);
-        window.addEventListener(npup.event.router, decideMenuRouter);
+        let header_top = parseFloat(header.style.top) || 0;
+        
+        const header_calc = header_top - scroll_gap;
 
-
-        function decideMenuTap(pCheck = pathChecker) {
-            if (pCheck('/novel/')) {
-                menu_tap = document.getElementsByClassName('menu_alarm_m')[0];
-                menu_top_important = true;
-            }
-            else if (document.getElementsByClassName('tap-box')[0]) {
-                menu_tap = document.querySelector('*:has(> div > .tap-box)');
-                menu_top_important = false;
-            }
-            else if (document.getElementsByClassName('contest_menu')[0]) {
-                menu_tap = document.getElementsByClassName('contest_menu')[0];
-                menu_top_important = false;
-            }
-            else if (document.getElementsByClassName('contest-tab')[0]) {
-                menu_tap = document.getElementsByClassName('contest-tab')[0];
-                menu_top_important = false;
-            }
-            else if (pCheck('/event/')) {
-                targetHandler(
-                    () => document.getElementsByClassName('tab__buttonWrap')[0],
-                    (target) => {
-                        menu_tap = target;
-                        menu_top_important = true;
-                    },
-                    {
-                        redetect: 1
-                    }
-                );
-            }
-            else if (pCheck('/comic_main/')) {
-                menu_tap = document.getElementsByClassName('comic-new-header-wp')[0];
-                menu_top_important = false;
-            }
-            else {
-                menu_tap = undefined;
-            }
+        if (scroll_gap > 0 && window.scrollY > 0) { // scroll up
+            if (header_top == -header_all_height) return;
+            header_top = header_calc < -header_all_height ? -header_all_height : header_calc;
+        }
+        else if (scroll_gap < 0) { // scroll down
+            if (header_top == 0) return;
+            header_top = header_calc > 0 ? 0 : header_calc;
         }
 
-        removeEventForEngine(() => {
-            window.removeEventListener('scroll', scrollHeader);
-            window.removeEventListener(npup.event.router, decideMenuRouter);
-        });
+        if (menu_tap) {
+            if (!document.body.contains(menu_tap)) decideMenuTap();
+            const menu_tap_calc = header_height - 1 + header_top;
+            if (menu_top_important) menu_tap.style.setProperty('top', `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`, 'important');
+            else menu_tap.style.top = `${menu_tap_calc < 0 ? 0 : menu_tap_calc}px`;
+        }
+
+        header.style.top = `${header_top}px`;
     }
+    window.addEventListener('scroll', scrollHeader);
+
+    scrollY = window.scrollY;
+
+    const decideMenuRouter = route_event => decideMenuTap(route_event.detail.pCheck);
+    window.addEventListener(npup.event.router, decideMenuRouter);
+
+
+    async function decideMenuTap(pCheck = pathChecker) {
+        if (pCheck('/novel/')) {
+            menu_tap = await findTarget(() => document.getElementsByClassName('menu_alarm_m')[0]);
+            menu_top_important = true;
+        }
+        else if (document.getElementsByClassName('tap-box')[0]) {
+            menu_tap = document.querySelector('*:has(> div > .tap-box)');
+            menu_top_important = false;
+        }
+        else if (document.getElementsByClassName('contest_menu')[0]) {
+            menu_tap = document.getElementsByClassName('contest_menu')[0];
+            menu_top_important = false;
+        }
+        else if (document.getElementsByClassName('contest-tab')[0]) {
+            menu_tap = document.getElementsByClassName('contest-tab')[0];
+            menu_top_important = false;
+        }
+        else if (pCheck('/event/')) {
+            menu_tap = await findTarget(() => document.getElementsByClassName('tab__buttonWrap')[0]);
+            menu_top_important = true;
+        }
+        else if (pCheck('/comic_main/')) {
+            menu_tap = document.getElementsByClassName('comic-new-header-wp')[0];
+            menu_top_important = false;
+        }
+        else {
+            menu_tap = undefined;
+        }
+    }
+
+    removeEventForEngine(() => {
+        window.removeEventListener('scroll', scrollHeader);
+        window.removeEventListener(npup.event.router, decideMenuRouter);
+    });
 }
 
 function getHeaderHeight(el) {
@@ -136,7 +129,7 @@ function getHeaderHeight(el) {
 
 
 
-mobileCa['origin-header'].system = function(r) {
+mobileCa['origin-header'].system = async function(r) {
     basicUseSystem('bottom-heart-alarm', r);
 
     if (!r['search']) {
@@ -150,11 +143,9 @@ mobileCa['origin-header'].system = function(r) {
 
         m_search_icon.appendChild(m_search_img);
 
-        targetHandler(
-            () => document.getElementsByClassName('header-icon-menu')[0],
-            (target) => target.esrender("afterbegin", m_search_icon),
-            { redetect: 1 }
-        );
+        const target = await findTarget(() => document.getElementsByClassName('header-icon-menu')[0]);
+
+        if (target) target.esrender("afterbegin", m_search_icon);
     }
 
     document.querySelectorAll('#toggle-menu').forEach(b => {
@@ -204,52 +195,46 @@ mobileCa['origin-header'].system = function(r) {
 
 
 
-mobileCa['bottom-heart-alarm'].system = function(r) {
-    let bha = (() => {
+mobileCa['bottom-heart-alarm'].system = async function(r) {
+    const handler = (() => {
         if (pathChecker('/novel/')) {
-            return {
-                handler: (continue_ep) => checkStyleSetup(continue_ep),
-                tHOption: { redetect: 1 }
-            }
+            return checkStyleSetup;
         }
         else if (pathChecker('/comic_episode/')) {
-            return {
-                handler: (continue_ep) => {
+            return (continue_ep) => {
+                checkStyleSetup(continue_ep, true);
+
+                let is_changed = false;
+
+                const continueObserver = new MutationObserver((mus2, ob2) => {
+                    is_changed = true;
+
+                    ob2.disconnect();
+
                     checkStyleSetup(continue_ep, true);
+                });
 
-                    let is_changed = false;
+                continueObserver.observe(continue_ep, observer_setup);
 
-                    const continueObserver = new MutationObserver((mus2, ob2) => {
-                        is_changed = true;
+                const continueInterval = setInterval(() => {
+                    if (document.querySelector('.loads').style.display != 'none') return;
 
-                        ob2.disconnect();
+                    continueObserver.disconnect();
 
-                        checkStyleSetup(continue_ep, true);
-                    });
+                    // 인터넷 속도가 느려 로딩 페이지가 오랫동안 보이고 continueObserver가 변화를 감지하기 전에 로딩 페이지를 닫는 버튼을 눌러버린다면
+                    // 이어보기에 추가 변화가 없다고 감지할 수 있음.
+                    if (!is_changed) npup.log('이어보기에 추가 변화가 없습니다.');
+                    else npup.log('이어보기에 변화가 있었습니다.');
 
-                    continueObserver.observe(continue_ep, observer_setup);
-
-                    const continueInterval = setInterval(() => {
-                        if (document.querySelector('.loads').style.display != 'none') return;
-
-                        continueObserver.disconnect();
-
-                        // 인터넷 속도가 느려 로딩 페이지가 오랫동안 보이고 continueObserver가 변화를 감지하기 전에 로딩 페이지를 닫는 버튼을 눌러버린다면
-                        // 이어보기에 추가 변화가 없다고 감지할 수 있음.
-                        if (!is_changed) npup.log('이어보기에 추가 변화가 없습니다.');
-                        else npup.log('이어보기에 변화가 있었습니다.');
-
-                        clearInterval(continueInterval);
-                    }, 1.5 * 1000);
-                },
-                tHOption: { redetect: 1 }
+                    clearInterval(continueInterval);
+                }, 1.5 * 1000);
             }
         }
         else
             return null;
     })();
 
-    if (!bha) return;
+    if (!handler) return;
 
     const style_id = `${npup.project.prefix.css}${this.key}`;
 
@@ -263,11 +248,9 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
         border: 0,
     }
 
-    targetHandler(
-        () => document.querySelector('.btn-view-episode'),
-        bha.handler,
-        bha.tHOption
-    );
+    const continue_ep = await findTarget(() => document.querySelector('.btn-view-episode'));
+
+    if (continue_ep) handler(continue_ep);
 
     /**
      * bottom-heart-alarm system 함수 이전 스타일 함수
@@ -429,22 +412,20 @@ mobileCa['bottom-heart-alarm'].system = function(r) {
 
 
 
-mobileCa['top-ep'].system = function(r) {
+mobileCa['top-ep'].system = async function(r) {
     if (!pathChecker('/novel/')) return;
 
-    targetHandler(
-        () => document.getElementsByClassName('btn-view-run')[0],
-        (target) => {
-            let top_ep = target.parentElement.cloneNode(true);
-            top_ep.style = 'justify-content: center;';
-            top_ep.firstElementChild.style = 'max-width: 585px; width: 100%; margin-top: 20px;';
-            if (top_ep.children.length > 1) top_ep.lastElementChild.style.display = 'none';
+    const target = await findTarget(() => document.getElementsByClassName('btn-view-run')[0]);
 
-            targetHandler(
-                () => document.getElementsByClassName('epnew-mobile-btn-area-relative')[0],
-                (ft) => ft.esrender('beforebegin', top_ep)
-            );
-        },
-        { redetect: 1 }
-    );
+    if (target) {
+        const top_ep = target.parentElement.cloneNode(true);
+        top_ep.style = 'justify-content: center;';
+        top_ep.firstElementChild.style = 'max-width: 585px; width: 100%; margin-top: 20px;';
+        if (top_ep.children.length > 1) top_ep.lastElementChild.style.display = 'none';
+    
+        const ft = await findTarget(() => document.getElementsByClassName('epnew-mobile-btn-area-relative')[0]);
+    
+        ft && ft.esrender('beforebegin', top_ep);
+    }
+
 }

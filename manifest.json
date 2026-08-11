@@ -3,7 +3,7 @@
     "name": "노벨피아 UI+",
     "description": "더 나은 노벨피아 UI를 경험해보세요!",
     "author": "grand-kiwi",
-    "version": "3.14.1.0",
+    "version": "3.15.0.0",
     "minimum_chrome_version": "117.0",
     "browser_specific_settings": {
         "gecko": {
@@ -49,8 +49,8 @@
                 "./src/npup.js",
                 "./src/setup.js",
                 "./src/assets/index.js",
-                "./src/assets/render.js",
                 "./src/assets/find.js",
+                "./src/assets/render.js",
                 "./src/options-category.js",
                 "./src/route-detector.js",
                 "./src/structure.js",
@@ -102,8 +102,8 @@
                 "./src/npup.js",
                 "./src/setup.js",
                 "./src/assets/index.js",
-                "./src/assets/render.js",
                 "./src/assets/find.js",
+                "./src/assets/render.js",
                 "./src/options-category.js",
                 "./src/route-detector.js",
                 "./src/structure.js",
@@ -145,8 +145,8 @@
                 "./src/npup.js",
                 "./src/setup.js",
                 "./src/assets/index.js",
-                "./src/assets/render.js",
                 "./src/assets/find.js",
+                "./src/assets/render.js",
                 "./src/options-category.js",
                 "./src/route-detector.js",
                 "./src/structure.js",
@@ -160,6 +160,43 @@
                 "./src/webtoon/system-part/common/move.js",
                 
                 "./src/webtoon/system-part/custom/custom-css.js",
+
+                "./src/key-binding.js",
+                "./src/options-setup.js",
+
+                "./src/content.js"
+            ],
+            "run_at": "document_start"
+        },
+
+
+
+
+
+        {
+            "tag": "Chat 노벨피아",
+            "all_frames": true,
+            "matches": ["*://chat.novelpia.com/*"],
+            "js": [
+                "./src/npup.js",
+                "./src/setup.js",
+                "./src/assets/index.js",
+                "./src/assets/find.js",
+                "./src/assets/render.js",
+                "./src/options-category.js",
+                "./src/route-detector.js",
+                "./src/structure.js",
+                "./src/content.js",
+
+                "./src/chat/engine.js",
+
+                "./src/chat/settings.js",
+                "./src/chat/assets.js",
+
+                "./src/chat/system-part/common/key-mapping.js",
+                "./src/chat/system-part/common/move.js",
+                
+                "./src/chat/system-part/custom/custom-css.js",
 
                 "./src/key-binding.js",
                 "./src/options-setup.js",
