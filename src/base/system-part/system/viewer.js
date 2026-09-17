@@ -94,7 +94,6 @@ function iconSetup() {
 
 
 viewerCa['dbl-vote'].system = function(r) {
-    naviViewSetup();
 
     // const std_novel_el = 'novel_text';
 
@@ -116,6 +115,9 @@ viewerCa['dbl-vote'].system = function(r) {
     }
 
     if (r[enhanced.key]) {
+
+        naviViewSetup();
+
         // 둘 다 하는 이유는 novel_drawing_page_c의 height 가 완전히 0이 아니기 때문
         [scroll_novel, page_novel].forEach(nd => {
             targetHandler(
