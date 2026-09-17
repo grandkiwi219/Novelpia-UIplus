@@ -66,8 +66,8 @@ headerThemeButton.addEventListener('click', function () {
 
         const what_patch = document.createElement('a');
         what_patch.classList.add('update-button');
-        // what_patch.href = document.getElementById('patch').href;
-        what_patch.href = './PatchNote.html';
+        what_patch.href = document.getElementById('patch').href;
+        // what_patch.href = './PatchNote.html';
         what_patch.target = '_blank';
         what_patch.textContent = '패치노트';
 
