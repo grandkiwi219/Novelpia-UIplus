@@ -34,7 +34,7 @@ const options_category = [
     },
     {
         type: 'chat',
-        name: 'Chat',
+        name: '노벨챗',
         path: 'options-chat',
         routes: [
             { path: '/' }
