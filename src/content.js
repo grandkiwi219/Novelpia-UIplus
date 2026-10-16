@@ -28,6 +28,17 @@ function ready(settings_param) {
     // --- Head Common Engine ---
     STRUCTURE.PRE_COMMON.ENGINE.on(settings);
 
+    // --- head checker ---
+    if (document.head) {
+        startHead();
+    } else {
+        new MutationObserver((mus, ob) => {
+            if (!document.head) return;
+            startHead();
+            ob.disconnect();
+        }).observe(document.documentElement, { childList: true });
+    }
+
     // --- body checker ---
     if (document.body) {
         startBody(settings);
@@ -38,17 +49,6 @@ function ready(settings_param) {
             ob.disconnect();
         }).observe(document.documentElement, { childList: true });
     }
-
-    // --- head checker ---
-    if (document.head) {
-        startHead();
-    } else {
-        new MutationObserver((mus, ob) => {
-            if (!document.head) return;
-            startHead();
-            ob.disconnect();
-        }).observe(document.documentElement, { childList: true });
-    }   
     
 
     function startBody() {

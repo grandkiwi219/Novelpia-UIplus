@@ -21,26 +21,20 @@ keyMappingCa['chat-quick-mapping-menu'].system = quickMappingMenuAsset((r, menu,
 });
 
 
-keyMappingCa['chat-home'].system = keyMappingBase(r => {
-    if (pathChecker('/', { strict: true })) return;
-    history.pushState({}, '', '/');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-});
+keyMappingCa['chat-home'].system = movePathPreset('/', true);
 
-keyMappingCa['chat-chat'].system = keyMappingBase(r => {
-    if (pathChecker('/chat/', { strict: true })) return;
-    history.pushState({}, '', '/chat');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-});
+keyMappingCa['chat-feed'].system = movePathPreset('/feed/', true);
 
-keyMappingCa['chat-favorite'].system = keyMappingBase(r => {
-    if (pathChecker('/favorite/')) return;
-    history.pushState({}, '', '/favorite');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-});
+keyMappingCa['chat-chat'].system = movePathPreset('/chat/', true);
 
-keyMappingCa['chat-ranking'].system = keyMappingBase(r => {
-    if (pathChecker('/ranking/')) return;
-    history.pushState({}, '', '/ranking');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-});
+keyMappingCa['chat-favorite'].system = movePathPreset('/favorite/');
+
+keyMappingCa['chat-ranking'].system = movePathPreset('/ranking/');
+
+keyMappingCa['chat-collection'].system = movePathPreset('/collection/');
+
+keyMappingCa['chat-search'].system = movePathPreset('/search/', true);
+
+keyMappingCa['chat-profile'].system = movePathPreset('/profile/');
+
+keyMappingCa['chat-alarm'].system = movePathPreset('/notification/');

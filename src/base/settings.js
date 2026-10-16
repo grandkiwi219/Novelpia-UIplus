@@ -839,7 +839,7 @@ body, header, main, section, #main_curation_7, .md_btn, .game-all-wrapper, #paym
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '(공통) Chat으로 이동',
+                desc: '(공통) 노벨챗으로 이동',
                 type: {
                     option: 'mapping'
                 },

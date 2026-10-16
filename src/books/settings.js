@@ -221,7 +221,7 @@ div.flex.w-\\[420px\\]:has(input:focus) {
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '(공통) Chat으로 이동',
+                desc: '(공통) 노벨챗으로 이동',
                 type: {
                     option: 'mapping'
                 },

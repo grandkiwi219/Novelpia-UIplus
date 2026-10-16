@@ -84,11 +84,20 @@ npup.options = {
                     option: 'mapping'
                 },
             },
+            'chat-feed': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '탐색으로 가기',
+                type: {
+                    option: 'mapping'
+                },
+            },
             'chat-chat': {
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '채팅 내역으로 가기',
+                desc: '최근 대화로 가기',
                 type: {
                     option: 'mapping'
                 },
@@ -110,11 +119,47 @@ npup.options = {
                 type: {
                     option: 'mapping'
                 },
+            },
+            'chat-collection': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '컬렉션으로 가기',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'chat-search': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '검색으로 가기',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'chat-profile': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '마이페이지로 가기',
+                type: {
+                    option: 'mapping'
+                },
+            },
+            'chat-alarm': {
+                tag: {
+                    quick_mapping_menu: true
+                },
+                desc: '마이페이지로 가기',
+                type: {
+                    option: 'mapping'
+                },
             }
         },
-        /* setups: {
+        setups: {
             length: 2
-        } */
+        }
     },
 
     move: {
@@ -164,7 +209,7 @@ npup.options = {
                 tag: {
                     quick_mapping_menu: true
                 },
-                desc: '(공통) Chat으로 이동',
+                desc: '(공통) 노벨챗으로 이동',
                 type: {
                     option: 'mapping'
                 },
