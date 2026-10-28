@@ -1,3 +1,3 @@
-window.addEventListener(npup.event.navi_view, () => {
+window.addEventListener('NPupNaviView', () => {
     navi_view();
 });
